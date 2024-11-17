@@ -1,0 +1,783 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easylive.mappers.UserInfoMapper">
+
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="com.easylive.entity.po.UserInfo">
+		<!--用户ID-->
+		<result column="user_id" property="userId"  />
+		<!--昵称-->
+		<result column="nick_name" property="nickName"  />
+		<!--邮箱-->
+		<result column="email" property="email"  />
+		<!--密码-->
+		<result column="password" property="password"  />
+		<!--0:女 1：男 2：未知-->
+		<result column="sex" property="sex"  />
+		<!--生日-->
+		<result column="birthday" property="birthday"  />
+		<!--学校-->
+		<result column="school" property="school"  />
+		<!--个人介绍-->
+		<result column="person_introduction" property="personIntroduction"  />
+		<!--加入时间-->
+		<result column="join_time" property="joinTime"  />
+		<!--上次登录时间-->
+		<result column="last_login_time" property="lastLoginTime"  />
+		<!--上次登录ip-->
+		<result column="last_login_ip" property="lastLoginIp"  />
+		<!--0:禁用 1：正常-->
+		<result column="status" property="status"  />
+		<!--空间公告-->
+		<result column="notice_info" property="noticeInfo"  />
+		<!--曾经获得过的所有硬币数-->
+		<result column="total_coin_count" property="totalCoinCount"  />
+		<!--当前所剩硬币数-->
+		<result column="current_coin_count" property="currentCoinCount"  />
+		<!--主题-->
+		<result column="theme" property="theme"  />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="base_column_list">
+		 u.user_id,u.nick_name,u.email,u.password,u.sex,
+		 u.birthday,u.school,u.person_introduction,u.join_time,u.last_login_time,
+		 u.last_login_ip,u.status,u.notice_info,u.total_coin_count,u.current_coin_count,
+		 u.theme
+	</sql>
+
+	<sql id="base_condition_filed">
+			<if test="query.userId != null and query.userId!=''">
+				 and  u.user_id = #{query.userId}
+			</if>
+			<if test="query.nickName != null and query.nickName!=''">
+				 and  u.nick_name = #{query.nickName}
+			</if>
+			<if test="query.email != null and query.email!=''">
+				 and  u.email = #{query.email}
+			</if>
+			<if test="query.password != null and query.password!=''">
+				 and  u.password = #{query.password}
+			</if>
+			<if test="query.sex != null">
+				 and  u.sex = #{query.sex}
+			</if>
+			<if test="query.birthday != null and query.birthday!=''">
+				 and  u.birthday = #{query.birthday}
+			</if>
+			<if test="query.school != null and query.school!=''">
+				 and  u.school = #{query.school}
+			</if>
+			<if test="query.personIntroduction != null and query.personIntroduction!=''">
+				 and  u.person_introduction = #{query.personIntroduction}
+			</if>
+			<if test="query.joinTime != null and query.joinTime!=''">
+				 <![CDATA[ and  u.join_time=str_to_date(#{query.joinTime}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.lastLoginTime != null and query.lastLoginTime!=''">
+				 <![CDATA[ and  u.last_login_time=str_to_date(#{query.lastLoginTime}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.lastLoginIp != null and query.lastLoginIp!=''">
+				 and  u.last_login_ip = #{query.lastLoginIp}
+			</if>
+			<if test="query.status != null">
+				 and  u.status = #{query.status}
+			</if>
+			<if test="query.noticeInfo != null and query.noticeInfo!=''">
+				 and  u.notice_info = #{query.noticeInfo}
+			</if>
+			<if test="query.totalCoinCount != null">
+				 and  u.total_coin_count = #{query.totalCoinCount}
+			</if>
+			<if test="query.currentCoinCount != null">
+				 and  u.current_coin_count = #{query.currentCoinCount}
+			</if>
+			<if test="query.theme != null">
+				 and  u.theme = #{query.theme}
+			</if>
+	</sql>
+	<!-- 通用条件列-->
+	<sql id="base_condition">
+	 <where>
+		 <include refid="base_condition_filed" />
+	 </where>
+	</sql>
+
+	<!-- 通用查询条件列-->
+	<sql id="query_condition">
+	 <where>
+			<include refid="base_condition_filed" />
+			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
+				 and  u.user_id like concat('%', #{query.userIdFuzzy}, '%')
+			</if>
+			<if test="query.nickNameFuzzy!= null  and query.nickNameFuzzy!=''">
+				 and  u.nick_name like concat('%', #{query.nickNameFuzzy}, '%')
+			</if>
+			<if test="query.emailFuzzy!= null  and query.emailFuzzy!=''">
+				 and  u.email like concat('%', #{query.emailFuzzy}, '%')
+			</if>
+			<if test="query.passwordFuzzy!= null  and query.passwordFuzzy!=''">
+				 and  u.password like concat('%', #{query.passwordFuzzy}, '%')
+			</if>
+			<if test="query.birthdayFuzzy!= null  and query.birthdayFuzzy!=''">
+				 and  u.birthday like concat('%', #{query.birthdayFuzzy}, '%')
+			</if>
+			<if test="query.schoolFuzzy!= null  and query.schoolFuzzy!=''">
+				 and  u.school like concat('%', #{query.schoolFuzzy}, '%')
+			</if>
+			<if test="query.personIntroductionFuzzy!= null  and query.personIntroductionFuzzy!=''">
+				 and  u.person_introduction like concat('%', #{query.personIntroductionFuzzy}, '%')
+			</if>
+			<if test="query.joinTimeStart!= null and query.joinTimeStart!=''">
+				 <![CDATA[ and  u.join_time>=str_to_date(#{query.joinTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.joinTimeEnd!= null and query.joinTimeEnd!=''">
+				 <![CDATA[ and  u.join_time< date_sub(str_to_date(#{query.joinTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+			<if test="query.lastLoginTimeStart!= null and query.lastLoginTimeStart!=''">
+				 <![CDATA[ and  u.last_login_time>=str_to_date(#{query.lastLoginTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.lastLoginTimeEnd!= null and query.lastLoginTimeEnd!=''">
+				 <![CDATA[ and  u.last_login_time< date_sub(str_to_date(#{query.lastLoginTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+			<if test="query.lastLoginIpFuzzy!= null  and query.lastLoginIpFuzzy!=''">
+				 and  u.last_login_ip like concat('%', #{query.lastLoginIpFuzzy}, '%')
+			</if>
+			<if test="query.noticeInfoFuzzy!= null  and query.noticeInfoFuzzy!=''">
+				 and  u.notice_info like concat('%', #{query.noticeInfoFuzzy}, '%')
+			</if>
+	 </where>
+	</sql>
+
+	<!-- 查询集合-->
+	<select id="selectList" resultMap="base_result_map" >
+		 SELECT <include refid="base_column_list" /> FROM user_info u <include refid="query_condition" />
+		 <if test="query.orderBy!=null">
+			 order by ${query.orderBy}
+		 </if>
+		 <if test="query.simplePage!=null">
+			 limit #{query.simplePage.start},#{query.simplePage.end}
+		 </if>
+	</select>
+
+	<!-- 查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer" >
+		 SELECT count(1) FROM user_info u <include refid="query_condition" />
+	</select>
+
+	<!-- 插入 （匹配有值的字段）-->
+	<insert id="insert" parameterType="com.easylive.entity.po.UserInfo">
+		 INSERT INTO user_info
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.nickName != null">
+				 nick_name,
+			</if>
+			<if test="bean.email != null">
+				 email,
+			</if>
+			<if test="bean.password != null">
+				 password,
+			</if>
+			<if test="bean.sex != null">
+				 sex,
+			</if>
+			<if test="bean.birthday != null">
+				 birthday,
+			</if>
+			<if test="bean.school != null">
+				 school,
+			</if>
+			<if test="bean.personIntroduction != null">
+				 person_introduction,
+			</if>
+			<if test="bean.joinTime != null">
+				 join_time,
+			</if>
+			<if test="bean.lastLoginTime != null">
+				 last_login_time,
+			</if>
+			<if test="bean.lastLoginIp != null">
+				 last_login_ip,
+			</if>
+			<if test="bean.status != null">
+				 status,
+			</if>
+			<if test="bean.noticeInfo != null">
+				 notice_info,
+			</if>
+			<if test="bean.totalCoinCount != null">
+				 total_coin_count,
+			</if>
+			<if test="bean.currentCoinCount != null">
+				 current_coin_count,
+			</if>
+			<if test="bean.theme != null">
+				 theme,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.nickName!=null">
+				 #{bean.nickName},
+			</if>
+			<if test="bean.email!=null">
+				 #{bean.email},
+			</if>
+			<if test="bean.password!=null">
+				 #{bean.password},
+			</if>
+			<if test="bean.sex!=null">
+				 #{bean.sex},
+			</if>
+			<if test="bean.birthday!=null">
+				 #{bean.birthday},
+			</if>
+			<if test="bean.school!=null">
+				 #{bean.school},
+			</if>
+			<if test="bean.personIntroduction!=null">
+				 #{bean.personIntroduction},
+			</if>
+			<if test="bean.joinTime!=null">
+				 #{bean.joinTime},
+			</if>
+			<if test="bean.lastLoginTime!=null">
+				 #{bean.lastLoginTime},
+			</if>
+			<if test="bean.lastLoginIp!=null">
+				 #{bean.lastLoginIp},
+			</if>
+			<if test="bean.status!=null">
+				 #{bean.status},
+			</if>
+			<if test="bean.noticeInfo!=null">
+				 #{bean.noticeInfo},
+			</if>
+			<if test="bean.totalCoinCount!=null">
+				 #{bean.totalCoinCount},
+			</if>
+			<if test="bean.currentCoinCount!=null">
+				 #{bean.currentCoinCount},
+			</if>
+			<if test="bean.theme!=null">
+				 #{bean.theme},
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 插入或者更新 （匹配有值的字段）-->
+	<insert id="insertOrUpdate" parameterType="com.easylive.entity.po.UserInfo">
+		 INSERT INTO user_info
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.nickName != null">
+				 nick_name,
+			</if>
+			<if test="bean.email != null">
+				 email,
+			</if>
+			<if test="bean.password != null">
+				 password,
+			</if>
+			<if test="bean.sex != null">
+				 sex,
+			</if>
+			<if test="bean.birthday != null">
+				 birthday,
+			</if>
+			<if test="bean.school != null">
+				 school,
+			</if>
+			<if test="bean.personIntroduction != null">
+				 person_introduction,
+			</if>
+			<if test="bean.joinTime != null">
+				 join_time,
+			</if>
+			<if test="bean.lastLoginTime != null">
+				 last_login_time,
+			</if>
+			<if test="bean.lastLoginIp != null">
+				 last_login_ip,
+			</if>
+			<if test="bean.status != null">
+				 status,
+			</if>
+			<if test="bean.noticeInfo != null">
+				 notice_info,
+			</if>
+			<if test="bean.totalCoinCount != null">
+				 total_coin_count,
+			</if>
+			<if test="bean.currentCoinCount != null">
+				 current_coin_count,
+			</if>
+			<if test="bean.theme != null">
+				 theme,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.nickName!=null">
+				 #{bean.nickName},
+			</if>
+			<if test="bean.email!=null">
+				 #{bean.email},
+			</if>
+			<if test="bean.password!=null">
+				 #{bean.password},
+			</if>
+			<if test="bean.sex!=null">
+				 #{bean.sex},
+			</if>
+			<if test="bean.birthday!=null">
+				 #{bean.birthday},
+			</if>
+			<if test="bean.school!=null">
+				 #{bean.school},
+			</if>
+			<if test="bean.personIntroduction!=null">
+				 #{bean.personIntroduction},
+			</if>
+			<if test="bean.joinTime!=null">
+				 #{bean.joinTime},
+			</if>
+			<if test="bean.lastLoginTime!=null">
+				 #{bean.lastLoginTime},
+			</if>
+			<if test="bean.lastLoginIp!=null">
+				 #{bean.lastLoginIp},
+			</if>
+			<if test="bean.status!=null">
+				 #{bean.status},
+			</if>
+			<if test="bean.noticeInfo!=null">
+				 #{bean.noticeInfo},
+			</if>
+			<if test="bean.totalCoinCount!=null">
+				 #{bean.totalCoinCount},
+			</if>
+			<if test="bean.currentCoinCount!=null">
+				 #{bean.currentCoinCount},
+			</if>
+			<if test="bean.theme!=null">
+				 #{bean.theme},
+			</if>
+		 </trim>
+		 on DUPLICATE key update 
+		 <trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.userId!=null">
+				 user_id = VALUES(user_id),
+			</if>
+			<if test="bean.nickName!=null">
+				 nick_name = VALUES(nick_name),
+			</if>
+			<if test="bean.email!=null">
+				 email = VALUES(email),
+			</if>
+			<if test="bean.password!=null">
+				 password = VALUES(password),
+			</if>
+			<if test="bean.sex!=null">
+				 sex = VALUES(sex),
+			</if>
+			<if test="bean.birthday!=null">
+				 birthday = VALUES(birthday),
+			</if>
+			<if test="bean.school!=null">
+				 school = VALUES(school),
+			</if>
+			<if test="bean.personIntroduction!=null">
+				 person_introduction = VALUES(person_introduction),
+			</if>
+			<if test="bean.joinTime!=null">
+				 join_time = VALUES(join_time),
+			</if>
+			<if test="bean.lastLoginTime!=null">
+				 last_login_time = VALUES(last_login_time),
+			</if>
+			<if test="bean.lastLoginIp!=null">
+				 last_login_ip = VALUES(last_login_ip),
+			</if>
+			<if test="bean.status!=null">
+				 status = VALUES(status),
+			</if>
+			<if test="bean.noticeInfo!=null">
+				 notice_info = VALUES(notice_info),
+			</if>
+			<if test="bean.totalCoinCount!=null">
+				 total_coin_count = VALUES(total_coin_count),
+			</if>
+			<if test="bean.currentCoinCount!=null">
+				 current_coin_count = VALUES(current_coin_count),
+			</if>
+			<if test="bean.theme!=null">
+				 theme = VALUES(theme),
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 添加 （批量插入）-->
+	<insert id="insertBatch" parameterType="com.easylive.entity.po.UserInfo">
+		 INSERT INTO user_info(
+			 user_id,
+			 nick_name,
+			 email,
+			 password,
+			 sex,
+			 birthday,
+			 school,
+			 person_introduction,
+			 join_time,
+			 last_login_time,
+			 last_login_ip,
+			 status,
+			 notice_info,
+			 total_coin_count,
+			 current_coin_count,
+			 theme
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.userId},
+				 #{item.nickName},
+				 #{item.email},
+				 #{item.password},
+				 #{item.sex},
+				 #{item.birthday},
+				 #{item.school},
+				 #{item.personIntroduction},
+				 #{item.joinTime},
+				 #{item.lastLoginTime},
+				 #{item.lastLoginIp},
+				 #{item.status},
+				 #{item.noticeInfo},
+				 #{item.totalCoinCount},
+				 #{item.currentCoinCount},
+				 #{item.theme}
+			 )
+		 </foreach>
+	</insert>
+
+	<!-- 批量新增修改 （批量插入）-->
+	<insert id="insertOrUpdateBatch" parameterType="com.easylive.entity.po.UserInfo">
+		 INSERT INTO user_info(
+			 user_id,
+			 nick_name,
+			 email,
+			 password,
+			 sex,
+			 birthday,
+			 school,
+			 person_introduction,
+			 join_time,
+			 last_login_time,
+			 last_login_ip,
+			 status,
+			 notice_info,
+			 total_coin_count,
+			 current_coin_count,
+			 theme
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.userId},
+				 #{item.nickName},
+				 #{item.email},
+				 #{item.password},
+				 #{item.sex},
+				 #{item.birthday},
+				 #{item.school},
+				 #{item.personIntroduction},
+				 #{item.joinTime},
+				 #{item.lastLoginTime},
+				 #{item.lastLoginIp},
+				 #{item.status},
+				 #{item.noticeInfo},
+				 #{item.totalCoinCount},
+				 #{item.currentCoinCount},
+				 #{item.theme}
+			 )
+		 </foreach>
+			on DUPLICATE key update 
+			user_id = VALUES(user_id),
+			nick_name = VALUES(nick_name),
+			email = VALUES(email),
+			password = VALUES(password),
+			sex = VALUES(sex),
+			birthday = VALUES(birthday),
+			school = VALUES(school),
+			person_introduction = VALUES(person_introduction),
+			join_time = VALUES(join_time),
+			last_login_time = VALUES(last_login_time),
+			last_login_ip = VALUES(last_login_ip),
+			status = VALUES(status),
+			notice_info = VALUES(notice_info),
+			total_coin_count = VALUES(total_coin_count),
+			current_coin_count = VALUES(current_coin_count),
+			theme = VALUES(theme)
+	</insert>
+
+	<!--多条件修改-->
+	<update id="updateByParam" parameterType="com.easylive.entity.query.UserInfoQuery">
+		 UPDATE user_info u
+ 		 <set> 
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.nickName != null">
+				 nick_name = #{bean.nickName},
+			</if>
+			<if test="bean.email != null">
+				 email = #{bean.email},
+			</if>
+			<if test="bean.password != null">
+				 password = #{bean.password},
+			</if>
+			<if test="bean.sex != null">
+				 sex = #{bean.sex},
+			</if>
+			<if test="bean.birthday != null">
+				 birthday = #{bean.birthday},
+			</if>
+			<if test="bean.school != null">
+				 school = #{bean.school},
+			</if>
+			<if test="bean.personIntroduction != null">
+				 person_introduction = #{bean.personIntroduction},
+			</if>
+			<if test="bean.joinTime != null">
+				 join_time = #{bean.joinTime},
+			</if>
+			<if test="bean.lastLoginTime != null">
+				 last_login_time = #{bean.lastLoginTime},
+			</if>
+			<if test="bean.lastLoginIp != null">
+				 last_login_ip = #{bean.lastLoginIp},
+			</if>
+			<if test="bean.status != null">
+				 status = #{bean.status},
+			</if>
+			<if test="bean.noticeInfo != null">
+				 notice_info = #{bean.noticeInfo},
+			</if>
+			<if test="bean.totalCoinCount != null">
+				 total_coin_count = #{bean.totalCoinCount},
+			</if>
+			<if test="bean.currentCoinCount != null">
+				 current_coin_count = #{bean.currentCoinCount},
+			</if>
+			<if test="bean.theme != null">
+				 theme = #{bean.theme},
+			</if>
+ 		 </set>
+ 		 <include refid="query_condition" />
+	</update>
+
+	<!--多条件删除-->
+	<delete id="deleteByParam">
+		 delete u from user_info u
+ 		 <include refid="query_condition" />
+	</delete>
+
+	<!-- 根据UserId修改-->
+	<update id="updateByUserId" parameterType="com.easylive.entity.po.UserInfo">
+		 UPDATE user_info
+ 		 <set> 
+			<if test="bean.nickName != null">
+				 nick_name = #{bean.nickName},
+			</if>
+			<if test="bean.email != null">
+				 email = #{bean.email},
+			</if>
+			<if test="bean.password != null">
+				 password = #{bean.password},
+			</if>
+			<if test="bean.sex != null">
+				 sex = #{bean.sex},
+			</if>
+			<if test="bean.birthday != null">
+				 birthday = #{bean.birthday},
+			</if>
+			<if test="bean.school != null">
+				 school = #{bean.school},
+			</if>
+			<if test="bean.personIntroduction != null">
+				 person_introduction = #{bean.personIntroduction},
+			</if>
+			<if test="bean.joinTime != null">
+				 join_time = #{bean.joinTime},
+			</if>
+			<if test="bean.lastLoginTime != null">
+				 last_login_time = #{bean.lastLoginTime},
+			</if>
+			<if test="bean.lastLoginIp != null">
+				 last_login_ip = #{bean.lastLoginIp},
+			</if>
+			<if test="bean.status != null">
+				 status = #{bean.status},
+			</if>
+			<if test="bean.noticeInfo != null">
+				 notice_info = #{bean.noticeInfo},
+			</if>
+			<if test="bean.totalCoinCount != null">
+				 total_coin_count = #{bean.totalCoinCount},
+			</if>
+			<if test="bean.currentCoinCount != null">
+				 current_coin_count = #{bean.currentCoinCount},
+			</if>
+			<if test="bean.theme != null">
+				 theme = #{bean.theme},
+			</if>
+ 		 </set>
+ 		 where user_id=#{userId}
+	</update>
+
+	<!-- 根据UserId删除-->
+	<delete id="deleteByUserId">
+		delete from user_info where user_id=#{userId}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByUserId" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from user_info u where user_id=#{userId}
+	</select>
+
+	<!-- 根据Email修改-->
+	<update id="updateByEmail" parameterType="com.easylive.entity.po.UserInfo">
+		 UPDATE user_info
+ 		 <set> 
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.nickName != null">
+				 nick_name = #{bean.nickName},
+			</if>
+			<if test="bean.password != null">
+				 password = #{bean.password},
+			</if>
+			<if test="bean.sex != null">
+				 sex = #{bean.sex},
+			</if>
+			<if test="bean.birthday != null">
+				 birthday = #{bean.birthday},
+			</if>
+			<if test="bean.school != null">
+				 school = #{bean.school},
+			</if>
+			<if test="bean.personIntroduction != null">
+				 person_introduction = #{bean.personIntroduction},
+			</if>
+			<if test="bean.joinTime != null">
+				 join_time = #{bean.joinTime},
+			</if>
+			<if test="bean.lastLoginTime != null">
+				 last_login_time = #{bean.lastLoginTime},
+			</if>
+			<if test="bean.lastLoginIp != null">
+				 last_login_ip = #{bean.lastLoginIp},
+			</if>
+			<if test="bean.status != null">
+				 status = #{bean.status},
+			</if>
+			<if test="bean.noticeInfo != null">
+				 notice_info = #{bean.noticeInfo},
+			</if>
+			<if test="bean.totalCoinCount != null">
+				 total_coin_count = #{bean.totalCoinCount},
+			</if>
+			<if test="bean.currentCoinCount != null">
+				 current_coin_count = #{bean.currentCoinCount},
+			</if>
+			<if test="bean.theme != null">
+				 theme = #{bean.theme},
+			</if>
+ 		 </set>
+ 		 where email=#{email}
+	</update>
+
+	<!-- 根据Email删除-->
+	<delete id="deleteByEmail">
+		delete from user_info where email=#{email}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByEmail" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from user_info u where email=#{email}
+	</select>
+
+	<!-- 根据NickName修改-->
+	<update id="updateByNickName" parameterType="com.easylive.entity.po.UserInfo">
+		 UPDATE user_info
+ 		 <set> 
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.email != null">
+				 email = #{bean.email},
+			</if>
+			<if test="bean.password != null">
+				 password = #{bean.password},
+			</if>
+			<if test="bean.sex != null">
+				 sex = #{bean.sex},
+			</if>
+			<if test="bean.birthday != null">
+				 birthday = #{bean.birthday},
+			</if>
+			<if test="bean.school != null">
+				 school = #{bean.school},
+			</if>
+			<if test="bean.personIntroduction != null">
+				 person_introduction = #{bean.personIntroduction},
+			</if>
+			<if test="bean.joinTime != null">
+				 join_time = #{bean.joinTime},
+			</if>
+			<if test="bean.lastLoginTime != null">
+				 last_login_time = #{bean.lastLoginTime},
+			</if>
+			<if test="bean.lastLoginIp != null">
+				 last_login_ip = #{bean.lastLoginIp},
+			</if>
+			<if test="bean.status != null">
+				 status = #{bean.status},
+			</if>
+			<if test="bean.noticeInfo != null">
+				 notice_info = #{bean.noticeInfo},
+			</if>
+			<if test="bean.totalCoinCount != null">
+				 total_coin_count = #{bean.totalCoinCount},
+			</if>
+			<if test="bean.currentCoinCount != null">
+				 current_coin_count = #{bean.currentCoinCount},
+			</if>
+			<if test="bean.theme != null">
+				 theme = #{bean.theme},
+			</if>
+ 		 </set>
+ 		 where nick_name=#{nickName}
+	</update>
+
+	<!-- 根据NickName删除-->
+	<delete id="deleteByNickName">
+		delete from user_info where nick_name=#{nickName}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByNickName" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from user_info u where nick_name=#{nickName}
+	</select>
+
+</mapper>
