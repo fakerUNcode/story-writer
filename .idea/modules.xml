@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/easylive-java/easylive-admin/easylive-admin.iml" filepath="$PROJECT_DIR$/easylive-java/easylive-admin/easylive-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylive-java/easylive-common/easylive-common.iml" filepath="$PROJECT_DIR$/easylive-java/easylive-common/easylive-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylive-java/easylive-web/easylive-web.iml" filepath="$PROJECT_DIR$/easylive-java/easylive-web/easylive-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/workspace-storywriter.iml" filepath="$PROJECT_DIR$/.idea/workspace-storywriter.iml" />
     </modules>
   </component>

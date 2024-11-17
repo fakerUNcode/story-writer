@@ -6,7 +6,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 15MB
   application:
-    name: easylive-admin
+    name: easylive-web
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/easylive?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false
     username: root
@@ -38,7 +38,7 @@ mybatis:
     map-underscore-to-camel-case: true
 
 project:
-  folder: c:/webser/easylive/
+  folder: ~/webser/easylive/
 log:
   root:
     level: debug
