@@ -38,7 +38,7 @@ mybatis:
     map-underscore-to-camel-case: true
 
 project:
-  folder: ~/webser/easylive/
+  folder: /Users/apple/logs
 log:
   root:
     level: debug
