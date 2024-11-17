@@ -2,15 +2,20 @@ package com.easylive.web.controller;
 
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
+import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.service.UserInfoService;
+import com.easylive.utils.StringTools;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
@@ -56,6 +61,38 @@ public class AccountController extends ABaseController{
 			return getSuccessResponseVO(null);
 		}finally {
 			redisComponent.cleanCheckCode(checkCodeKey);
+		}
+	}
+
+	@RequestMapping("/login")
+	public ResponseVO login(HttpServletRequest request,
+							HttpServletResponse response,
+							@NotEmpty @Email String email,
+							@NotEmpty String password,
+							@NotEmpty String checkCodeKey,
+							@NotEmpty String checkCode){
+		try {
+			if(!checkCode.equalsIgnoreCase(redisComponent.getCheckCode(checkCodeKey))){
+				throw new BusinessException("图形验证码错误！");
+			}
+			String ip = getIpAddr();
+			TokenUserInfoDto tokenUserInfoDto = userInfoService.login(email,password,ip);
+			saveToken2Cookie(response,tokenUserInfoDto.getToken());
+			//TODO 粉丝等数据
+			return getSuccessResponseVO(tokenUserInfoDto);
+		}finally {
+			redisComponent.cleanCheckCode(checkCodeKey);
+			Cookie[] cookies = request.getCookies();
+			String token = null;
+			for(Cookie cookie : cookies){
+				if(cookie.getName().equals(Constants.REDIS_KEY_TOKEN_WEB)){
+					token = cookie.getValue();
+				}
+			}
+			if (!StringTools.isEmpty(token)){
+				redisComponent.cleanToken(token);
+			}
+
 		}
 
 

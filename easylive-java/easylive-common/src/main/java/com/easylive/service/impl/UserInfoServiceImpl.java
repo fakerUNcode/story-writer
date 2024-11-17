@@ -1,6 +1,8 @@
 package com.easylive.service.impl;
 
+import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
+import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.UserSexEnum;
 import com.easylive.entity.enums.UserStatusEnum;
@@ -11,6 +13,7 @@ import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.mappers.UserInfoMapper;
 import com.easylive.service.UserInfoService;
+import com.easylive.utils.CopyTools;
 import com.easylive.utils.StringTools;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Resource
 	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
+	@Resource
+	private RedisComponent redisComponent;
 
 	/**
 	 * 根据条件查询列表
@@ -181,35 +186,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 		return this.userInfoMapper.deleteByNickName(nickName);
 	}
 
+	//用户注册方法
 	@Override
 	public void register(String email, String nickName, String registerPassword) {
-/*		UserInfo userInfo = this.userInfoMapper.selectByEmail(email);
-		if(userInfo!=null){
-			UserInfo nickNameUser = this.userInfoMapper.selectByNickName(nickName);
-			if(nickNameUser!=null){
-				//满足所有条件开始注册 首先生成一个userInfo对象
-				userInfo = new UserInfo();
-				//随机生成一个长度为10的纯数字用户id
-				String userId = StringTools.getRandomNumber(LENGTH_10);
-				//录入用户信息
-				userInfo.setUserId(userId);
-				userInfo.setNickName(nickName);
-				userInfo.setEmail(email);
-				userInfo.setPassword(StringTools.encodeByMd5(registerPassword));
-				userInfo.setJoinTime(new Date());
-				userInfo.setStatus(UserStatusEnum.ENABLE.getStatus());
-				userInfo.setSex(UserSexEnum.SECRECY.getType());
-				userInfo.setTheme(Constants.ONE);
-				//插入对象到数据库
-				this.userInfoMapper.insert(userInfo);
-				return true;
-			}else{
-				return false;
-			}
-		}else {
-			return false;
-		}*/
-
 		UserInfo userInfo = this.userInfoMapper.selectByEmail(email);
 		if(null!=userInfo){
 			throw new BusinessException("邮箱账号已经存在");
@@ -231,12 +210,32 @@ public class UserInfoServiceImpl implements UserInfoService {
 		userInfo.setStatus(UserStatusEnum.ENABLE.getStatus());
 		userInfo.setSex(UserSexEnum.SECRECY.getType());
 		userInfo.setTheme(Constants.ONE);
-
-		//TODO 初始化用户的硬币为10
+		//初始化硬币数
 		userInfo.setCurrentCoinCount(10);
 		userInfo.setTotalCoinCount(10);
-
 		//插入对象到数据库
 		this.userInfoMapper.insert(userInfo);
 	}
+
+	//用户登录方法
+	@Override
+	public TokenUserInfoDto login(String email, String password, String ip) {
+		UserInfo userInfo = this.userInfoMapper.selectByEmail(email);
+		if(null==userInfo || !userInfo.getPassword().equals(password)){
+			throw new BusinessException("账号或密码错误");
+		}
+		if(UserStatusEnum.DISABLE .getStatus().equals(userInfo.getStatus())){
+			throw new BusinessException("账户已禁用");
+		}
+		UserInfo updateInfo = new UserInfo();
+		updateInfo.setLastLoginTime(new Date());
+		updateInfo.setLastLoginIp(ip);
+		this.userInfoMapper.updateByUserId(updateInfo,userInfo.getUserId());
+
+		TokenUserInfoDto tokenUserInfoDto = CopyTools.copy(userInfo, TokenUserInfoDto.class);
+		redisComponent.saveTokenInfo(tokenUserInfoDto);
+
+		return tokenUserInfoDto;
+	}
+
 }
