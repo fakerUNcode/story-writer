@@ -38,10 +38,11 @@ mybatis:
     map-underscore-to-camel-case: true
 
 project:
-  folder: /Users/apple/logs
+  folder: ./easylive/web
 log:
   root:
-    level: debug
+  level: debug
+  path: ./logs
 admin:
   account: admin
   password: admin123

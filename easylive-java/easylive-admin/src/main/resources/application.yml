@@ -40,10 +40,11 @@ mybatis:
     map-underscore-to-camel-case: true
 
 project:
-  folder: c:/webser/easylive/
+  folder: ./easylive/admin
 log:
   root:
-    level: debug
+  level: debug
+  path: ./logs
 admin:
   account: admin
   password: admin123

@@ -47,4 +47,14 @@ public class RedisComponent {
         return (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_WEB+token);
     }
 
+    public String saveTokenInfo4Admin(String account){
+        String token = UUID.randomUUID().toString();
+        redisUtils.setex(Constants.REDIS_KEY_TOKEN_ADMIN+token,account,Constants.REDIS_KEY_EXPIRES_ONE_DAY);
+        return token;
+    }
+
+    public void cleanToken4Admin(String token){
+        redisUtils.delete(Constants.REDIS_KEY_TOKEN_ADMIN + token);
+    }
+
 }
