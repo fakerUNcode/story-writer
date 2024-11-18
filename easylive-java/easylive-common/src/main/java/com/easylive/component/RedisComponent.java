@@ -17,6 +17,7 @@ public class RedisComponent {
     private RedisUtils redisUtils;
     public String saveCheckCode(String code){
         String checkCodeKey = UUID.randomUUID().toString();
+        //为 Token 键名加上前缀 easylive:token:web:  之后的所有方法也会加上这个前缀 有效防止键名冲突
         redisUtils.setex(Constants.REDIS_KEY_CHECK_CODE+checkCodeKey, code, REDIS_KEY_EXPIRES_ONE_MIN*10);
         return checkCodeKey;
     }
@@ -40,6 +41,10 @@ public class RedisComponent {
 
     public void cleanToken(String token){
         redisUtils.delete(Constants.REDIS_KEY_TOKEN_WEB + token);
+    }
+
+    public TokenUserInfoDto getTokenInfo(String token){
+        return (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_WEB+token);
     }
 
 }

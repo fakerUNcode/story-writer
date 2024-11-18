@@ -1,12 +1,15 @@
 package com.easylive.web.controller;
 
+import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
+import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.exception.BusinessException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +20,9 @@ public class ABaseController {
     protected static final String STATUC_SUCCESS = "success";
 
     protected static final String STATUC_ERROR = "error";
+
+    @Resource
+    private RedisComponent redisComponent;
 
     protected <T> ResponseVO getSuccessResponseVO(T t) {
         ResponseVO<T> responseVO = new ResponseVO<>();
@@ -84,5 +90,48 @@ public class ABaseController {
         cookie.setMaxAge(Constants.TIME_SECONDS_DAY*7);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    protected TokenUserInfoDto getTokenUserInfoDto() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        // 优先从请求头中获取 Token
+        String token = request.getHeader(Constants.TOKEN_WEB);
+        // 如果请求头中未找到 Token，则尝试从 Cookie 中获取
+        if (token == null) {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (Constants.TOKEN_WEB.equals(cookie.getName())) {
+                        token = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        // 根据 Token 从 Redis 获取用户信息
+        return redisComponent.getTokenInfo(token);
+    }
+
+    protected void cleanCookie(HttpServletResponse response){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Cookie[] cookies = request.getCookies();
+        if(cookies==null){
+            //若已经清空cookie则不做操作
+            return;
+        }
+        for(Cookie cookie : cookies){
+            //遍历 Cookie，找到 Constants.TOKEN_WEB（“token”）对应的 Cookie。
+            if(cookie.getName().equals(Constants.TOKEN_WEB)){
+                //调用 redisComponent.cleanToken 删除 Redis 中与该 Token 相关的数据。
+                redisComponent.cleanToken(cookie.getValue());
+                //将 Cookie 的 MaxAge 设置为 0，使其在客户端立即失效。
+                cookie.setMaxAge(0);
+                //// 确保整个路径范围的 Cookie 都被清除
+                cookie.setPath("/");
+                //将更新后的 Cookie 添加到 HTTP 响应中，以覆盖旧的 Cookie。
+                response.addCookie(cookie);
+                break;
+            }
+        }
     }
 }
