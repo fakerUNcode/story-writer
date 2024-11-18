@@ -85,17 +85,37 @@ public class AccountController extends ABaseController{
 			Cookie[] cookies = request.getCookies();
 			String token = null;
 			for(Cookie cookie : cookies){
-				if(cookie.getName().equals(Constants.REDIS_KEY_TOKEN_WEB)){
+				if(cookie.getName().equals(Constants.TOKEN_WEB)){
 					token = cookie.getValue();
 				}
 			}
 			if (!StringTools.isEmpty(token)){
 				redisComponent.cleanToken(token);
 			}
-
 		}
-
-
 	}
 
+	@RequestMapping("/autologin")
+	public ResponseVO autoLogin(HttpServletResponse response){
+		TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+		//如果为空说明长时间未登录token已清空，需重新登录
+		if(tokenUserInfoDto==null){
+			return getSuccessResponseVO(null);
+		}
+		//如果用户在过期前一天登录，则刷新有效时间从新登录时刻起计算
+		if(tokenUserInfoDto.getExpireAt() - System.currentTimeMillis() < Constants.REDIS_KEY_EXPIRES_ONE_DAY){
+			redisComponent.saveTokenInfo(tokenUserInfoDto);// 保存新的 Token 信息到 Redis
+			saveToken2Cookie(response,tokenUserInfoDto.getToken());// 更新新的token信息到用户浏览器的Cookie中
+			//上述操作使Redis中存储的新token和用户浏览器中刷新的token进行同步
+		}
+		//即使当前 Token 的有效期足够长，没有刷新 Token 的必要，也需要确保客户端的 Cookie 中正确存储了用户的 Token。
+		saveToken2Cookie(response,tokenUserInfoDto.getToken());
+		return getSuccessResponseVO(tokenUserInfoDto);
+	}
+
+	@RequestMapping("/logout")
+	public ResponseVO logout(HttpServletResponse response){
+		cleanCookie(response);
+		return getSuccessResponseVO(null);
+	}
 }
