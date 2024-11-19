@@ -39,12 +39,18 @@ public class RedisComponent {
         redisUtils.setex(Constants.REDIS_KEY_TOKEN_WEB + token, tokenUserInfoDto,Constants.REDIS_KEY_EXPIRES_ONE_DAY*7);
     }
 
+
+
     public void cleanToken(String token){
         redisUtils.delete(Constants.REDIS_KEY_TOKEN_WEB + token);
     }
 
     public TokenUserInfoDto getTokenInfo(String token){
         return (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_WEB+token);
+    }
+
+    public TokenUserInfoDto getTokenInfo4Admin(String token){
+        return (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_ADMIN+token);
     }
 
     public String saveTokenInfo4Admin(String account){
