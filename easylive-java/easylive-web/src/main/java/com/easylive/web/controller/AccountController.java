@@ -83,14 +83,16 @@ public class AccountController extends ABaseController{
 		}finally {
 			redisComponent.cleanCheckCode(checkCodeKey);
 			Cookie[] cookies = request.getCookies();
-			String token = null;
-			for(Cookie cookie : cookies){
-				if(cookie.getName().equals(Constants.TOKEN_WEB)){
-					token = cookie.getValue();
+			if(cookies!=null){
+				String token = null;
+				for(Cookie cookie : cookies){
+					if(cookie.getName().equals(Constants.TOKEN_WEB)){
+						token = cookie.getValue();
+					}
 				}
-			}
-			if (!StringTools.isEmpty(token)){
-				redisComponent.cleanToken(token);
+				if (!StringTools.isEmpty(token)){
+					redisComponent.cleanToken(token);
+				}
 			}
 		}
 	}
