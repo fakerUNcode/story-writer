@@ -56,7 +56,7 @@ public class AccountController extends ABaseController{
 			if(!checkCode.equalsIgnoreCase(redisComponent.getCheckCode(checkCodeKey))){
 				throw new BusinessException("图形验证码错误！");
 			}
-			if (!account.equals(appConfig.getAdminAccount()) || !password.equals(appConfig.getAdminPassword())) {
+			if (!account.equals(appConfig.getAdminAccount()) || !password.equals(StringTools.encodeByMd5(appConfig.getAdminPassword()))) {
 				throw new BusinessException("账号或密码错误");
 			}
 			String token = redisComponent.saveTokenInfo4Admin(account);

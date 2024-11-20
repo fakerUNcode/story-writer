@@ -46,7 +46,7 @@ public interface CategoryInfoMapper<T,P> extends BaseMapper<T,P> {
 	 T selectByCategoryCode(@Param("categoryCode") String categoryCode);
 
 	// select max(categoryId) from category_info where pcategoryId = ?; 因此我们需要传入父级分类的id，
-	 Integer selectMaxSort(@Param("pcategoryId") Integer pcategoryId);
+	 Integer selectMaxSort(@Param("pCategoryId") Integer pcategoryId);
 
 	 //更新排序方法
 	void updateSortBatch(@Param("categoryInfoList")List<CategoryInfo> categoryInfoList);

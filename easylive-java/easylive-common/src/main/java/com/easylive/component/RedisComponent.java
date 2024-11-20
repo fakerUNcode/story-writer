@@ -49,8 +49,8 @@ public class RedisComponent {
         return (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_WEB+token);
     }
 
-    public TokenUserInfoDto getTokenInfo4Admin(String token){
-        return (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_ADMIN+token);
+    public String getTokenInfo4Admin(String token){
+        return (String) redisUtils.get(Constants.REDIS_KEY_TOKEN_ADMIN+token);
     }
 
     public String saveTokenInfo4Admin(String account){

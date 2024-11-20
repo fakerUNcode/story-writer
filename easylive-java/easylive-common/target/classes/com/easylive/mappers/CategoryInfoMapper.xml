@@ -368,7 +368,7 @@
 		select <include refid="base_column_list" /> from category_info c where category_code=#{categoryCode}
 	</select>
 
-	<select id="selectMaxSort">
+	<select id="selectMaxSort" resultType="java.lang.Integer">
 	<!--没找到父类就把sort设为0  -->
 		select ifnull(max(sort),0) from category_info where p_category_id = #{pCategoryId}
 	</select>

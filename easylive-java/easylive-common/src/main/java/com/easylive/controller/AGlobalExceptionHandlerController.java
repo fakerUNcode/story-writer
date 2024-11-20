@@ -6,6 +6,7 @@ import com.easylive.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
+@Controller("apiGlobalExceptionHandlerController")
 public class AGlobalExceptionHandlerController  {
     private static final String STATUC_ERROR = "error";
 

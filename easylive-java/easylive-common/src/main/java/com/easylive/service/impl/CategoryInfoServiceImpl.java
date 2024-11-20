@@ -32,24 +32,28 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 	@Override
 	public List<CategoryInfo> findListByParam(CategoryInfoQuery param) {
 		List<CategoryInfo> categoryInfoList = this.categoryInfoMapper.selectList(param);
-		//如果选择用树形结构查询 则使用树形递归查询子类
-		if(param.getConvert2Tree()!=null && param.getConvert2Tree()){
+		System.out.println("Linear data: " + categoryInfoList);
+		if (param.getConvert2Tree() != null && param.getConvert2Tree()) {
 			categoryInfoList = convertLine2Tree(categoryInfoList, Constants.ZERO);
 		}
+		System.out.println("Tree structure: " + categoryInfoList);
 		return categoryInfoList;
 	}
 
+
 	//线性结构——>树形结构转换の辅助方法
-	private List<CategoryInfo> convertLine2Tree(List<CategoryInfo> dataList, Integer pid){
+	private List<CategoryInfo> convertLine2Tree(List<CategoryInfo> dataList, Integer pid) {
 		List<CategoryInfo> children = new ArrayList<>();
-		for(CategoryInfo m : dataList){
-			if(m.getpCategoryId()!=null && m.getpCategoryId()!=null && m.getpCategoryId().equals(pid)){
-				m.setChildren(convertLine2Tree(dataList,m.getCategoryId()));
+		for (CategoryInfo m : dataList) {
+			if (m.getpCategoryId() != null && m.getpCategoryId().equals(pid)) {
+				m.setChildren(convertLine2Tree(dataList, m.getCategoryId()));
 				children.add(m);
 			}
 		}
+		System.out.println("Children for pid " + pid + ": " + children);
 		return children;
 	}
+
 
 	/**
 	 * 根据条件查询列表
@@ -191,7 +195,7 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 			bean.setSort(maxSort + 1);
 			this.categoryInfoMapper.insert(bean);
 		}else{
-			this.categoryInfoMapper.deleteByCategoryId(bean.getCategoryId());
+			this.categoryInfoMapper.updateByCategoryId(bean,bean.getCategoryId());
 		}
 	}
 
@@ -204,15 +208,22 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		//todo 刷新缓存
 	}
 
+	//  主要任务：
+	//	重新设置指定父分类（pCategoryId）下分类的排序顺序。
+	//	对传入的分类 ID 列表按照顺序进行排序更新。
 	@Override
 	public void changeSort(Integer pCategoryId, String categoryIds) {
+		//将逗号分隔的分类 ID 字符串（如 "1,2,3"）分割成数组。
 		String[] categoryIdArray = categoryIds.split(",");
+		//用于存储所有需要更新排序的分类对象
 		List<CategoryInfo> categoryInfoList = new ArrayList<>();
+
 		Integer sort = 0;
 		for (String categoryId:categoryIdArray){
 			CategoryInfo categoryInfo = new CategoryInfo();
 			categoryInfo.setpCategoryId(Integer.parseInt(categoryId));
 			categoryInfo.setpCategoryId(pCategoryId);
+			//设置排序号，递增
 			categoryInfo.setSort(++sort);
 			categoryInfoList.add(categoryInfo);
 		}

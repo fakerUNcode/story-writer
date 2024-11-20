@@ -37,8 +37,8 @@ public class CategoryController extends ABaseController{
                                    String icon,
                                    String background){
         CategoryInfo categoryInfo = new CategoryInfo();
-        categoryInfo.setpCategoryId(pCategoryId);
         categoryInfo.setCategoryId(categoryId);
+        categoryInfo.setpCategoryId(pCategoryId);
         categoryInfo.setCategoryCode(categoryCode);
         categoryInfo.setCategoryName(categoryName);
         categoryInfo.setIcon(icon);

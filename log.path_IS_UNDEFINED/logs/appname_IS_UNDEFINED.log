@@ -1,0 +1,16 @@
+2024-11-20 19:31:04 [DEBUG][org.springframework.boot.availability.ApplicationAvailabilityBean][onApplicationEvent][77]-> Application availability state ReadinessState changed from ACCEPTING_TRAFFIC to REFUSING_TRAFFIC
+2024-11-20 19:31:04 [DEBUG][org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext][doClose][1060]-> Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@3e10dc6, started on Wed Nov 20 15:58:16 CST 2024
+2024-11-20 19:31:04 [DEBUG][org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertyResolver$DefaultResolver][logKeyFound][115]-> Found key 'spring.liveBeansView.mbeanDomain' in PropertySource 'systemProperties' with value of type String
+2024-11-20 19:31:04 [DEBUG][org.springframework.context.support.DefaultLifecycleProcessor][stop][366]-> Stopping beans in phase 2147483647
+2024-11-20 19:31:04 [DEBUG][org.springframework.context.support.DefaultLifecycleProcessor][lambda$doStop$3][239]-> Bean 'container' completed its stop procedure
+2024-11-20 19:31:04 [DEBUG][org.springframework.context.support.DefaultLifecycleProcessor][lambda$doStop$3][239]-> Bean 'webServerGracefulShutdown' completed its stop procedure
+2024-11-20 19:31:04 [DEBUG][org.springframework.context.support.DefaultLifecycleProcessor][stop][366]-> Stopping beans in phase 2147483646
+2024-11-20 19:31:05 [DEBUG][org.springframework.context.support.DefaultLifecycleProcessor][lambda$doStop$3][239]-> Bean 'webServerStartStop' completed its stop procedure
+2024-11-20 19:31:05 [DEBUG][org.springframework.context.support.DefaultLifecycleProcessor][stop][366]-> Stopping beans in phase -2147483647
+2024-11-20 19:31:05 [DEBUG][org.springframework.context.support.DefaultLifecycleProcessor][lambda$doStop$3][239]-> Bean 'springBootLoggingLifecycle' completed its stop procedure
+2024-11-20 19:31:05 [DEBUG][org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager][shutdown][232]-> Connection manager is shutting down
+2024-11-20 19:31:05 [DEBUG][org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager][shutdown][234]-> Connection manager shut down
+2024-11-20 19:31:05 [DEBUG][org.springframework.jmx.export.annotation.AnnotationMBeanExporter][destroy][452]-> Unregistering JMX-exposed beans on shutdown
+2024-11-20 19:31:05 [DEBUG][org.springframework.jmx.export.annotation.AnnotationMBeanExporter][unregisterBeans][186]-> Unregistering JMX-exposed beans
+2024-11-20 19:31:05 [DEBUG][org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor][shutdown][224]-> Shutting down ExecutorService 'applicationTaskExecutor'
+2024-11-20 19:31:05 [DEBUG][io.netty.buffer.PoolThreadCache][free][221]-> Freed 7 thread-local buffer(s) from thread: lettuce-nioEventLoop-4-1
