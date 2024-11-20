@@ -11,11 +11,33 @@
  Target Server Version : 80040 (8.0.40)
  File Encoding         : 65001
 
- Date: 19/11/2024 12:53:28
+ Date: 19/11/2024 17:15:06
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for category_info
+-- ----------------------------
+DROP TABLE IF EXISTS `category_info`;
+CREATE TABLE `category_info` (
+  `category_id` int NOT NULL AUTO_INCREMENT COMMENT '自增分类',
+  `category_code` varchar(30) NOT NULL COMMENT '分类编码',
+  `category_name` varchar(30) NOT NULL COMMENT '分类名称',
+  `p_category_id` int NOT NULL COMMENT '父类分级ID',
+  `icon` varchar(50) DEFAULT NULL COMMENT '图标',
+  `background` varchar(50) DEFAULT NULL COMMENT '背景图',
+  `sort` tinyint NOT NULL COMMENT '排序号',
+  PRIMARY KEY (`category_id`) USING BTREE,
+  UNIQUE KEY `idx_key_category_code` (`category_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='分类信息';
+
+-- ----------------------------
+-- Records of category_info
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for user_info
@@ -45,6 +67,7 @@ CREATE TABLE `user_info` (
 -- Records of user_info
 -- ----------------------------
 BEGIN;
+INSERT INTO `user_info` (`user_id`, `nick_name`, `email`, `password`, `sex`, `birthday`, `school`, `person_introduction`, `join_time`, `last_login_time`, `last_login_ip`, `status`, `notice_info`, `total_coin_count`, `current_coin_count`, `theme`) VALUES ('8067577440', 'Fakeruncode', 'woaixkzero@gmail.com', 'c9502c867f34528020a0ad7cc5a2b8fd', 2, NULL, NULL, NULL, '2024-11-19 12:54:08', NULL, NULL, 1, NULL, 10, 10, 1);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

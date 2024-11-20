@@ -26,8 +26,9 @@ public class AppInterceptor implements HandlerInterceptor {
     private RedisComponent redisComponent;
 
     //preHandle 方法会在每个请求到达控制器（Controller）之前执行
+    //验证登录的管理员：获取客户端的身份令牌 (token) 并验证其是否存在或有效。如果 token 不存在，则抛出异常，表示未登录或登录超时。
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if(null==handler){
             return false;
         }
@@ -66,7 +67,6 @@ public class AppInterceptor implements HandlerInterceptor {
                 return cookie.getValue();
             }
         }
-
         return null;
     }
 

@@ -86,6 +86,7 @@ public class ABaseController {
 
     protected void saveToken2Cookie(HttpServletResponse response,String token){
         Cookie cookie = new Cookie(Constants.TOKEN_ADMIN,token);
+        //有效期设为-1，只要管理员关闭了当前的窗口会话，再次进入后台管理界面必须重新登录，提高安全性
         cookie.setMaxAge(Constants.TIME_SECONDS_DAY);
         cookie.setPath("/");
         response.addCookie(cookie);

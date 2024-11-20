@@ -1,12 +1,12 @@
 package com.easylive.web.controller;
+
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.exception.BusinessException;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
+@Controller("webGlobalExceptionHandlerController")
 public class AGlobalExceptionHandlerController extends ABaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(AGlobalExceptionHandlerController.class);
