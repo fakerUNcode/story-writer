@@ -1,5 +1,6 @@
 package com.easylive.service.impl;
 
+import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.po.CategoryInfo;
@@ -22,6 +23,8 @@ import java.util.List;
  */
 @Service("categoryInfoService")
 public class CategoryInfoServiceImpl implements CategoryInfoService {
+	@Resource
+	RedisComponent redisComponent;
 
 	@Resource
 	private CategoryInfoMapper<CategoryInfo, CategoryInfoQuery> categoryInfoMapper;
@@ -197,6 +200,8 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		}else{
 			this.categoryInfoMapper.updateByCategoryId(bean,bean.getCategoryId());
 		}
+		//刷新缓存中的内容
+		save2Redis();
 	}
 
 	@Override
@@ -205,7 +210,8 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		CategoryInfoQuery categoryInfoQuery = new CategoryInfoQuery();
 		categoryInfoQuery.setCategoryIdOrPCategoryId(categoryId);
 		categoryInfoMapper.deleteByParam(categoryInfoQuery);
-		//todo 刷新缓存
+		//刷新缓存中的内容
+		save2Redis();
 	}
 
 	//  主要任务：
@@ -221,7 +227,7 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		Integer sort = 0;
 		for (String categoryId:categoryIdArray){
 			CategoryInfo categoryInfo = new CategoryInfo();
-			categoryInfo.setpCategoryId(Integer.parseInt(categoryId));
+			categoryInfo.setCategoryId(Integer.parseInt(categoryId));
 			categoryInfo.setpCategoryId(pCategoryId);
 			//设置排序号，递增
 			categoryInfo.setSort(++sort);
@@ -229,6 +235,18 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		}
 		//我们选择使用mybatis的mapper一次性做完对数据库的操作，避免了java的for循环中每次循环都建立一次数据库连接的性能浪费
 		categoryInfoMapper.updateSortBatch(categoryInfoList);
-		//TODO 刷新缓存
+
+		//刷新缓存中的内容
+		save2Redis();
+	}
+
+	//使用Redis缓存信息
+	private void save2Redis(){
+		CategoryInfoQuery query = new CategoryInfoQuery();
+		query.setOrderBy("sort asc");
+		query.setConvert2Tree(true);
+		List<CategoryInfo> categoryInfoList = findListByParam(query);
+		//Category信息存入redis缓存内
+		redisComponent.saveCategoryList(categoryInfoList);
 	}
 }

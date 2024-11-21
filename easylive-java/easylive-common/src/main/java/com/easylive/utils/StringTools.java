@@ -68,4 +68,25 @@ public class StringTools {
         return StringTools.isEmpty(orginString)?null: DigestUtils.md5Hex(orginString);
 
     }
+
+    //文件路径检测方法
+    public static boolean pathIsOk(String path) {
+        if(StringTools.isEmpty(path)){
+            return true;
+        }
+        //防止路径注入攻击（如 ../../ 越级访问文件系统）
+        if(path.contains("../") || path.contains("..\\")){
+            return false;
+        }
+        return true;
+    }
+
+    //文件后缀名提取方法
+    public static String getFileSuffix(String fileName){
+        if(StringTools.isEmpty(fileName) || !fileName.contains(".")){
+            return null;
+        }
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        return suffix;
+    }
 }

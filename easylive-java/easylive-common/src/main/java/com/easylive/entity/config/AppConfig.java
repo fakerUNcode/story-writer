@@ -14,6 +14,9 @@ public class AppConfig {
     @Value("${admin.password:}")
     private String adminPassword;
 
+    @Value("${showFFmegLog:true}")
+    private boolean showFFmegLog;
+
     public String getProjectFolder() {
         return projectFolder;
     }
@@ -24,5 +27,9 @@ public class AppConfig {
 
     public String getAdminPassword() {
         return adminPassword;
+    }
+
+    public boolean getShowFFmegLog() {
+        return showFFmegLog;
     }
 }
