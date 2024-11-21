@@ -2,10 +2,12 @@ package com.easylive.component;
 
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.po.CategoryInfo;
 import com.easylive.redis.RedisUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.UUID;
 
 import static com.easylive.entity.constants.Constants.REDIS_KEY_EXPIRES_ONE_MIN;
@@ -17,7 +19,6 @@ public class RedisComponent {
     private RedisUtils redisUtils;
     public String saveCheckCode(String code){
         String checkCodeKey = UUID.randomUUID().toString();
-        //为 Token 键名加上前缀 easylive:token:web:  之后的所有方法也会加上这个前缀 有效防止键名冲突
         redisUtils.setex(Constants.REDIS_KEY_CHECK_CODE+checkCodeKey, code, REDIS_KEY_EXPIRES_ONE_MIN*10);
         return checkCodeKey;
     }
@@ -61,6 +62,11 @@ public class RedisComponent {
 
     public void cleanToken4Admin(String token){
         redisUtils.delete(Constants.REDIS_KEY_TOKEN_ADMIN + token);
+    }
+
+    //将CategoryInfo列表存入Redis缓存，以便后续使用
+    public void saveCategoryList(List<CategoryInfo> categoryInfoList){
+        redisUtils.set(Constants.REDIS_KEY_CATEGORY_LIST, categoryInfoList);
     }
 
 }

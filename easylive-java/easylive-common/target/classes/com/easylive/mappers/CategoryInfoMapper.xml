@@ -75,7 +75,7 @@
 				 and  c.background like concat('%', #{query.backgroundFuzzy}, '%')
 			</if>
 			<if test="query.CategoryIdOrPcategoryId!=null">
-				add c.category_id = #{query.categoryIdOrPCategoryId} or p_category_id = #{query.categoryIdOrPCategoryId}
+				and c.category_id = #{query.categoryIdOrPCategoryId} or p_category_id = #{query.categoryIdOrPCategoryId}
 			</if>
 	 </where>
 	</sql>
