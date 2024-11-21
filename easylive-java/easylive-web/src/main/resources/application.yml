@@ -42,7 +42,7 @@ project:
 log:
   root:
   level: debug
-  path: ./logs
+  path: /Users/apple/easylive/logs
 admin:
   account: admin
   password: admin123

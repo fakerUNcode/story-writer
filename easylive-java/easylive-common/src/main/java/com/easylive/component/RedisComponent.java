@@ -69,4 +69,8 @@ public class RedisComponent {
         redisUtils.set(Constants.REDIS_KEY_CATEGORY_LIST, categoryInfoList);
     }
 
+    public List<CategoryInfo> getCategoryList(){
+       return  (List<CategoryInfo>) redisUtils.get(Constants.REDIS_KEY_CATEGORY_LIST);
+    }
+
 }

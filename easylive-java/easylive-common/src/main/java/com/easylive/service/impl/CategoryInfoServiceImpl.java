@@ -249,4 +249,14 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		//Category信息存入redis缓存内
 		redisComponent.saveCategoryList(categoryInfoList);
 	}
+
+	@Override
+	public List<CategoryInfo> getAllCategoryList() {
+		List<CategoryInfo> categoryInfoList = redisComponent.getCategoryList();
+		//若未取到目录列表则刷新一次缓存中的内容
+		if(categoryInfoList.isEmpty()){
+			save2Redis();
+		}
+		return redisComponent.getCategoryList();
+	}
 }
