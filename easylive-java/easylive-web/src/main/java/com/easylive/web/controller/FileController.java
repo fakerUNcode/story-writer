@@ -1,20 +1,28 @@
 package com.easylive.web.controller;
 
+import com.easylive.component.RedisComponent;
 import com.easylive.entity.config.AppConfig;
 import com.easylive.entity.constants.Constants;
+import com.easylive.entity.dto.SysSettingDto;
+import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.dto.UploadingFileDto;
 import com.easylive.entity.enums.ResponseCodeEnum;
+import com.easylive.entity.vo.ResponseVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 @RestController
@@ -24,6 +32,8 @@ import java.io.OutputStream;
 public class FileController extends ABaseController{
     @Resource
     private AppConfig appConfig;
+    @Resource
+    private RedisComponent redisComponent;
 
     @RequestMapping("/getResource")
     public void getResource(HttpServletResponse response, @NotNull String sourceName)  {
@@ -56,6 +66,55 @@ public class FileController extends ABaseController{
         }catch (Exception e){
             log.error("读取文件异常",e);
         }
+    }
+
+    //视频预上传处理interface
+    @RequestMapping("preUploadVideo")
+    public ResponseVO preUploadVideo(@NotEmpty String fileName, @NotNull Integer chunks){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        String uploadId = redisComponent.savePreVideoFileInfo(tokenUserInfoDto.getUserId(), fileName, chunks);
+        return getSuccessResponseVO(uploadId);
+    }
+
+    //视频上传处理interface
+    @RequestMapping("uploadVideo")
+    public ResponseVO uploadVideo(@NotNull MultipartFile chunkFile, @NotNull Integer chunkIndex, @NotEmpty String uploadId) throws IOException {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        UploadingFileDto fileDto = redisComponent.getUploadVideoFile(tokenUserInfoDto.getUserId(), uploadId);
+        if(fileDto==null){
+            throw new BusinessException("文件不存在，请重新上传！");
+        }
+        SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
+
+        if(fileDto.getFileSize() > sysSettingDto.getVideoSize()*Constants.MB_SIZE){
+            throw new BusinessException("文件超过大小限制！");
+        }
+        /*
+        fileDto.getChunkIndex(): 表示当前已经成功上传的最大分片索引。
+        fileDto.getChunks(): 表示总分片数。
+        检查确保：当前上传的分块是上一个分块的下一块，按分块顺序依次上传；且文件上传的分块数不能大于可分块的最大数
+        */
+        if((chunkIndex-1) > fileDto.getChunkIndex() || chunkIndex > fileDto.getChunks()-1){
+            throw new BusinessException(ResponseCodeEnum.CODE_600);
+        }
+
+        String folder = appConfig.getProjectFolder() + Constants.FILE_FOLDER + Constants.FILE_FOLDER_TEMP + fileDto.getFilePath();
+        File targetFile = new File(folder + "/" + chunkIndex);
+        File folderFile = new File(folder);
+        //再次效验目录是否创建
+        if (!folderFile.exists()) {
+            boolean created = folderFile.mkdirs();
+            log.debug("Created folder: {}, success: {}", folder, created);
+            if (!created) {
+                throw new IOException("Failed to create directory: " + folder);
+            }
+        }
+        chunkFile.transferTo(targetFile);
+        fileDto.setChunkIndex(chunkIndex);
+        //fileDto的FileSize为已上传的总大小，之前的总大小＋要上传的分块大小 = 上传该分块后已经上传的总大小
+        fileDto.setFileSize(fileDto.getFileSize() + chunkFile.getSize());
+        redisComponent.updateVideoFileInfo(tokenUserInfoDto.getUserId(), fileDto);
+        return getSuccessResponseVO(null);
     }
 }
 
