@@ -130,4 +130,8 @@ public class RedisComponent {
         redisUtils.setex(Constants.REDIS_KEY_UPLOADING_FILE + userId+ fileDto.getUploadId(), fileDto, Constants.REDIS_KEY_EXPIRES_ONE_DAY);
     }
 
+    public void delVideoFileInfo(String userId, String uploadId){
+        redisUtils.delete(Constants.REDIS_KEY_UPLOADING_FILE + userId+ uploadId);
+    }
+
 }

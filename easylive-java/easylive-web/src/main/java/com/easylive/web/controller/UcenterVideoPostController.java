@@ -1,2 +1,4 @@
-package com.easylive.web.controller;public class UcenterVideoPostController {
+package com.easylive.web.controller;
+
+public class UcenterVideoPostController {
 }
