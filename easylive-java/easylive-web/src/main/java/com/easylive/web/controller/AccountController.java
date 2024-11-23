@@ -97,7 +97,7 @@ public class AccountController extends ABaseController{
 		}
 	}
 
-	@RequestMapping("/autologin")
+	@RequestMapping("/autoLogin")
 	public ResponseVO autoLogin(HttpServletResponse response){
 		TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
 		//如果为空说明长时间未登录token已清空，需重新登录

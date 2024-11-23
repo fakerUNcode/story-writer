@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easylive.mappers.VideoInfoFileMapper">
+
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="com.easylive.entity.po.VideoInfoFile">
+		<!--唯一ID-->
+		<result column="file_id" property="fileId"  />
+		<!--用户ID-->
+		<result column="user_id" property="userId"  />
+		<!--视频ID-->
+		<result column="video_id" property="videoId"  />
+		<!--文件名-->
+		<result column="file_name" property="fileName"  />
+		<!--文件索引-->
+		<result column="file_index" property="fileIndex"  />
+		<!--文件大小-->
+		<result column="file_size" property="fileSize"  />
+		<!--文件路径-->
+		<result column="file_path" property="filePath"  />
+		<!--持续时间（秒）-->
+		<result column="duration" property="duration"  />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="base_column_list">
+		 v.file_id,v.user_id,v.video_id,v.file_name,v.file_index,
+		 v.file_size,v.file_path,v.duration
+	</sql>
+
+	<sql id="base_condition_filed">
+			<if test="query.fileId != null and query.fileId!=''">
+				 and  v.file_id = #{query.fileId}
+			</if>
+			<if test="query.userId != null and query.userId!=''">
+				 and  v.user_id = #{query.userId}
+			</if>
+			<if test="query.videoId != null and query.videoId!=''">
+				 and  v.video_id = #{query.videoId}
+			</if>
+			<if test="query.fileName != null and query.fileName!=''">
+				 and  v.file_name = #{query.fileName}
+			</if>
+			<if test="query.fileIndex != null">
+				 and  v.file_index = #{query.fileIndex}
+			</if>
+			<if test="query.fileSize != null">
+				 and  v.file_size = #{query.fileSize}
+			</if>
+			<if test="query.filePath != null and query.filePath!=''">
+				 and  v.file_path = #{query.filePath}
+			</if>
+			<if test="query.duration != null">
+				 and  v.duration = #{query.duration}
+			</if>
+	</sql>
+	<!-- 通用条件列-->
+	<sql id="base_condition">
+	 <where>
+		 <include refid="base_condition_filed" />
+	 </where>
+	</sql>
+
+	<!-- 通用查询条件列-->
+	<sql id="query_condition">
+	 <where>
+			<include refid="base_condition_filed" />
+			<if test="query.fileIdFuzzy!= null  and query.fileIdFuzzy!=''">
+				 and  v.file_id like concat('%', #{query.fileIdFuzzy}, '%')
+			</if>
+			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
+				 and  v.user_id like concat('%', #{query.userIdFuzzy}, '%')
+			</if>
+			<if test="query.videoIdFuzzy!= null  and query.videoIdFuzzy!=''">
+				 and  v.video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			</if>
+			<if test="query.fileNameFuzzy!= null  and query.fileNameFuzzy!=''">
+				 and  v.file_name like concat('%', #{query.fileNameFuzzy}, '%')
+			</if>
+			<if test="query.filePathFuzzy!= null  and query.filePathFuzzy!=''">
+				 and  v.file_path like concat('%', #{query.filePathFuzzy}, '%')
+			</if>
+	 </where>
+	</sql>
+
+	<!-- 查询集合-->
+	<select id="selectList" resultMap="base_result_map" >
+		 SELECT <include refid="base_column_list" /> FROM video_info_file v <include refid="query_condition" />
+		 <if test="query.orderBy!=null">
+			 order by ${query.orderBy}
+		 </if>
+		 <if test="query.simplePage!=null">
+			 limit #{query.simplePage.start},#{query.simplePage.end}
+		 </if>
+	</select>
+
+	<!-- 查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer" >
+		 SELECT count(1) FROM video_info_file v <include refid="query_condition" />
+	</select>
+
+	<!-- 插入 （匹配有值的字段）-->
+	<insert id="insert" parameterType="com.easylive.entity.po.VideoInfoFile">
+		 INSERT INTO video_info_file
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="bean.fileId != null">
+				 file_id,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.fileName != null">
+				 file_name,
+			</if>
+			<if test="bean.fileIndex != null">
+				 file_index,
+			</if>
+			<if test="bean.fileSize != null">
+				 file_size,
+			</if>
+			<if test="bean.filePath != null">
+				 file_path,
+			</if>
+			<if test="bean.duration != null">
+				 duration,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="bean.fileId!=null">
+				 #{bean.fileId},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.fileName!=null">
+				 #{bean.fileName},
+			</if>
+			<if test="bean.fileIndex!=null">
+				 #{bean.fileIndex},
+			</if>
+			<if test="bean.fileSize!=null">
+				 #{bean.fileSize},
+			</if>
+			<if test="bean.filePath!=null">
+				 #{bean.filePath},
+			</if>
+			<if test="bean.duration!=null">
+				 #{bean.duration},
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 插入或者更新 （匹配有值的字段）-->
+	<insert id="insertOrUpdate" parameterType="com.easylive.entity.po.VideoInfoFile">
+		 INSERT INTO video_info_file
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.fileId != null">
+				 file_id,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.fileName != null">
+				 file_name,
+			</if>
+			<if test="bean.fileIndex != null">
+				 file_index,
+			</if>
+			<if test="bean.fileSize != null">
+				 file_size,
+			</if>
+			<if test="bean.filePath != null">
+				 file_path,
+			</if>
+			<if test="bean.duration != null">
+				 duration,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.fileId!=null">
+				 #{bean.fileId},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.fileName!=null">
+				 #{bean.fileName},
+			</if>
+			<if test="bean.fileIndex!=null">
+				 #{bean.fileIndex},
+			</if>
+			<if test="bean.fileSize!=null">
+				 #{bean.fileSize},
+			</if>
+			<if test="bean.filePath!=null">
+				 #{bean.filePath},
+			</if>
+			<if test="bean.duration!=null">
+				 #{bean.duration},
+			</if>
+		 </trim>
+		 on DUPLICATE key update 
+		 <trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.fileId!=null">
+				 file_id = VALUES(file_id),
+			</if>
+			<if test="bean.userId!=null">
+				 user_id = VALUES(user_id),
+			</if>
+			<if test="bean.videoId!=null">
+				 video_id = VALUES(video_id),
+			</if>
+			<if test="bean.fileName!=null">
+				 file_name = VALUES(file_name),
+			</if>
+			<if test="bean.fileIndex!=null">
+				 file_index = VALUES(file_index),
+			</if>
+			<if test="bean.fileSize!=null">
+				 file_size = VALUES(file_size),
+			</if>
+			<if test="bean.filePath!=null">
+				 file_path = VALUES(file_path),
+			</if>
+			<if test="bean.duration!=null">
+				 duration = VALUES(duration),
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 添加 （批量插入）-->
+	<insert id="insertBatch" parameterType="com.easylive.entity.po.VideoInfoFile">
+		 INSERT INTO video_info_file(
+			 file_id,
+			 user_id,
+			 video_id,
+			 file_name,
+			 file_index,
+			 file_size,
+			 file_path,
+			 duration
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.fileId},
+				 #{item.userId},
+				 #{item.videoId},
+				 #{item.fileName},
+				 #{item.fileIndex},
+				 #{item.fileSize},
+				 #{item.filePath},
+				 #{item.duration}
+			 )
+		 </foreach>
+	</insert>
+
+	<!-- 批量新增修改 （批量插入）-->
+	<insert id="insertOrUpdateBatch" parameterType="com.easylive.entity.po.VideoInfoFile">
+		 INSERT INTO video_info_file(
+			 file_id,
+			 user_id,
+			 video_id,
+			 file_name,
+			 file_index,
+			 file_size,
+			 file_path,
+			 duration
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.fileId},
+				 #{item.userId},
+				 #{item.videoId},
+				 #{item.fileName},
+				 #{item.fileIndex},
+				 #{item.fileSize},
+				 #{item.filePath},
+				 #{item.duration}
+			 )
+		 </foreach>
+			on DUPLICATE key update 
+			file_id = VALUES(file_id),
+			user_id = VALUES(user_id),
+			video_id = VALUES(video_id),
+			file_name = VALUES(file_name),
+			file_index = VALUES(file_index),
+			file_size = VALUES(file_size),
+			file_path = VALUES(file_path),
+			duration = VALUES(duration)
+	</insert>
+
+	<!--多条件修改-->
+	<update id="updateByParam" parameterType="com.easylive.entity.query.VideoInfoFileQuery">
+		 UPDATE video_info_file v
+ 		 <set> 
+			<if test="bean.fileId != null">
+				 file_id = #{bean.fileId},
+			</if>
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.fileName != null">
+				 file_name = #{bean.fileName},
+			</if>
+			<if test="bean.fileIndex != null">
+				 file_index = #{bean.fileIndex},
+			</if>
+			<if test="bean.fileSize != null">
+				 file_size = #{bean.fileSize},
+			</if>
+			<if test="bean.filePath != null">
+				 file_path = #{bean.filePath},
+			</if>
+			<if test="bean.duration != null">
+				 duration = #{bean.duration},
+			</if>
+ 		 </set>
+ 		 <include refid="query_condition" />
+	</update>
+
+	<!--多条件删除-->
+	<delete id="deleteByParam">
+		 delete v from video_info_file v
+ 		 <include refid="query_condition" />
+	</delete>
+
+	<!-- 根据FileId修改-->
+	<update id="updateByFileId" parameterType="com.easylive.entity.po.VideoInfoFile">
+		 UPDATE video_info_file
+ 		 <set> 
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.fileName != null">
+				 file_name = #{bean.fileName},
+			</if>
+			<if test="bean.fileIndex != null">
+				 file_index = #{bean.fileIndex},
+			</if>
+			<if test="bean.fileSize != null">
+				 file_size = #{bean.fileSize},
+			</if>
+			<if test="bean.filePath != null">
+				 file_path = #{bean.filePath},
+			</if>
+			<if test="bean.duration != null">
+				 duration = #{bean.duration},
+			</if>
+ 		 </set>
+ 		 where file_id=#{fileId}
+	</update>
+
+	<!-- 根据FileId删除-->
+	<delete id="deleteByFileId">
+		delete from video_info_file where file_id=#{fileId}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByFileId" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from video_info_file v where file_id=#{fileId}
+	</select>
+
+</mapper>

@@ -6,7 +6,11 @@ public class Constants {
     public static final Integer ZERO = 0;
     //ID长度
     public static final Integer LENGTH_10 = 10;
+    public static final Integer LENGTH_15 = 15;
+
     public static final Integer LENGTH_30 = 30;
+    public static final Long MB_SIZE = 1024*1024L;
+
     //用于效验密码是否符合规范的正则表达式（必须包含数字字母和特殊符号，8-18位）
     public static final String REGEX_PASSWORD =  "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,18}$";
     //将REDIS失效时间常数设为一分钟（60000毫秒）
@@ -38,6 +42,9 @@ public class Constants {
 
     public static final String REDIS_KEY_CATEGORY_LIST = REDIS_KEY_PREFIX + "category:list:";
 
+    public static final String REDIS_KEY_UPLOADING_FILE = REDIS_KEY_PREFIX + "uploading:";
 
+    //系统设置
+    public static final String REDIS_KEY_SYS_SETTING = REDIS_KEY_PREFIX + "sysSetting:";
 
 }
