@@ -1,24 +1,31 @@
 package com.easylive.service.impl;
 
 import com.easylive.component.RedisComponent;
+import com.easylive.entity.config.AppConfig;
 import com.easylive.entity.constants.Constants;
+import com.easylive.entity.dto.UploadingFileDto;
 import com.easylive.entity.enums.*;
+import com.easylive.entity.po.VideoInfoFile;
 import com.easylive.entity.po.VideoInfoFilePost;
 import com.easylive.entity.po.VideoInfoPost;
-import com.easylive.entity.query.SimplePage;
-import com.easylive.entity.query.VideoInfoFilePostQuery;
-import com.easylive.entity.query.VideoInfoPostQuery;
+import com.easylive.entity.query.*;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.mappers.VideoInfoFilePostMapper;
 import com.easylive.mappers.VideoInfoPostMapper;
 import com.easylive.service.VideoInfoPostService;
+import com.easylive.utils.FFmpegUtils;
 import com.easylive.utils.StringTools;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.elasticsearch.common.recycler.Recycler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,15 +37,21 @@ import java.util.stream.Collectors;
 /**
  * 视频信息 业务接口实现
  */
+
+@Slf4j
 @Service("videoInfoPostService")
 public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 	@Resource
 	private RedisComponent redisComponent;
+	@Resource
+	private FFmpegUtils fFmpegUtils;
 
 	@Resource
 	private VideoInfoPostMapper<VideoInfoPost, VideoInfoPostQuery> videoInfoPostMapper;
 	@Resource
 	private VideoInfoFilePostMapper <VideoInfoFilePost,VideoInfoFilePostQuery> videoInfoFilePostMapper;
+	@Resource
+	private AppConfig appConfig;
 
 	/**
 	 * 根据条件查询列表
@@ -143,6 +156,7 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		return this.videoInfoPostMapper.deleteByVideoId(videoId);
 	}
 
+	//视频信息保存方法
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void saveVideoInfo(VideoInfoPost videoInfoPost, List<VideoInfoFilePost> uploadFileList) {
@@ -246,11 +260,6 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		}
 	}
 
-	@Override
-	public void transferVideoFile(VideoInfoFilePost videoInfoFilePost) {
-
-	}
-
 	private Boolean changeVideoInfo(VideoInfoPost videoInfoPost){
 		VideoInfoPost dbInfo = this.videoInfoPostMapper.selectByVideoId((videoInfoPost.getVideoId()));
 		//检测标题、封面、标签、简介等信息是否更改
@@ -262,4 +271,125 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		}
 		return false;
 	}
+
+	//将视频从临时目录迁移到正式目录的方法
+	@Override
+	public void transferVideoFile(VideoInfoFilePost videoInfoFilePost) {
+		VideoInfoFilePost updateFilePost = new VideoInfoFilePost();
+		try{
+			UploadingFileDto fileDto = redisComponent.getUploadVideoFile(videoInfoFilePost.getUserId(),videoInfoFilePost.getUploadId());
+			String tempFilePath = appConfig.getProjectFolder()+Constants.FILE_FOLDER+Constants.FILE_FOLDER_TEMP+fileDto.getFilePath();
+			File tempFile = new File(tempFilePath);
+			//把temp目录中的视频迁移到正式目录/video中
+			String targetFilePath = appConfig.getProjectFolder()+Constants.FILE_FOLDER+Constants.FILE_VIDEO+fileDto.getFilePath();
+			File targetFile = new File(targetFilePath);
+			if(!targetFile.exists()){
+				targetFile.mkdirs();
+			}
+			FileUtils.copyDirectory(tempFile,targetFile);
+			//删除掉临时目录中的视频
+			FileUtils.forceDelete(tempFile);
+			//清除消息队列中的临时视频信息
+			redisComponent.delVideoFileInfo(videoInfoFilePost.getUserId(),videoInfoFilePost.getUploadId());
+			//把视频分块合并为视频
+			String completeVideo = targetFilePath + Constants.TEMP_VIDEO_NAME;
+			this.union(targetFilePath,completeVideo,true);
+
+			//获取播放时长
+			Integer duration = fFmpegUtils.getVideoInfoDuration(completeVideo);
+			updateFilePost.setDuration(duration);
+			updateFilePost.setFileSize(new File(completeVideo).length());
+			updateFilePost.setFilePath(Constants.FILE_FOLDER+fileDto.getFilePath());
+			updateFilePost.setTransferResult(VideoFileTransferResultEnum.SUCCESS.getStatus());
+
+			this.convertVideo2Ts(completeVideo);
+		}catch (Exception e){
+			log.error("文件转码失败",e);
+			updateFilePost.setTransferResult(VideoFileTransferResultEnum.FAIL.getStatus());
+		}finally {
+			videoInfoFilePostMapper.updateByUploadIdAndUserId(updateFilePost,videoInfoFilePost.getUploadId(),videoInfoFilePost.getUserId());
+			VideoInfoFilePostQuery filePostQuery = new VideoInfoFilePostQuery();
+			filePostQuery.setVideoId(videoInfoFilePost.getVideoId());
+			filePostQuery.setTransferResult(VideoFileTransferResultEnum.FAIL.getStatus());
+			//如果有转码失败的则更新信息
+			Integer failCount = videoInfoFilePostMapper.selectCount(filePostQuery);
+			if(failCount>0){
+				VideoInfoPost videoUpdate = new VideoInfoPost();
+				videoUpdate.setStatus(VideoStatusEnum.STATUS1.getStatus());
+				videoInfoPostMapper.updateByVideoId(videoUpdate,videoInfoFilePost.getVideoId());
+				return;
+			}
+			//文件全部转码完毕则更新信息
+			filePostQuery.setTransferResult(VideoFileTransferResultEnum.TRANSFER.getStatus());
+			Integer transferCount = videoInfoFilePostMapper.selectCount(filePostQuery);
+			if(transferCount==0){
+				//此处计算所有分p的时长总和，这个总和是用户浏览视频前看到的时长预览
+				Integer duration = videoInfoFilePostMapper.sumDuration(videoInfoFilePost.getVideoId());
+				VideoInfoPost videoUpdate = new VideoInfoPost();
+				//全部文件转码完成后进入待审核状态
+				videoUpdate.setStatus(VideoStatusEnum.STATUS2.getStatus());
+				videoUpdate.setDuration(duration);
+				videoInfoPostMapper.updateByVideoId(videoUpdate,videoInfoFilePost.getVideoId());
+
+			}
+		}
+	}
+
+	//视频转Ts方法
+	private void convertVideo2Ts(String completeVideo){
+		File videoFile = new File(completeVideo);
+		File tsFolder = videoFile.getParentFile();
+		//视频编码转为h264
+		String codec = fFmpegUtils.getVideoCodec(completeVideo);
+		//若是hevc格式则需要转码
+		if(Constants.VIDEO_CODE_HEVC.equals(codec)){
+			//把文件名改为加上临时转码后缀
+			String tempFileName = completeVideo + Constants.VIDEO_CODE_TEMP_FILE_SUFFIX;
+			new File(completeVideo).renameTo(new File(tempFileName));
+			fFmpegUtils.convertHevc2Mp4(tempFileName,completeVideo);
+			new File(tempFileName).delete();
+		}
+		fFmpegUtils.convertVideo2Ts(tsFolder,completeVideo);
+		//转码完成后删除临时文件
+		videoFile.delete();
+	}
+
+	//文件合并辅助方法
+	private void union(String dirPath, String toFilePath, Boolean delSource) {
+		File dir = new File(dirPath);
+		if (!dir.exists()) {
+			throw new BusinessException("目录不存在");
+		}
+		File fileList[] = dir.listFiles();
+		File targetFile = new File(toFilePath);
+		try (RandomAccessFile writeFile = new RandomAccessFile(targetFile, "rw")) {
+			byte[] b = new byte[1024 * 10];
+			for (int i = 0; i < fileList.length; i++) {
+				int len = -1;
+				// 创建读取块文件的对象
+				File chunkFile = new File(dirPath + File.separator + i);
+				RandomAccessFile readFile = null;
+				try {
+					readFile = new RandomAccessFile(chunkFile, "r");
+					while ((len = readFile.read(b)) != -1) {
+						writeFile.write(b, 0, len);
+					}
+				} catch (Exception e) {
+					log.error("合并分片失败", e);
+					throw new BusinessException("合并文件失败");
+				} finally {
+					readFile.close();
+				}
+			}
+		} catch (Exception e) {
+			throw new BusinessException("合并文件" + dirPath + "出错了");
+		} finally {
+			if (delSource) {
+				for (int i = 0; i < fileList.length; i++) {
+					fileList[i].delete();
+				}
+			}
+		}
+	}
+
 }
