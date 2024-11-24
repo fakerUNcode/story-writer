@@ -1,8 +1,5 @@
 package com.easylive.entity.query;
 
-import java.util.Date;
-
-
 /**
  * 视频信息参数
  */
@@ -108,6 +105,24 @@ public class VideoInfoPostQuery extends BaseParam {
 	 */
 	private Integer duration;
 
+	private Integer[] excludeStatusArray;
+	private Boolean queryCountInfo;
+
+	public Integer[] getExcludeStatusArray() {
+		return excludeStatusArray;
+	}
+
+	public void setExcludeStatusArray(Integer[] excludeStatusArray) {
+		this.excludeStatusArray = excludeStatusArray;
+	}
+
+	public Boolean getQueryCountInfo() {
+		return queryCountInfo;
+	}
+
+	public void setQueryCountInfo(Boolean queryCountInfo) {
+		this.queryCountInfo = queryCountInfo;
+	}
 
 	public void setVideoId(String videoId){
 		this.videoId = videoId;

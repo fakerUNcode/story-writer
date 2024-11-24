@@ -140,12 +140,23 @@
 			<if test="query.interactionFuzzy!= null  and query.interactionFuzzy!=''">
 				 and  v.interaction like concat('%', #{query.interactionFuzzy}, '%')
 			</if>
+			<if test="query.excludeStatusArray!=null">
+				and v.status not in (<foreach collection="query.excludeStatusArray" separator="," item="item">#{item}</foreach>)
+			</if>
 	 </where>
 	</sql>
 
 	<!-- 查询集合-->
 	<select id="selectList" resultMap="base_result_map" >
-		 SELECT <include refid="base_column_list" /> FROM video_info_post v <include refid="query_condition" />
+		 SELECT <include refid="base_column_list" />
+		 <if test="query.queryCountInfo">
+			 ,c.play_count,c.like_count,c.danmu_count,c.comment_count,c.coin_count,c.collect_count,c.recommend_type
+		 </if>
+		 FROM video_info_post v
+		<if test="query.queryCountInfo">
+			left join video_info c on c.video_id = v.video_id
+		</if>
+		 <include refid="query_condition" />
 		 <if test="query.orderBy!=null">
 			 order by ${query.orderBy}
 		 </if>
