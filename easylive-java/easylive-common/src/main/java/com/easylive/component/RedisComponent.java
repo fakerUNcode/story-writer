@@ -144,9 +144,6 @@ public class RedisComponent {
         redisUtils.lpushAll(Constants.REDIS_KEY_QUEUE_TRANSFER, addFileList, 0);
     }
 
-    public void addFile2TransferQueue4single(VideoInfoFilePost videoInfoFilePost){
-        redisUtils.lpush(Constants.REDIS_KEY_QUEUE_TRANSFER,videoInfoFilePost,0L);
-    }
 
     public VideoInfoFilePost getFileFromTransferQueue(){
         //右侧推出消息队列

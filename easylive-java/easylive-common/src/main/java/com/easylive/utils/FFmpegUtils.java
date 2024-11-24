@@ -65,7 +65,7 @@ public class FFmpegUtils {
     }
 
     public void convertVideo2Ts(File tsFolder, String videoFilePath){
-        final String CMD_TRANSFER_2TS = "ffmpeg -y -i \"%s\" -vcodec copy -acodec copy -vbsf h264_mp4toannexb \"%s\"";
+        final String CMD_TRANSFER_2TS = "ffmpeg -y -i \"%s\" -vcodec copy -acodec copy -bsf:v h264_mp4toannexb \"%s\"";
         final String CMD_CUT_TS = "ffmpeg -i \"%s\" -c copy -map 0 -f segment -segment_list \"%s\" -segment_time 10 %s/%%4d.ts";
         String tsPath = tsFolder + "/" + Constants.TS_NAME;
         // 生成 .ts 文件
