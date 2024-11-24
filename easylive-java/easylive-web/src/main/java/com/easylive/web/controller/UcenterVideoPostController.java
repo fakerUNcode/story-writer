@@ -46,6 +46,7 @@ public class UcenterVideoPostController extends ABaseController{
         List<VideoInfoFilePost> filePostList = JsonUtils.convertJsonArray2List(uploadFileList, VideoInfoFilePost.class);
 
         VideoInfoPost videoInfoPost = new VideoInfoPost();
+        videoInfoPost.setUserId(tokenUserInfoDto.getUserId());
         videoInfoPost.setVideoId(videoId);
         videoInfoPost.setVideoCover(videoCover);
         videoInfoPost.setVideoName(videoName);
