@@ -71,4 +71,6 @@ public interface VideoInfoPostService {
 	Integer deleteVideoInfoPostByVideoId(String videoId);
 
     void saveVideoInfo(VideoInfoPost videoInfoPost, List<VideoInfoFilePost> filePostList);
+
+	void transferVideoFile(VideoInfoFilePost videoInfoFilePost);
 }

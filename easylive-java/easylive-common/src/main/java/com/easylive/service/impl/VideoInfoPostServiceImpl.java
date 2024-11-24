@@ -2,9 +2,7 @@ package com.easylive.service.impl;
 
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
-import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.enums.ResponseCodeEnum;
-import com.easylive.entity.enums.VideoStatusEnum;
+import com.easylive.entity.enums.*;
 import com.easylive.entity.po.VideoInfoFilePost;
 import com.easylive.entity.po.VideoInfoPost;
 import com.easylive.entity.query.SimplePage;
@@ -166,7 +164,8 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		String videoId = videoInfoPost.getVideoId();
 		//用户可能多次上传分p,我们关心被删除的和被新加的
 		List<VideoInfoFilePost> deleteFileList = new ArrayList<>();
-		List<VideoInfoFilePost> addFileList;
+		//默认情况下，addFileList 包含所有上传的文件，因此初始化为uploadFileList。即使没有新增文件需要插入也需要按照逻辑处理
+		List<VideoInfoFilePost> addFileList = uploadFileList;
 		//无id说明第一次上传，直接上传即可
 		if(StringTools.isEmpty(videoId)){
 			videoId = StringTools.getRandomString(Constants.LENGTH_10);
@@ -213,6 +212,43 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 			}
 			this.videoInfoPostMapper.updateByVideoId(videoInfoPost, videoInfoPost.getVideoId());
 		}
+		//deleteFileList不为空，说明有文件需要处理
+		if(!deleteFileList.isEmpty()){
+			//使用 stream 遍历 deleteFileList，提取每个 VideoInfoFilePost 对象的 fileId。
+			//将这些 fileId 收集到一个列表 delFileList 并调用数据库删除
+			List<String> delFileList = deleteFileList.stream().map(item->item.getFileId()).collect(Collectors.toList());
+			this.videoInfoFilePostMapper.deleteBatchByFileId(delFileList,videoInfoPost.getUserId());
+			//提取文件路径并加入 Redis 删除队列
+			List<String> delFilePathList = deleteFileList.stream().map(item->item.getFilePath()).collect(Collectors.toList());
+			redisComponent.addFile2DelQueue(videoId,delFilePathList);
+		}
+
+		Integer index = 1;
+		for(VideoInfoFilePost videoInfoFilePost : uploadFileList){
+			videoInfoFilePost.setFileIndex(index++);
+			videoInfoFilePost.setVideoId(videoId);
+			videoInfoFilePost.setUserId(videoInfoPost.getUserId());
+			//如果是新文件则分配信息和状态
+			if(videoInfoFilePost.getFileId()==null){
+				videoInfoFilePost.setFileId(StringTools.getRandomString(Constants.LENGTH_20));
+				videoInfoFilePost.setUpdateType(VideoFileUpdateTypeEnum.UPDATE.getStatus());
+				videoInfoFilePost.setTransferResult(VideoFileTransferResultEnum.TRANSFER.getStatus());
+			}
+		}
+		//对上传文件进行批量插入或更新，并将新增文件加入到 Redis 转码队列中
+		this.videoInfoFilePostMapper.insertOrUpdateBatch(uploadFileList);
+		if(addFileList != null && !addFileList.isEmpty()){
+			for(VideoInfoFilePost file : addFileList){
+				file.setUserId(videoInfoPost.getUserId());
+				file.setVideoId(videoId);
+			}
+			redisComponent.addFile2TransferQueue(addFileList);
+		}
+	}
+
+	@Override
+	public void transferVideoFile(VideoInfoFilePost videoInfoFilePost) {
+
 	}
 
 	private Boolean changeVideoInfo(VideoInfoPost videoInfoPost){

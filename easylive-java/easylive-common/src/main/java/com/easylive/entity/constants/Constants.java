@@ -4,9 +4,12 @@ public class Constants {
     //主题值
     public static final Integer ONE = 1;
     public static final Integer ZERO = 0;
-    //ID长度
+    //长度
+    public static final Integer LENGTH_2 = 2;
     public static final Integer LENGTH_10 = 10;
     public static final Integer LENGTH_15 = 15;
+    public static final Integer LENGTH_20 = 20;
+
 
     public static final Integer LENGTH_30 = 30;
     public static final Long MB_SIZE = 1024*1024L;
@@ -31,6 +34,7 @@ public class Constants {
     //在定义 Redis 键时，将其作为前缀拼接具体的业务键。
     public static final String REDIS_KEY_PREFIX = "easylive:";
 
+
     //用于验证码相关的 Redis 键。
     //键名格式示例：easylive:checkCode:{用户唯一标识}。
     public static String REDIS_KEY_CHECK_CODE = REDIS_KEY_PREFIX + "checkCode:";
@@ -46,5 +50,7 @@ public class Constants {
 
     //系统设置
     public static final String REDIS_KEY_SYS_SETTING = REDIS_KEY_PREFIX + "sysSetting:";
-
+    //删除文件组合
+    public static final String REDIS_KEY_FILE_DEL =REDIS_KEY_PREFIX + "file:list:del:";
+    public static final String REDIS_KEY_QUEUE_TRANSFER = REDIS_KEY_PREFIX + "queue:transfer:";
 }

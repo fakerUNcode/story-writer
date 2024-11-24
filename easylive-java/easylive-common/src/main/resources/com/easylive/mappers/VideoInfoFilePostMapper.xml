@@ -522,4 +522,9 @@
 		select <include refid="base_column_list" /> from video_info_file_post v where upload_id=#{uploadId} and user_id=#{userId}
 	</select>
 
+	<delete id="deleteBatchByFileId">
+		delete from video_info_file_post where file_id in (<foreach collection="fileIdList" separator="," item="item">#{item}</foreach>)
+		and user_id = #{userId}
+	</delete>
+
 </mapper>
