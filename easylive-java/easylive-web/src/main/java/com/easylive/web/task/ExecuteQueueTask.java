@@ -28,8 +28,9 @@ public class ExecuteQueueTask {
     public void consumeTransferFileQueue(){
         executorService.execute(()->{
             while (true){
+                VideoInfoFilePost videoInfoFile = null;
                 try{
-                    VideoInfoFilePost videoInfoFile = (VideoInfoFilePost) redisComponent.getFileFromTransferQueue();
+                    videoInfoFile  =  redisComponent.getFileFromTransferQueue();
                     //消息队列取不到VideoInfoFilePost说明队列空了，停顿一会再取
                     if(videoInfoFile == null){
                         Thread.sleep(1500);
@@ -38,6 +39,7 @@ public class ExecuteQueueTask {
                     videoInfoPostService.transferVideoFile(videoInfoFile);
                 }catch (Exception e){
                     log.error("获取转码文件队列信息失败！",e);
+                    redisComponent.addFile2TransferQueue4single(videoInfoFile);
                 }
             }
         });
