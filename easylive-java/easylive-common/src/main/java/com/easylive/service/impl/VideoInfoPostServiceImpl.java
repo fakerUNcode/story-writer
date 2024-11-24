@@ -287,7 +287,7 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 				targetFile.mkdirs();
 			}
 			FileUtils.copyDirectory(tempFile,targetFile);
-			//删除掉临时目录中的视频
+			//删除掉临时目录
 			FileUtils.forceDelete(tempFile);
 			//清除消息队列中的临时视频信息
 			redisComponent.delVideoFileInfo(videoInfoFilePost.getUserId(),videoInfoFilePost.getUploadId());
