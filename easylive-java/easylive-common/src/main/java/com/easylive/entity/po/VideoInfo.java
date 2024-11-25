@@ -1,13 +1,12 @@
 package com.easylive.entity.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
 import com.easylive.entity.enums.DateTimePatternEnum;
 import com.easylive.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -128,6 +127,26 @@ public class VideoInfo implements Serializable {
 	/**
 	 * 最后播放时间
 	 */
+
+	private String nickName;
+	private String avatar;
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date lastPlayTime;

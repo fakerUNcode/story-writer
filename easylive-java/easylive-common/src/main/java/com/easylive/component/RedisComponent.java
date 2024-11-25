@@ -149,4 +149,14 @@ public class RedisComponent {
         //右侧推出消息队列
        return (VideoInfoFilePost) redisUtils.rpop(Constants.REDIS_KEY_QUEUE_TRANSFER);
     }
+
+    //得到需要删除的文件列表方法
+    public List<String> getDelFileList(String videoId) {
+        return redisUtils.getQueueList(Constants.REDIS_KEY_FILE_DEL + videoId);
+    }
+
+    //清除视频目录方法
+    public void cleanDelFileList(String videoId) {
+        redisUtils.delete(Constants.REDIS_KEY_FILE_DEL+videoId);
+    }
 }

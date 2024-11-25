@@ -108,6 +108,16 @@ public class VideoInfoPostQuery extends BaseParam {
 	private Integer[] excludeStatusArray;
 	private Boolean queryCountInfo;
 
+	private Boolean queryUserInfo;
+
+	public Boolean getQueryUserInfo() {
+		return queryUserInfo;
+	}
+
+	public void setQueryUserInfo(Boolean queryUserInfo) {
+		this.queryUserInfo = queryUserInfo;
+	}
+
 	public Integer[] getExcludeStatusArray() {
 		return excludeStatusArray;
 	}

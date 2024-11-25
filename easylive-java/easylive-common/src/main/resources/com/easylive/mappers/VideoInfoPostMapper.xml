@@ -152,9 +152,15 @@
 		 <if test="query.queryCountInfo">
 			 ,c.play_count,c.like_count,c.danmu_count,c.comment_count,c.coin_count,c.collect_count,c.recommend_type
 		 </if>
+		 <if test="query.queryUserInfo">
+			 ,u.nick_name,u.avatar
+		 </if>
 		 FROM video_info_post v
 		<if test="query.queryCountInfo">
 			left join video_info c on c.video_id = v.video_id
+		</if>
+		<if test="query.queryUserInfo">
+			left join user_info u on u.user_id = v.user_id
 		</if>
 		 <include refid="query_condition" />
 		 <if test="query.orderBy!=null">

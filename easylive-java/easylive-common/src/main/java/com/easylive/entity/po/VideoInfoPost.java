@@ -1,19 +1,19 @@
 package com.easylive.entity.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
 import com.easylive.entity.enums.DateTimePatternEnum;
+import com.easylive.entity.enums.VideoStatusEnum;
 import com.easylive.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
  * 视频信息
  */
-public class VideoInfoPost implements Serializable {
+public class VideoInfoPost extends VideoInfo implements Serializable {
 
 
 	/**
@@ -95,6 +95,17 @@ public class VideoInfoPost implements Serializable {
 	 */
 	private Integer duration;
 
+	//视频状态
+	private  String statusName;
+
+	public String getStatusName() {
+		VideoStatusEnum videoStatusEnum = VideoStatusEnum.getByStatus(status);
+		return videoStatusEnum==null?"":videoStatusEnum.getDesc();
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
 
 	public void setVideoId(String videoId){
 		this.videoId = videoId;
