@@ -1,19 +1,17 @@
 package com.easylive.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.po.VideoInfo;
-import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.VideoInfoQuery;
+import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.mappers.VideoInfoMapper;
 import com.easylive.service.VideoInfoService;
 import com.easylive.utils.StringTools;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -127,4 +125,5 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 	public Integer deleteVideoInfoByVideoId(String videoId) {
 		return this.videoInfoMapper.deleteByVideoId(videoId);
 	}
+
 }

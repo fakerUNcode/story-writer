@@ -1,17 +1,16 @@
 package com.easylive.entity.query;
 
 /**
- * 用户信息表参数
+ * 参数
  */
 public class UserInfoQuery extends BaseParam {
 
 
 	/**
-	 * 用户ID
+	 * 用户id
 	 */
-	//精确匹配
 	private String userId;
-	//Fuzzy:模糊匹配
+
 	private String userIdFuzzy;
 
 	/**
@@ -36,7 +35,7 @@ public class UserInfoQuery extends BaseParam {
 	private String passwordFuzzy;
 
 	/**
-	 * 0:女 1：男 2：未知
+	 * 性别 0女 1男 2未知
 	 */
 	private Integer sex;
 
@@ -55,7 +54,7 @@ public class UserInfoQuery extends BaseParam {
 	private String schoolFuzzy;
 
 	/**
-	 * 个人介绍
+	 * 个人简介
 	 */
 	private String personIntroduction;
 
@@ -71,7 +70,7 @@ public class UserInfoQuery extends BaseParam {
 	private String joinTimeEnd;
 
 	/**
-	 * 上次登录时间
+	 * 最后登录时间
 	 */
 	private String lastLoginTime;
 
@@ -80,14 +79,14 @@ public class UserInfoQuery extends BaseParam {
 	private String lastLoginTimeEnd;
 
 	/**
-	 * 上次登录ip
+	 * 最后登录Ip
 	 */
 	private String lastLoginIp;
 
 	private String lastLoginIpFuzzy;
 
 	/**
-	 * 0:禁用 1：正常
+	 * 0禁用 1正常
 	 */
 	private Integer status;
 
@@ -99,12 +98,12 @@ public class UserInfoQuery extends BaseParam {
 	private String noticeInfoFuzzy;
 
 	/**
-	 * 曾经获得过的所有硬币数
+	 * 获得过的硬币总数
 	 */
 	private Integer totalCoinCount;
 
 	/**
-	 * 当前所剩硬币数
+	 * 当前硬币数
 	 */
 	private Integer currentCoinCount;
 
@@ -112,6 +111,13 @@ public class UserInfoQuery extends BaseParam {
 	 * 主题
 	 */
 	private Integer theme;
+
+	/**
+	 * 头像
+	 */
+	private String avatar;
+
+	private String avatarFuzzy;
 
 
 	public void setUserId(String userId){
@@ -342,6 +348,22 @@ public class UserInfoQuery extends BaseParam {
 
 	public Integer getTheme(){
 		return this.theme;
+	}
+
+	public void setAvatar(String avatar){
+		this.avatar = avatar;
+	}
+
+	public String getAvatar(){
+		return this.avatar;
+	}
+
+	public void setAvatarFuzzy(String avatarFuzzy){
+		this.avatarFuzzy = avatarFuzzy;
+	}
+
+	public String getAvatarFuzzy(){
+		return this.avatarFuzzy;
 	}
 
 }

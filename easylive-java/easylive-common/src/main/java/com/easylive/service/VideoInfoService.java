@@ -1,10 +1,10 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.po.VideoInfo;
+import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -68,5 +68,6 @@ public interface VideoInfoService {
 	 * 根据VideoId删除
 	 */
 	Integer deleteVideoInfoByVideoId(String videoId);
+
 
 }

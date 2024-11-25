@@ -7,10 +7,11 @@
           <map>
             <entry key="com.zeroturnaround.jrebel.FormatVersion" value="7.0.0" />
             <entry key="jrebelEnabled" value="true" />
+            <entry key="lastExternalPluginCheckTime" value="1732505048544" />
             <entry key="rebelXmlGenerationInvariantToken" value="PGFwcGxpY2F0aW9uIGdlbmVyYXRlZC1ieT0iaW50ZWxsaWoiPjxpZD53b3Jrc3BhY2Utc3Rvcnl3cml0ZXI8L2lkPjxjbGFzc3BhdGg+PGRpciBuYW1lPSIvVXNlcnMvYXBwbGUvRGVza3RvcC9naXQvd29ya3NwYWNlLXN0b3J5d3JpdGVyL291dC9wcm9kdWN0aW9uL3dvcmtzcGFjZS1zdG9yeXdyaXRlciI+PC9kaXI+PC9jbGFzc3BhdGg+PC9hcHBsaWNhdGlvbj4=" />
           </map>
         </option>
-        <option name="version" value="5" />
+        <option name="version" value="7" />
       </configuration>
     </facet>
   </component>
