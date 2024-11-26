@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,7 +70,7 @@ public class VideoController extends ABaseController{
 			throw new BusinessException(ResponseCodeEnum.CODE_404);
 		}
 		//TODO 获取用户行为：点赞投币收藏
-		VideoInfoResultVO resultVO = new VideoInfoResultVO();
+		VideoInfoResultVO resultVO = new VideoInfoResultVO(videoInfo, new ArrayList<>());
 		resultVO.setVideoInfo(videoInfo);
 		return getSuccessResponseVO(resultVO);
 	}
@@ -82,5 +83,10 @@ public class VideoController extends ABaseController{
 		videoInfoFileQuery.setOrderBy("file_index asc");
 		List<VideoInfoFile> fileList = videoInfoFileService.findListByParam(videoInfoFileQuery);
 		return getSuccessResponseVO(fileList);
+	}
+
+	@RequestMapping("/reportVideoPlayOnline")
+	public ResponseVO reportVideoPlayOnline(@NotEmpty String fileId,@NotEmpty String deviceId){
+		return getSuccessResponseVO(null);
 	}
 }
