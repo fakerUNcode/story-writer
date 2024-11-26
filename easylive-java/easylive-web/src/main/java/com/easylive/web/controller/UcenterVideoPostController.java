@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+/*用户投稿视频中心 Controller*/
 @RestController
 @RequestMapping("/ucenter")
 @Validated

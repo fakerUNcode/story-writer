@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/*视频分类Controller*/
 @RestController
 @RequestMapping("/category")
 public class CategoryController extends ABaseController{
