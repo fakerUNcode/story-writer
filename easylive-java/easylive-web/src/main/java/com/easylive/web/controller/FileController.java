@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
+/*上传视频以及相关文件Controller*/
 @RestController
 @RequestMapping("/file")
 @Validated

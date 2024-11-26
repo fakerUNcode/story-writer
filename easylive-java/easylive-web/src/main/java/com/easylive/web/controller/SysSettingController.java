@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+/*系统设置 Controller*/
 @RestController
 @RequestMapping("/sysSetting")
 @Validated
