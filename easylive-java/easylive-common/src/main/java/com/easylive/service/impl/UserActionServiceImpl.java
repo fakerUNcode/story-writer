@@ -12,6 +12,7 @@ import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.mappers.UserActionMapper;
+import com.easylive.mappers.UserInfoMapper;
 import com.easylive.mappers.VideoInfoMapper;
 import com.easylive.service.UserActionService;
 import com.easylive.utils.StringTools;
@@ -33,6 +34,8 @@ public class UserActionServiceImpl implements UserActionService {
 	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
 	@Resource
 	private UserActionMapper<UserAction, UserActionQuery> userActionMapper;
+	@Resource
+	private UserInfoMapper userInfoMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -178,6 +181,7 @@ public class UserActionServiceImpl implements UserActionService {
 		UserAction dbAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(bean.getVideoId(),bean.getCommentId(),bean.getActionType(), bean.getUserId());
 		bean.setActionTime(new Date());
 		switch (actionTypeEnum){
+			/*点赞和收藏操作*/
 			case VIDEO_LIKE:
 			case VIDEO_COLLECT:
 				//取消操作则删除该action
@@ -194,6 +198,31 @@ public class UserActionServiceImpl implements UserActionService {
 					//TODO 更新es收藏数量
 				}
 				break;
+			/*投币操作*/
+			case VIDEO_COIN:
+				//每个用户都不可以给自己投币
+				if(videoInfo.getUserId().equals(bean.getUserId())){
+					throw new BusinessException("自己不能给自己投币哦！");
+				}
+				//一个用户给一个视频仅可投币一次
+				if(dbAction!=null){
+					throw new BusinessException("对本稿件的投币次数已用完！");
+				}
+				//减少自己的硬币（使用SQL锁保证并发下硬币数不会出现错误）
+				Integer updateCount = userInfoMapper.updateCoinCountInfo(bean.getUserId(), -bean.getActionCount());
+				//更新行数返回为0说明更新操作失败
+				if(updateCount==0){
+					throw new BusinessException("硬币不足！");
+				}
+				//给up主增加硬币
+				updateCount = userInfoMapper.updateCoinCountInfo(videoInfo.getUserId(), bean.getActionCount());
+				if(updateCount==0){
+					throw new BusinessException("投币失败！");
+				}
+				userActionMapper.insert(bean);
+				videoInfoMapper.updateCountInfo(bean.getVideoId(), actionTypeEnum.getField(), bean.getActionCount());
+				break;
+
 		}
 	}
 }

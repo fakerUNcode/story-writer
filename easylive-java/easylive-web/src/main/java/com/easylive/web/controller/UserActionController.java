@@ -32,7 +32,7 @@ public class UserActionController extends ABaseController{
         actionCount = actionCount==null? Constants.ONE:actionCount;
         userAction.setActionCount(actionCount);
         //用户未评论则默认置commentId为1
-        commentId = commentId == null ? Constants.ONE : commentId;
+        commentId = commentId == null ? Constants.ZERO : commentId;
         userAction.setCommentId(commentId);
         userActionService.saveAction(userAction);
         return getSuccessResponseVO(null);
