@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easylive.mappers.VideoCommentMapper">
+
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="com.easylive.entity.po.VideoComment">
+		<!--评论ID-->
+		<id column="comment_id" property="commentId"  />
+		<!--父级评论ID-->
+		<result column="p_comment_id" property="pCommentId"  />
+		<!--视频ID-->
+		<result column="video_id" property="videoId"  />
+		<!--视频用户ID-->
+		<result column="video_user_id" property="videoUserId"  />
+		<!--回复内容-->
+		<result column="content" property="content"  />
+		<!--图片-->
+		<result column="img_path" property="imgPath"  />
+		<!--用户ID-->
+		<result column="user_id" property="userId"  />
+		<!--回复人ID-->
+		<result column="reply_user_id" property="replyUserId"  />
+		<!--0:未置顶 1:置顶-->
+		<result column="top_type" property="topType"  />
+		<!--发布时间-->
+		<result column="post_time" property="postTime"  />
+		<!--喜欢数量-->
+		<result column="like_count" property="likeCount"  />
+		<!--讨厌数量-->
+		<result column="hate_count" property="hateCount"  />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="base_column_list">
+		 v.comment_id,v.p_comment_id,v.video_id,v.video_user_id,v.content,
+		 v.img_path,v.user_id,v.reply_user_id,v.top_type,v.post_time,
+		 v.like_count,v.hate_count
+	</sql>
+
+	<sql id="base_condition_filed">
+			<if test="query.commentId != null">
+				 and  v.comment_id = #{query.commentId}
+			</if>
+			<if test="query.pCommentId != null">
+				 and  v.p_comment_id = #{query.pCommentId}
+			</if>
+			<if test="query.videoId != null and query.videoId!=''">
+				 and  v.video_id = #{query.videoId}
+			</if>
+			<if test="query.videoUserId != null and query.videoUserId!=''">
+				 and  v.video_user_id = #{query.videoUserId}
+			</if>
+			<if test="query.content != null and query.content!=''">
+				 and  v.content = #{query.content}
+			</if>
+			<if test="query.imgPath != null and query.imgPath!=''">
+				 and  v.img_path = #{query.imgPath}
+			</if>
+			<if test="query.userId != null and query.userId!=''">
+				 and  v.user_id = #{query.userId}
+			</if>
+			<if test="query.replyUserId != null and query.replyUserId!=''">
+				 and  v.reply_user_id = #{query.replyUserId}
+			</if>
+			<if test="query.topType != null">
+				 and  v.top_type = #{query.topType}
+			</if>
+			<if test="query.postTime != null and query.postTime!=''">
+				 <![CDATA[ and  v.post_time=str_to_date(#{query.postTime}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.likeCount != null">
+				 and  v.like_count = #{query.likeCount}
+			</if>
+			<if test="query.hateCount != null">
+				 and  v.hate_count = #{query.hateCount}
+			</if>
+	</sql>
+	<!-- 通用条件列-->
+	<sql id="base_condition">
+	 <where>
+		 <include refid="base_condition_filed" />
+	 </where>
+	</sql>
+
+	<!-- 通用查询条件列-->
+	<sql id="query_condition">
+	 <where>
+			<include refid="base_condition_filed" />
+			<if test="query.videoIdFuzzy!= null  and query.videoIdFuzzy!=''">
+				 and  v.video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			</if>
+			<if test="query.videoUserIdFuzzy!= null  and query.videoUserIdFuzzy!=''">
+				 and  v.video_user_id like concat('%', #{query.videoUserIdFuzzy}, '%')
+			</if>
+			<if test="query.contentFuzzy!= null  and query.contentFuzzy!=''">
+				 and  v.content like concat('%', #{query.contentFuzzy}, '%')
+			</if>
+			<if test="query.imgPathFuzzy!= null  and query.imgPathFuzzy!=''">
+				 and  v.img_path like concat('%', #{query.imgPathFuzzy}, '%')
+			</if>
+			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
+				 and  v.user_id like concat('%', #{query.userIdFuzzy}, '%')
+			</if>
+			<if test="query.replyUserIdFuzzy!= null  and query.replyUserIdFuzzy!=''">
+				 and  v.reply_user_id like concat('%', #{query.replyUserIdFuzzy}, '%')
+			</if>
+			<if test="query.postTimeStart!= null and query.postTimeStart!=''">
+				 <![CDATA[ and  v.post_time>=str_to_date(#{query.postTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.postTimeEnd!= null and query.postTimeEnd!=''">
+				 <![CDATA[ and  v.post_time< date_sub(str_to_date(#{query.postTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+	 </where>
+	</sql>
+
+	<!-- 查询集合-->
+	<select id="selectList" resultMap="base_result_map" >
+		 SELECT <include refid="base_column_list" /> FROM video_comment v <include refid="query_condition" />
+		 <if test="query.orderBy!=null">
+			 order by ${query.orderBy}
+		 </if>
+		 <if test="query.simplePage!=null">
+			 limit #{query.simplePage.start},#{query.simplePage.end}
+		 </if>
+	</select>
+
+	<!-- 查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer" >
+		 SELECT count(1) FROM video_comment v <include refid="query_condition" />
+	</select>
+
+	<!-- 插入 （匹配有值的字段）-->
+	<insert id="insert" parameterType="com.easylive.entity.po.VideoComment">
+		<selectKey keyProperty="bean.commentId" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		 INSERT INTO video_comment
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="bean.pCommentId != null">
+				 p_comment_id,
+			</if>
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id,
+			</if>
+			<if test="bean.content != null">
+				 content,
+			</if>
+			<if test="bean.imgPath != null">
+				 img_path,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.replyUserId != null">
+				 reply_user_id,
+			</if>
+			<if test="bean.topType != null">
+				 top_type,
+			</if>
+			<if test="bean.postTime != null">
+				 post_time,
+			</if>
+			<if test="bean.likeCount != null">
+				 like_count,
+			</if>
+			<if test="bean.hateCount != null">
+				 hate_count,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="bean.pCommentId!=null">
+				 #{bean.pCommentId},
+			</if>
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId!=null">
+				 #{bean.videoUserId},
+			</if>
+			<if test="bean.content!=null">
+				 #{bean.content},
+			</if>
+			<if test="bean.imgPath!=null">
+				 #{bean.imgPath},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.replyUserId!=null">
+				 #{bean.replyUserId},
+			</if>
+			<if test="bean.topType!=null">
+				 #{bean.topType},
+			</if>
+			<if test="bean.postTime!=null">
+				 #{bean.postTime},
+			</if>
+			<if test="bean.likeCount!=null">
+				 #{bean.likeCount},
+			</if>
+			<if test="bean.hateCount!=null">
+				 #{bean.hateCount},
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 插入或者更新 （匹配有值的字段）-->
+	<insert id="insertOrUpdate" parameterType="com.easylive.entity.po.VideoComment">
+		 INSERT INTO video_comment
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.commentId != null">
+				 comment_id,
+			</if>
+			<if test="bean.pCommentId != null">
+				 p_comment_id,
+			</if>
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id,
+			</if>
+			<if test="bean.content != null">
+				 content,
+			</if>
+			<if test="bean.imgPath != null">
+				 img_path,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.replyUserId != null">
+				 reply_user_id,
+			</if>
+			<if test="bean.topType != null">
+				 top_type,
+			</if>
+			<if test="bean.postTime != null">
+				 post_time,
+			</if>
+			<if test="bean.likeCount != null">
+				 like_count,
+			</if>
+			<if test="bean.hateCount != null">
+				 hate_count,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.commentId!=null">
+				 #{bean.commentId},
+			</if>
+			<if test="bean.pCommentId!=null">
+				 #{bean.pCommentId},
+			</if>
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId!=null">
+				 #{bean.videoUserId},
+			</if>
+			<if test="bean.content!=null">
+				 #{bean.content},
+			</if>
+			<if test="bean.imgPath!=null">
+				 #{bean.imgPath},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.replyUserId!=null">
+				 #{bean.replyUserId},
+			</if>
+			<if test="bean.topType!=null">
+				 #{bean.topType},
+			</if>
+			<if test="bean.postTime!=null">
+				 #{bean.postTime},
+			</if>
+			<if test="bean.likeCount!=null">
+				 #{bean.likeCount},
+			</if>
+			<if test="bean.hateCount!=null">
+				 #{bean.hateCount},
+			</if>
+		 </trim>
+		 on DUPLICATE key update 
+		 <trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.pCommentId!=null">
+				 p_comment_id = VALUES(p_comment_id),
+			</if>
+			<if test="bean.videoId!=null">
+				 video_id = VALUES(video_id),
+			</if>
+			<if test="bean.videoUserId!=null">
+				 video_user_id = VALUES(video_user_id),
+			</if>
+			<if test="bean.content!=null">
+				 content = VALUES(content),
+			</if>
+			<if test="bean.imgPath!=null">
+				 img_path = VALUES(img_path),
+			</if>
+			<if test="bean.userId!=null">
+				 user_id = VALUES(user_id),
+			</if>
+			<if test="bean.replyUserId!=null">
+				 reply_user_id = VALUES(reply_user_id),
+			</if>
+			<if test="bean.topType!=null">
+				 top_type = VALUES(top_type),
+			</if>
+			<if test="bean.postTime!=null">
+				 post_time = VALUES(post_time),
+			</if>
+			<if test="bean.likeCount!=null">
+				 like_count = VALUES(like_count),
+			</if>
+			<if test="bean.hateCount!=null">
+				 hate_count = VALUES(hate_count),
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 添加 （批量插入）-->
+	<insert id="insertBatch" parameterType="com.easylive.entity.po.VideoComment" useGeneratedKeys="true" keyProperty="commentId">
+		 INSERT INTO video_comment(
+			 p_comment_id,
+			 video_id,
+			 video_user_id,
+			 content,
+			 img_path,
+			 user_id,
+			 reply_user_id,
+			 top_type,
+			 post_time,
+			 like_count,
+			 hate_count
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.pCommentId},
+				 #{item.videoId},
+				 #{item.videoUserId},
+				 #{item.content},
+				 #{item.imgPath},
+				 #{item.userId},
+				 #{item.replyUserId},
+				 #{item.topType},
+				 #{item.postTime},
+				 #{item.likeCount},
+				 #{item.hateCount}
+			 )
+		 </foreach>
+	</insert>
+
+	<!-- 批量新增修改 （批量插入）-->
+	<insert id="insertOrUpdateBatch" parameterType="com.easylive.entity.po.VideoComment">
+		 INSERT INTO video_comment(
+			 p_comment_id,
+			 video_id,
+			 video_user_id,
+			 content,
+			 img_path,
+			 user_id,
+			 reply_user_id,
+			 top_type,
+			 post_time,
+			 like_count,
+			 hate_count
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.pCommentId},
+				 #{item.videoId},
+				 #{item.videoUserId},
+				 #{item.content},
+				 #{item.imgPath},
+				 #{item.userId},
+				 #{item.replyUserId},
+				 #{item.topType},
+				 #{item.postTime},
+				 #{item.likeCount},
+				 #{item.hateCount}
+			 )
+		 </foreach>
+			on DUPLICATE key update 
+			p_comment_id = VALUES(p_comment_id),
+			video_id = VALUES(video_id),
+			video_user_id = VALUES(video_user_id),
+			content = VALUES(content),
+			img_path = VALUES(img_path),
+			user_id = VALUES(user_id),
+			reply_user_id = VALUES(reply_user_id),
+			top_type = VALUES(top_type),
+			post_time = VALUES(post_time),
+			like_count = VALUES(like_count),
+			hate_count = VALUES(hate_count)
+	</insert>
+
+	<!--多条件修改-->
+	<update id="updateByParam" parameterType="com.easylive.entity.query.VideoCommentQuery">
+		 UPDATE video_comment v
+ 		 <set> 
+			<if test="bean.pCommentId != null">
+				 p_comment_id = #{bean.pCommentId},
+			</if>
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id = #{bean.videoUserId},
+			</if>
+			<if test="bean.content != null">
+				 content = #{bean.content},
+			</if>
+			<if test="bean.imgPath != null">
+				 img_path = #{bean.imgPath},
+			</if>
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.replyUserId != null">
+				 reply_user_id = #{bean.replyUserId},
+			</if>
+			<if test="bean.topType != null">
+				 top_type = #{bean.topType},
+			</if>
+			<if test="bean.postTime != null">
+				 post_time = #{bean.postTime},
+			</if>
+			<if test="bean.likeCount != null">
+				 like_count = #{bean.likeCount},
+			</if>
+			<if test="bean.hateCount != null">
+				 hate_count = #{bean.hateCount},
+			</if>
+ 		 </set>
+ 		 <include refid="query_condition" />
+	</update>
+
+	<!--多条件删除-->
+	<delete id="deleteByParam">
+		 delete v from video_comment v
+ 		 <include refid="query_condition" />
+	</delete>
+
+	<!-- 根据CommentId修改-->
+	<update id="updateByCommentId" parameterType="com.easylive.entity.po.VideoComment">
+		 UPDATE video_comment
+ 		 <set> 
+			<if test="bean.pCommentId != null">
+				 p_comment_id = #{bean.pCommentId},
+			</if>
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id = #{bean.videoUserId},
+			</if>
+			<if test="bean.content != null">
+				 content = #{bean.content},
+			</if>
+			<if test="bean.imgPath != null">
+				 img_path = #{bean.imgPath},
+			</if>
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.replyUserId != null">
+				 reply_user_id = #{bean.replyUserId},
+			</if>
+			<if test="bean.topType != null">
+				 top_type = #{bean.topType},
+			</if>
+			<if test="bean.postTime != null">
+				 post_time = #{bean.postTime},
+			</if>
+			<if test="bean.likeCount != null">
+				 like_count = #{bean.likeCount},
+			</if>
+			<if test="bean.hateCount != null">
+				 hate_count = #{bean.hateCount},
+			</if>
+ 		 </set>
+ 		 where comment_id=#{commentId}
+	</update>
+
+	<!-- 根据CommentId删除-->
+	<delete id="deleteByCommentId">
+		delete from video_comment where comment_id=#{commentId}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByCommentId" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from video_comment v where comment_id=#{commentId}
+	</select>
+
+</mapper>
