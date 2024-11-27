@@ -1,19 +1,26 @@
 package com.easylive.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
+import com.easylive.entity.constants.Constants;
 import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.query.UserActionQuery;
+import com.easylive.entity.enums.ResponseCodeEnum;
+import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.po.UserAction;
-import com.easylive.entity.vo.PaginationResultVO;
+import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.UserActionQuery;
+import com.easylive.entity.query.VideoInfoQuery;
+import com.easylive.entity.vo.PaginationResultVO;
+import com.easylive.exception.BusinessException;
 import com.easylive.mappers.UserActionMapper;
+import com.easylive.mappers.VideoInfoMapper;
 import com.easylive.service.UserActionService;
 import com.easylive.utils.StringTools;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -22,6 +29,8 @@ import com.easylive.utils.StringTools;
 @Service("userActionService")
 public class UserActionServiceImpl implements UserActionService {
 
+	@Resource
+	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
 	@Resource
 	private UserActionMapper<UserAction, UserActionQuery> userActionMapper;
 
@@ -150,5 +159,41 @@ public class UserActionServiceImpl implements UserActionService {
 	@Override
 	public Integer deleteUserActionByVideoIdAndCommentIdAndActionTypeAndUserId(String videoId, Integer commentId, Integer actionType, String userId) {
 		return this.userActionMapper.deleteByVideoIdAndCommentIdAndActionTypeAndUserId(videoId, commentId, actionType, userId);
+	}
+
+	//保存用户操作（点赞、投币、收藏）
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void saveAction(UserAction bean) {
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(bean.getVideoId());
+		if(videoInfo==null){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		bean.setVideoUserId(videoInfo.getUserId());
+
+		UserActionTypeEnum actionTypeEnum = UserActionTypeEnum.getByType(bean.getActionType());
+		if(actionTypeEnum==null){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		UserAction dbAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(bean.getVideoId(),bean.getCommentId(),bean.getActionType(), bean.getUserId());
+		bean.setActionTime(new Date());
+		switch (actionTypeEnum){
+			case VIDEO_LIKE:
+			case VIDEO_COLLECT:
+				//取消操作则删除该action
+				if(dbAction!=null){
+					userActionMapper.deleteByActionId(dbAction.getActionId());
+				}else {
+					userActionMapper.insert(bean);
+				}
+				//取消操作则从数据库中的操作数减去1，比如取消点赞则点赞数减1
+				Integer changeCount = dbAction == null ? Constants.ONE : -Constants.ONE;
+				videoInfoMapper.updateCountInfo(bean.getVideoId(), actionTypeEnum.getField(), changeCount);
+
+				if(actionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT.VIDEO_LIKE){
+					//TODO 更新es收藏数量
+				}
+				break;
+		}
 	}
 }

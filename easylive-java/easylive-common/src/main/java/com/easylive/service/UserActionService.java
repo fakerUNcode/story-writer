@@ -1,10 +1,10 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.UserActionQuery;
 import com.easylive.entity.po.UserAction;
+import com.easylive.entity.query.UserActionQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -87,4 +87,5 @@ public interface UserActionService {
 	 */
 	Integer deleteUserActionByVideoIdAndCommentIdAndActionTypeAndUserId(String videoId,Integer commentId,Integer actionType,String userId);
 
+    void saveAction(UserAction userAction);
 }

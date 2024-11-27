@@ -137,7 +137,7 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void saveVideoDanmu(VideoDanmu videoDanmu) {
 		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoDanmu.getVideoId());
 		if(videoInfo==null){
@@ -147,6 +147,9 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		if(videoInfo.getInteraction()!=null && videoInfo.getInteraction().contains(Constants.ONE.toString())){
 			throw new BusinessException("up主已经关闭了弹幕！");
 		}
+/*	•	事务保证：
+	•	如果 insert 操作成功，但 update 操作失败，整个事务会回滚，插入的弹幕记录也会被撤销。
+	•	事务管理通过 Spring 和数据库共同完成。*/
 		this.videoDanmuMapper.insert(videoDanmu);
 		//使用动态拼接sql解决并发问题，此处第二个参数传入弹幕field，更新弹幕数量
 		this.videoInfoMapper.updateCountInfo(videoDanmu.getVideoId(),UserActionTypeEnum.VIDEO_DANMU.getField(),1);

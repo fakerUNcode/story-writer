@@ -1,15 +1,20 @@
 package com.easylive.web.controller;
 
+import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.ResponseCodeEnum;
+import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.enums.VideoRecommendTypeEnum;
+import com.easylive.entity.po.UserAction;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.po.VideoInfoFile;
+import com.easylive.entity.query.UserActionQuery;
 import com.easylive.entity.query.VideoInfoFileQuery;
 import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.entity.vo.VideoInfoResultVO;
 import com.easylive.exception.BusinessException;
+import com.easylive.service.UserActionService;
 import com.easylive.service.VideoInfoFileService;
 import com.easylive.service.VideoInfoService;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +38,8 @@ public class VideoController extends ABaseController{
 	private VideoInfoService videoInfoService;
 	@Resource
 	private VideoInfoFileService videoInfoFileService;
+	@Resource
+	private UserActionService userActionService;
 	/*首页推荐视频接口*/
 	@RequestMapping("/loadRecommendVideo")
 	public ResponseVO loadRecommendVideo(){
@@ -69,9 +76,17 @@ public class VideoController extends ABaseController{
 		if(videoInfo==null){
 			throw new BusinessException(ResponseCodeEnum.CODE_404);
 		}
-		//TODO 获取用户行为：点赞投币收藏
-		VideoInfoResultVO resultVO = new VideoInfoResultVO(videoInfo, new ArrayList<>());
-		resultVO.setVideoInfo(videoInfo);
+		TokenUserInfoDto  tokenUserInfoDto = getTokenUserInfoDto();
+		List<UserAction> userActionList = new ArrayList<>();
+		if(tokenUserInfoDto!=null){
+			UserActionQuery actionQuery = new UserActionQuery();
+			actionQuery.setVideoId(videoId);
+			actionQuery.setUserId(tokenUserInfoDto.getUserId());
+			actionQuery.setActionTypeArray(new Integer[] {UserActionTypeEnum.VIDEO_LIKE.getType(),UserActionTypeEnum.VIDEO_COLLECT.getType(),UserActionTypeEnum.VIDEO_COIN.getType()});
+			userActionList = userActionService.findListByParam(actionQuery);
+		}
+
+		VideoInfoResultVO resultVO = new VideoInfoResultVO(videoInfo,userActionList);
 		return getSuccessResponseVO(resultVO);
 	}
 

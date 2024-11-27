@@ -82,6 +82,10 @@
 			<if test="query.actionTimeEnd!= null and query.actionTimeEnd!=''">
 				 <![CDATA[ and  u.action_time< date_sub(str_to_date(#{query.actionTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
 			</if>
+			 /*拓展的过滤条件*/
+			 <if test="query.actionTypeArray!=null and query.actionTypeArray.length>0">
+				 and action_type in(<foreach collection="query.actionTypeArray" separator="," item="item">#{item}</foreach> )
+			 </if>
 	 </where>
 	</sql>
 

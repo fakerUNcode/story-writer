@@ -853,6 +853,8 @@
 	</select>
 	<!--更新弹幕数量信息-->
 	<update id="updateCountInfo">
+/*在 SQL 执行时，数据库会将字段的读取和更新操作当作一个原子操作。*/
+/*数据库通过锁机制（如行级锁）确保在同一时间只能有一个事务修改 danmu_count，避免并发问题。*/
 		update video_info set ${field} = ${field}+#{changeCount}
 		<if test="field=='play_count'">
 			,last_play_time = now()
