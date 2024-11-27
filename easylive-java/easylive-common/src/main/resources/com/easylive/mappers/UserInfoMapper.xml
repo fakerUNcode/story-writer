@@ -687,5 +687,34 @@
 	<select id="selectByUserId" resultMap="base_result_map" >
 		select <include refid="base_column_list" /> from user_info u where user_id=#{userId}
 	</select>
+	<!-- 根据Email获取对象 -->
+	<select id="selectByEmail" resultMap="base_result_map">
+		select <include refid="base_column_list" /> from user_info u where u.email = #{email}
+	</select>
+	<!-- 根据昵称获取用户信息 -->
+	<select id="selectByNickName" resultMap="base_result_map">
+		SELECT
+		<include refid="base_column_list" />
+		FROM
+		user_info u
+		WHERE
+		u.nick_name = #{nickName}
+	</select>
 
+
+
+
+	<!--更新投币者的剩余硬币数 和 up主获取的硬币数-->
+	<update id="updateCoinCountInfo">
+		update user_info
+		<set>
+			current_coin_count = current_coin_count +#{changeCount}
+		    /*如果硬币减少了，则历史总计硬币数不需要更新，反之需要更新*/
+			<if test="changeCount>0">
+				,total_coin_count = total_coin_count+#{changeCount}
+			</if>
+		</set>
+		/*投币完保证硬币不是负数*/
+		where user_id = #{userId} and current_coin_count+#{changeCount}>=0
+	</update>
 </mapper>

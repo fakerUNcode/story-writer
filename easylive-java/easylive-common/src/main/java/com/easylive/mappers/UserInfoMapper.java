@@ -58,7 +58,7 @@ public interface UserInfoMapper<T,P> extends BaseMapper<T,P> {
 	/**
 	 * 根据NickName获取对象
 	 */
-	 T selectByNickName(@Param("nickName") String nickName);
+	T selectByNickName(@Param("nickName") String nickName);
 
-
+	 Integer updateCoinCountInfo(@Param("userId")String userId, @Param("changeCount")Integer changeCount);
 }
