@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easylive.mappers.UserActionMapper">
+
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="com.easylive.entity.po.UserAction">
+		<!--自增ID-->
+		<id column="action_id" property="actionId"  />
+		<!--视频ID-->
+		<result column="video_id" property="videoId"  />
+		<!--视频用户ID-->
+		<result column="video_user_id" property="videoUserId"  />
+		<!--评论ID-->
+		<result column="comment_id" property="commentId"  />
+		<!--0:评论点赞 1:讨厌评论 2:视频点赞 3:视频收藏 4:视频投币-->
+		<result column="action_type" property="actionType"  />
+		<!--数量-->
+		<result column="action_count" property="actionCount"  />
+		<!--用户ID-->
+		<result column="user_id" property="userId"  />
+		<!--操作时间-->
+		<result column="action_time" property="actionTime"  />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="base_column_list">
+		 u.action_id,u.video_id,u.video_user_id,u.comment_id,u.action_type,
+		 u.action_count,u.user_id,u.action_time
+	</sql>
+
+	<sql id="base_condition_filed">
+			<if test="query.actionId != null">
+				 and  u.action_id = #{query.actionId}
+			</if>
+			<if test="query.videoId != null and query.videoId!=''">
+				 and  u.video_id = #{query.videoId}
+			</if>
+			<if test="query.videoUserId != null and query.videoUserId!=''">
+				 and  u.video_user_id = #{query.videoUserId}
+			</if>
+			<if test="query.commentId != null">
+				 and  u.comment_id = #{query.commentId}
+			</if>
+			<if test="query.actionType != null">
+				 and  u.action_type = #{query.actionType}
+			</if>
+			<if test="query.actionCount != null">
+				 and  u.action_count = #{query.actionCount}
+			</if>
+			<if test="query.userId != null and query.userId!=''">
+				 and  u.user_id = #{query.userId}
+			</if>
+			<if test="query.actionTime != null and query.actionTime!=''">
+				 <![CDATA[ and  u.action_time=str_to_date(#{query.actionTime}, '%Y-%m-%d') ]]>
+			</if>
+	</sql>
+	<!-- 通用条件列-->
+	<sql id="base_condition">
+	 <where>
+		 <include refid="base_condition_filed" />
+	 </where>
+	</sql>
+
+	<!-- 通用查询条件列-->
+	<sql id="query_condition">
+	 <where>
+			<include refid="base_condition_filed" />
+			<if test="query.videoIdFuzzy!= null  and query.videoIdFuzzy!=''">
+				 and  u.video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			</if>
+			<if test="query.videoUserIdFuzzy!= null  and query.videoUserIdFuzzy!=''">
+				 and  u.video_user_id like concat('%', #{query.videoUserIdFuzzy}, '%')
+			</if>
+			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
+				 and  u.user_id like concat('%', #{query.userIdFuzzy}, '%')
+			</if>
+			<if test="query.actionTimeStart!= null and query.actionTimeStart!=''">
+				 <![CDATA[ and  u.action_time>=str_to_date(#{query.actionTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.actionTimeEnd!= null and query.actionTimeEnd!=''">
+				 <![CDATA[ and  u.action_time< date_sub(str_to_date(#{query.actionTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+	 </where>
+	</sql>
+
+	<!-- 查询集合-->
+	<select id="selectList" resultMap="base_result_map" >
+		 SELECT <include refid="base_column_list" /> FROM user_action u <include refid="query_condition" />
+		 <if test="query.orderBy!=null">
+			 order by ${query.orderBy}
+		 </if>
+		 <if test="query.simplePage!=null">
+			 limit #{query.simplePage.start},#{query.simplePage.end}
+		 </if>
+	</select>
+
+	<!-- 查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer" >
+		 SELECT count(1) FROM user_action u <include refid="query_condition" />
+	</select>
+
+	<!-- 插入 （匹配有值的字段）-->
+	<insert id="insert" parameterType="com.easylive.entity.po.UserAction">
+		<selectKey keyProperty="bean.actionId" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		 INSERT INTO user_action
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id,
+			</if>
+			<if test="bean.commentId != null">
+				 comment_id,
+			</if>
+			<if test="bean.actionType != null">
+				 action_type,
+			</if>
+			<if test="bean.actionCount != null">
+				 action_count,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.actionTime != null">
+				 action_time,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId!=null">
+				 #{bean.videoUserId},
+			</if>
+			<if test="bean.commentId!=null">
+				 #{bean.commentId},
+			</if>
+			<if test="bean.actionType!=null">
+				 #{bean.actionType},
+			</if>
+			<if test="bean.actionCount!=null">
+				 #{bean.actionCount},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.actionTime!=null">
+				 #{bean.actionTime},
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 插入或者更新 （匹配有值的字段）-->
+	<insert id="insertOrUpdate" parameterType="com.easylive.entity.po.UserAction">
+		 INSERT INTO user_action
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.actionId != null">
+				 action_id,
+			</if>
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id,
+			</if>
+			<if test="bean.commentId != null">
+				 comment_id,
+			</if>
+			<if test="bean.actionType != null">
+				 action_type,
+			</if>
+			<if test="bean.actionCount != null">
+				 action_count,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.actionTime != null">
+				 action_time,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.actionId!=null">
+				 #{bean.actionId},
+			</if>
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId!=null">
+				 #{bean.videoUserId},
+			</if>
+			<if test="bean.commentId!=null">
+				 #{bean.commentId},
+			</if>
+			<if test="bean.actionType!=null">
+				 #{bean.actionType},
+			</if>
+			<if test="bean.actionCount!=null">
+				 #{bean.actionCount},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.actionTime!=null">
+				 #{bean.actionTime},
+			</if>
+		 </trim>
+		 on DUPLICATE key update 
+		 <trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.videoId!=null">
+				 video_id = VALUES(video_id),
+			</if>
+			<if test="bean.videoUserId!=null">
+				 video_user_id = VALUES(video_user_id),
+			</if>
+			<if test="bean.commentId!=null">
+				 comment_id = VALUES(comment_id),
+			</if>
+			<if test="bean.actionType!=null">
+				 action_type = VALUES(action_type),
+			</if>
+			<if test="bean.actionCount!=null">
+				 action_count = VALUES(action_count),
+			</if>
+			<if test="bean.userId!=null">
+				 user_id = VALUES(user_id),
+			</if>
+			<if test="bean.actionTime!=null">
+				 action_time = VALUES(action_time),
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 添加 （批量插入）-->
+	<insert id="insertBatch" parameterType="com.easylive.entity.po.UserAction" useGeneratedKeys="true" keyProperty="actionId">
+		 INSERT INTO user_action(
+			 video_id,
+			 video_user_id,
+			 comment_id,
+			 action_type,
+			 action_count,
+			 user_id,
+			 action_time
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.videoId},
+				 #{item.videoUserId},
+				 #{item.commentId},
+				 #{item.actionType},
+				 #{item.actionCount},
+				 #{item.userId},
+				 #{item.actionTime}
+			 )
+		 </foreach>
+	</insert>
+
+	<!-- 批量新增修改 （批量插入）-->
+	<insert id="insertOrUpdateBatch" parameterType="com.easylive.entity.po.UserAction">
+		 INSERT INTO user_action(
+			 video_id,
+			 video_user_id,
+			 comment_id,
+			 action_type,
+			 action_count,
+			 user_id,
+			 action_time
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.videoId},
+				 #{item.videoUserId},
+				 #{item.commentId},
+				 #{item.actionType},
+				 #{item.actionCount},
+				 #{item.userId},
+				 #{item.actionTime}
+			 )
+		 </foreach>
+			on DUPLICATE key update 
+			video_id = VALUES(video_id),
+			video_user_id = VALUES(video_user_id),
+			comment_id = VALUES(comment_id),
+			action_type = VALUES(action_type),
+			action_count = VALUES(action_count),
+			user_id = VALUES(user_id),
+			action_time = VALUES(action_time)
+	</insert>
+
+	<!--多条件修改-->
+	<update id="updateByParam" parameterType="com.easylive.entity.query.UserActionQuery">
+		 UPDATE user_action u
+ 		 <set> 
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id = #{bean.videoUserId},
+			</if>
+			<if test="bean.commentId != null">
+				 comment_id = #{bean.commentId},
+			</if>
+			<if test="bean.actionType != null">
+				 action_type = #{bean.actionType},
+			</if>
+			<if test="bean.actionCount != null">
+				 action_count = #{bean.actionCount},
+			</if>
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.actionTime != null">
+				 action_time = #{bean.actionTime},
+			</if>
+ 		 </set>
+ 		 <include refid="query_condition" />
+	</update>
+
+	<!--多条件删除-->
+	<delete id="deleteByParam">
+		 delete u from user_action u
+ 		 <include refid="query_condition" />
+	</delete>
+
+	<!-- 根据ActionId修改-->
+	<update id="updateByActionId" parameterType="com.easylive.entity.po.UserAction">
+		 UPDATE user_action
+ 		 <set> 
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.videoUserId != null">
+				 video_user_id = #{bean.videoUserId},
+			</if>
+			<if test="bean.commentId != null">
+				 comment_id = #{bean.commentId},
+			</if>
+			<if test="bean.actionType != null">
+				 action_type = #{bean.actionType},
+			</if>
+			<if test="bean.actionCount != null">
+				 action_count = #{bean.actionCount},
+			</if>
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.actionTime != null">
+				 action_time = #{bean.actionTime},
+			</if>
+ 		 </set>
+ 		 where action_id=#{actionId}
+	</update>
+
+	<!-- 根据ActionId删除-->
+	<delete id="deleteByActionId">
+		delete from user_action where action_id=#{actionId}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByActionId" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from user_action u where action_id=#{actionId}
+	</select>
+
+	<!-- 根据VideoIdAndCommentIdAndActionTypeAndUserId修改-->
+	<update id="updateByVideoIdAndCommentIdAndActionTypeAndUserId" parameterType="com.easylive.entity.po.UserAction">
+		 UPDATE user_action
+ 		 <set> 
+			<if test="bean.videoUserId != null">
+				 video_user_id = #{bean.videoUserId},
+			</if>
+			<if test="bean.actionCount != null">
+				 action_count = #{bean.actionCount},
+			</if>
+			<if test="bean.actionTime != null">
+				 action_time = #{bean.actionTime},
+			</if>
+ 		 </set>
+ 		 where video_id=#{videoId} and comment_id=#{commentId} and action_type=#{actionType} and user_id=#{userId}
+	</update>
+
+	<!-- 根据VideoIdAndCommentIdAndActionTypeAndUserId删除-->
+	<delete id="deleteByVideoIdAndCommentIdAndActionTypeAndUserId">
+		delete from user_action where video_id=#{videoId} and comment_id=#{commentId} and action_type=#{actionType} and user_id=#{userId}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByVideoIdAndCommentIdAndActionTypeAndUserId" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from user_action u where video_id=#{videoId} and comment_id=#{commentId} and action_type=#{actionType} and user_id=#{userId}
+	</select>
+
+</mapper>
