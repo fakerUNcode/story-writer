@@ -1,10 +1,10 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.VideoCommentQuery;
 import com.easylive.entity.po.VideoComment;
+import com.easylive.entity.query.VideoCommentQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -69,4 +69,5 @@ public interface VideoCommentService {
 	 */
 	Integer deleteVideoCommentByCommentId(Integer commentId);
 
+    void postComment(VideoComment comment, Integer replyCommentId);
 }
