@@ -43,6 +43,9 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 	 */
 	@Override
 	public List<VideoComment> findListByParam(VideoCommentQuery param) {
+		if(param.getLoadChildren()!=null && param.getLoadChildren()){
+			return this.videoCommentMapper.selectListWithChildren(param);
+		}
 		return this.videoCommentMapper.selectList(param);
 	}
 
