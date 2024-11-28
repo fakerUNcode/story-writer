@@ -1,8 +1,5 @@
 package com.easylive.entity.query;
 
-import java.util.Date;
-
-
 /**
  * 评论参数
  */
@@ -84,7 +81,16 @@ public class VideoCommentQuery extends BaseParam {
 	 * 讨厌数量
 	 */
 	private Integer hateCount;
+	//是否加载子评论
+	private Boolean loadChildren;
 
+	public Boolean getLoadChildren() {
+		return loadChildren;
+	}
+
+	public void setLoadChildren(Boolean loadChildren) {
+		this.loadChildren = loadChildren;
+	}
 
 	public void setCommentId(Integer commentId){
 		this.commentId = commentId;

@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -81,6 +82,15 @@ public class VideoComment implements Serializable {
 	private String nickName;
 	private String replyAvatar;
 	private String replyNickName;
+	private List<VideoComment> children;
+
+	public List<VideoComment> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<VideoComment> children) {
+		this.children = children;
+	}
 
 	public String getReplyNickName() {
 		return replyNickName;

@@ -70,6 +70,7 @@ public class VideoCommentController extends ABaseController{
         }
         VideoCommentQuery commentQuery = new VideoCommentQuery();
         commentQuery.setVideoId(videoId);
+        commentQuery.setLoadChildren(true);
         commentQuery.setPageNo(pageNo);
         commentQuery.setPageSize(PageSize.SIZE15.getSize());
         commentQuery.setpCommentId(0);
