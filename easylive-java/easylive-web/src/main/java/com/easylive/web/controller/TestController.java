@@ -21,10 +21,7 @@ public class TestController extends ABaseController{
         return getSuccessResponseVO(null);
     }
 
-    @RequestMapping("/comment/loadComment")
-    public ResponseVO loadComment(){
-        return getSuccessResponseVO(null);
-    }
+
 
     @RequestMapping("/video/getVideoRecommend")
     public ResponseVO getVideoRecommend(){

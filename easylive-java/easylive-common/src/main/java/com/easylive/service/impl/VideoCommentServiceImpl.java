@@ -1,19 +1,28 @@
 package com.easylive.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
+import com.easylive.entity.constants.Constants;
 import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.query.VideoCommentQuery;
+import com.easylive.entity.enums.ResponseCodeEnum;
+import com.easylive.entity.enums.UserActionTypeEnum;
+import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.po.VideoComment;
-import com.easylive.entity.vo.PaginationResultVO;
+import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.UserInfoQuery;
+import com.easylive.entity.query.VideoCommentQuery;
+import com.easylive.entity.query.VideoInfoQuery;
+import com.easylive.entity.vo.PaginationResultVO;
+import com.easylive.exception.BusinessException;
+import com.easylive.mappers.UserInfoMapper;
 import com.easylive.mappers.VideoCommentMapper;
+import com.easylive.mappers.VideoInfoMapper;
 import com.easylive.service.VideoCommentService;
 import com.easylive.utils.StringTools;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -24,6 +33,10 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 
 	@Resource
 	private VideoCommentMapper<VideoComment, VideoCommentQuery> videoCommentMapper;
+	@Resource
+	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
+	@Resource
+	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -126,5 +139,42 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 	@Override
 	public Integer deleteVideoCommentByCommentId(Integer commentId) {
 		return this.videoCommentMapper.deleteByCommentId(commentId);
+	}
+
+	@Override
+	public void postComment(VideoComment comment, Integer replyCommentId) {
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(comment.getVideoId());
+		if(videoInfo==null){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		if(videoInfo.getInteraction()!=null && videoInfo.getInteraction().contains(Constants.ZERO.toString())){
+			throw new BusinessException("up主已经关闭评论区！");
+		}
+		if(replyCommentId!=null){
+			VideoComment replyComment = getVideoCommentByCommentId(replyCommentId);
+			if(replyComment==null || !replyComment.getVideoId().equals(comment.getVideoId())){
+				throw new BusinessException(ResponseCodeEnum.CODE_600);
+			}
+			//如果要评论的是视频的一级评论，则将新加的评论的父评论设为一级评论，如果评论二级评论，则父评论都是一级评论
+			if(replyComment.getpCommentId()==0){
+				comment.setpCommentId(replyComment.getCommentId());
+			}else{
+				comment.setpCommentId(replyComment.getpCommentId());
+				comment.setReplyUserId(replyComment.getUserId());
+			}
+			UserInfo userInfo = userInfoMapper.selectByUserId(replyComment.getUserId());
+			comment.setReplyNickName(userInfo.getNickName());
+			comment.setReplyAvatar(userInfo.getAvatar());
+		} else {
+			//直接评论视频，该评论为一级评论
+			comment.setpCommentId(0);
+		}
+		comment.setPostTime(new Date());
+		comment.setVideoUserId(videoInfo.getUserId());
+		this.videoCommentMapper.insert(comment);
+		//是一级评论则让视频的评论数信息更新
+		if(comment.getpCommentId()==0){
+			this.videoInfoMapper.updateCountInfo(comment.getVideoId(), UserActionTypeEnum.VIDEO_COMMENT.getField(), 1);
+		}
 	}
 }

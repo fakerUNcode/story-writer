@@ -1,13 +1,12 @@
 package com.easylive.entity.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
 import com.easylive.entity.enums.DateTimePatternEnum;
 import com.easylive.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -78,6 +77,42 @@ public class VideoComment implements Serializable {
 	 */
 	private Integer hateCount;
 
+	private String avatar;
+	private String nickName;
+	private String replyAvatar;
+	private String replyNickName;
+
+	public String getReplyNickName() {
+		return replyNickName;
+	}
+
+	public void setReplyNickName(String replyNickName) {
+		this.replyNickName = replyNickName;
+	}
+
+	public String getReplyAvatar() {
+		return replyAvatar;
+	}
+
+	public void setReplyAvatar(String replyAvatar) {
+		this.replyAvatar = replyAvatar;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
 
 	public void setCommentId(Integer commentId){
 		this.commentId = commentId;
