@@ -159,4 +159,30 @@ public class RedisComponent {
     public void cleanDelFileList(String videoId) {
         redisUtils.delete(Constants.REDIS_KEY_FILE_DEL+videoId);
     }
+
+    //获取视频在线观看人数
+    public Integer reportVideoPlayOnline(String fileId,String deviceId){
+        String userPlayOnlineKey = String.format(Constants.REDIS_KEY_VIDEO_PLAY_COUNT_USER,fileId,deviceId);
+
+        String playOnlineCountKey = String.format(Constants.REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE,fileId);
+        //检查用户是否已经在线
+        if(!redisUtils.keyExists(userPlayOnlineKey)){
+            //处理新用户在线的情况:
+            //8秒内若用户不在线则清除该用户贡献的在线人数
+            redisUtils.setex(userPlayOnlineKey,fileId,Constants.REDIS_KEY_EXPIRES_ONE_SECOND*8);
+            //将视频播放人数键 playOnlineCountKey 的值加 1（递增）同时设置playOnlineCountKey过期时间为10s，返回递增后的播放人数
+            return redisUtils.incrementex(playOnlineCountKey,Constants.REDIS_KEY_EXPIRES_ONE_SECOND*10).intValue();
+        }
+        //处理用户仍然在线的情况
+        redisUtils.expire(playOnlineCountKey,Constants.REDIS_KEY_EXPIRES_ONE_SECOND*10);
+        redisUtils.expire(userPlayOnlineKey,Constants.REDIS_KEY_EXPIRES_ONE_SECOND*8);
+
+        Integer count = (Integer) redisUtils.get(playOnlineCountKey);
+        return count==null?1:count;
+    }
+
+    //减少在线观看人数
+    public void decrementPlayOnlineCount(String key){
+        redisUtils.decrement(key);
+    }
 }

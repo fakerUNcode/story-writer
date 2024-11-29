@@ -16,6 +16,8 @@ public class Constants {
 
     //用于效验密码是否符合规范的正则表达式（必须包含数字字母和特殊符号，8-18位）
     public static final String REGEX_PASSWORD =  "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,18}$";
+
+    public static final Integer REDIS_KEY_EXPIRES_ONE_SECOND = 1000;
     //将REDIS失效时间常数设为一分钟（60000毫秒）
     public static final Integer REDIS_KEY_EXPIRES_ONE_MIN = 60000;
     //REDIS存储token的失效期为1天
@@ -66,4 +68,10 @@ public class Constants {
     //ts文件后缀
     public static final String TS_NAME = "index.ts";
     public static final String M3U8_NAME = "index.m3u8";
+
+    //视频在线观看
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE_PREFIX = REDIS_KEY_PREFIX + "video:play:online:";
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE = REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE_PREFIX + "count:%s";
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_USER_PREFIX = "user:";
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT_USER = REDIS_KEY_VIDEO_PLAY_COUNT_ONLINE_PREFIX + REDIS_KEY_VIDEO_PLAY_COUNT_USER_PREFIX + "%s:%s";
 }
