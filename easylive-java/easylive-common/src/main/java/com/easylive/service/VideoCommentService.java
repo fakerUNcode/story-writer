@@ -70,4 +70,10 @@ public interface VideoCommentService {
 	Integer deleteVideoCommentByCommentId(Integer commentId);
 
     void postComment(VideoComment comment, Integer replyCommentId);
+
+    void topComment(Integer commentId, String userId);
+
+	void cancelTopComment(Integer commentId, String userId);
+
+	void deleteComment(Integer commentId, String userId);
 }

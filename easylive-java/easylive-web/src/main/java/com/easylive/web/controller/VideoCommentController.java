@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 public class VideoCommentController extends ABaseController{
+
     @Resource
     private VideoCommentService videoCommentService;
     @Resource
@@ -109,14 +111,12 @@ public class VideoCommentController extends ABaseController{
             actionQuery.setActionTypeArray(new Integer[] {UserActionTypeEnum.COMMENT_LIKE.getType(),UserActionTypeEnum.COMMENT_HATE.getType()});
             userActionList = userActionService.findListByParam(actionQuery);
         }
-
         resultVO.setUserActionList(userActionList);
-
         return getSuccessResponseVO(resultVO);
     }
 
-    //评论置顶
-    private List<VideoComment> topComment(String videoId){
+    //置顶评论列表获取方法
+    private List<VideoComment> topComment(String videoId) {
         VideoCommentQuery commentQuery = new VideoCommentQuery();
         commentQuery.setVideoId(videoId);
         commentQuery.setTopType(CommentTopTypeEnum.TOP.getType());
@@ -125,4 +125,30 @@ public class VideoCommentController extends ABaseController{
         return videoCommentList;
     }
 
+    //评论置顶请求
+    @RequestMapping("/topComment")
+    public ResponseVO topComment(@NotNull Integer commentId){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        videoCommentService.topComment(commentId,tokenUserInfoDto.getUserId());
+
+        return getSuccessResponseVO(null);
+    }
+
+    //取消置顶请求
+    @RequestMapping("/cancelTopComment")
+    public ResponseVO cancelTopComment(@NotNull Integer commentId) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        videoCommentService.cancelTopComment(commentId,tokenUserInfoDto.getUserId());
+
+        return getSuccessResponseVO(null);
+    }
+
+    //删除评论
+    @RequestMapping("/userDelComment")
+    public ResponseVO userDelComment(@NotNull Integer commentId) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        videoCommentService.deleteComment(commentId,tokenUserInfoDto.getUserId());
+
+        return getSuccessResponseVO(null);
+    }
 }
