@@ -5,14 +5,18 @@ import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.po.UserAction;
+import com.easylive.entity.po.UserInfo;
+import com.easylive.entity.po.VideoComment;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.query.SimplePage;
 import com.easylive.entity.query.UserActionQuery;
+import com.easylive.entity.query.VideoCommentQuery;
 import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.mappers.UserActionMapper;
 import com.easylive.mappers.UserInfoMapper;
+import com.easylive.mappers.VideoCommentMapper;
 import com.easylive.mappers.VideoInfoMapper;
 import com.easylive.service.UserActionService;
 import com.easylive.utils.StringTools;
@@ -35,7 +39,9 @@ public class UserActionServiceImpl implements UserActionService {
 	@Resource
 	private UserActionMapper<UserAction, UserActionQuery> userActionMapper;
 	@Resource
-	private UserInfoMapper userInfoMapper;
+	private UserInfoMapper<UserInfo,UserInfoMapper> userInfoMapper;
+	@Resource
+	private VideoCommentMapper<VideoComment, VideoCommentQuery> videoCommentMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -223,6 +229,27 @@ public class UserActionServiceImpl implements UserActionService {
 				videoInfoMapper.updateCountInfo(bean.getVideoId(), actionTypeEnum.getField(), bean.getActionCount());
 				break;
 
+			//评论区的点赞和讨厌
+			case COMMENT_LIKE:
+			case COMMENT_HATE:
+				UserActionTypeEnum opposeTypeEnum = UserActionTypeEnum.COMMENT_LIKE == actionTypeEnum?UserActionTypeEnum.COMMENT_HATE:UserActionTypeEnum.COMMENT_LIKE;
+				UserAction opposeAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(bean.getVideoId(), bean.getCommentId(), opposeTypeEnum.getType(), bean.getUserId());
+				//如果用户当前动作存在存在原有对立动作则直接删除原有的对立动作即可：如果原本点赞了，此时点击讨厌，则删除原有的点赞即可
+				if(opposeAction!=null){
+					userActionMapper.deleteByActionId(opposeAction.getActionId());
+				}
+				//如果用户当前动作和原有的动作相同 删除原有动作：如果原本点赞了，此时再次点击点赞，则取消点赞
+				if(dbAction!=null){
+					userActionMapper.deleteByActionId(dbAction.getActionId());
+				}else {
+					userActionMapper.insert(bean);
+				}
+				changeCount = dbAction == null ? Constants.ONE : -Constants.ONE;
+				Integer opposeChangeCount = -changeCount;
+
+				videoCommentMapper.updateCountInfo(bean.getCommentId(), actionTypeEnum.getField(), changeCount,
+						opposeAction==null?null: opposeTypeEnum.getField(),opposeChangeCount);
+				break;
 		}
 	}
 }

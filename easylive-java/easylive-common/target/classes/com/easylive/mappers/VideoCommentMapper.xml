@@ -115,12 +115,13 @@
 	 </where>
 	</sql>
 
+	<!--定义如何在查询时加载每条评论的子评论-->
 	<resultMap id="base_result_map_children" type="com.easylive.entity.po.VideoComment" extends="base_result_map">
 		<collection property="children" column="comment_id" select="com.easylive.mappers.VideoCommentMapper.selectChildComment">
-
 		</collection>
 	</resultMap>
 
+	<!--加载每条一级评论的子评论-->
 	<select id="selectChildComment" resultMap="base_result_map">
 		select v.*,u.nick_name nickName,u.avatar avatar,u2.nick_name replyNickName,u2.avatar replayAvatar
 		from video_comment v
@@ -129,7 +130,7 @@
 		where p_comment_id = #{commentId} order by v.comment_id asc
 	</select>
 
-	<!--查询包含子集合-->
+	<!--查询含有子评论的一级评论-->
 	<select id="selectListWithChildren" resultMap="base_result_map_children">
 		select <include refid="base_column_list"/>,u.nick_name nickName, u.avatar avatar
 		from video_comment v left join user_info u on v.user_id = u.user_id
@@ -529,5 +530,15 @@
 	<select id="selectByCommentId" resultMap="base_result_map" >
 		select <include refid="base_column_list" /> from video_comment v where comment_id=#{commentId}
 	</select>
+
+	<!--更新评论的点赞和讨厌数量-->
+	<update id="updateCountInfo">
+		UPDATE video_comment
+		SET ${field} = GREATEST(${field} + #{changeCount}, 0)
+		<if test="opposeField != null">
+			, ${opposeField} = GREATEST(${opposeField} + #{opposeChangeCount}, 0)
+		</if>
+		WHERE comment_id = #{commentId}
+	</update>
 
 </mapper>

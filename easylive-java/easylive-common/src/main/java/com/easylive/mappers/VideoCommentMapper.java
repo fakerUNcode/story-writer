@@ -28,4 +28,7 @@ public interface VideoCommentMapper<T,P> extends BaseMapper<T,P> {
 
 
     List<T> selectListWithChildren(@Param("query")P p);
+
+	void updateCountInfo(@Param("commentId")Integer commentId,@Param("field") String field,@Param("changeCount")Integer changeCount,
+						 @Param("opposeField")String opposeField,@Param("opposeChangeCount")Integer opposeChangeCount);
 }
