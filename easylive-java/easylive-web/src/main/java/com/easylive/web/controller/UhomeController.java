@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @RestController
 @RequestMapping("/uhome")
@@ -65,6 +63,15 @@ public class UhomeController extends ABaseController{
         userInfo.setNoticeInfo(noticeInfo);
 
         userInfoService.updateUserInfo(userInfo,tokenUserInfoDto);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("saveTheme")
+    public ResponseVO saveTheme(@Min(1) @Max(10) @NotNull Integer theme){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        UserInfo userInfo  = new UserInfo();
+        userInfo.setTheme(theme);
+        userInfoService.updateUserInfoByUserId(userInfo,tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }
 }
