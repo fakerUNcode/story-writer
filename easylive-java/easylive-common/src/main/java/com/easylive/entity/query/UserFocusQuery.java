@@ -1,8 +1,5 @@
 package com.easylive.entity.query;
 
-import java.util.Date;
-
-
 /**
  * 参数
  */
@@ -32,6 +29,16 @@ public class UserFocusQuery extends BaseParam {
 
 	private String focusTimeEnd;
 
+	/*查询的列表类型*/
+	private Integer queryType;
+
+	public Integer getQueryType() {
+		return queryType;
+	}
+
+	public void setQueryType(Integer queryType) {
+		this.queryType = queryType;
+	}
 
 	public void setUserId(String userId){
 		this.userId = userId;

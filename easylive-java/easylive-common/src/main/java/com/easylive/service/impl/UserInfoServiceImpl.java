@@ -7,11 +7,14 @@ import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.UserSexEnum;
 import com.easylive.entity.enums.UserStatusEnum;
+import com.easylive.entity.po.UserFocus;
 import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.UserFocusQuery;
 import com.easylive.entity.query.UserInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
+import com.easylive.mappers.UserFocusMapper;
 import com.easylive.mappers.UserInfoMapper;
 import com.easylive.service.UserInfoService;
 import com.easylive.utils.CopyTools;
@@ -36,6 +39,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
 	@Resource
 	private RedisComponent redisComponent;
+	@Resource
+	private UserFocusMapper<UserFocus, UserFocusQuery> userFocusMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -246,7 +251,17 @@ public class UserInfoServiceImpl implements UserInfoService {
 		if(null==userInfo){
 			throw new BusinessException(ResponseCodeEnum.CODE_404);
 		}
-		//TODO 粉丝相关信息
+		//TODO 获赞数，播放数
+		Integer fansCount = userFocusMapper.selectFansCount(userId);
+		Integer focusCount = userFocusMapper.selectFocusCount(userId);
+		userInfo.setFansCount(fansCount);
+		userInfo.setFocusCount(focusCount);
+		if(currentUserId==null){
+			userInfo.setHaveFocus(false);
+		}else {
+			UserFocus userFocus = userFocusMapper.selectByUserIdAndFocusUserId(currentUserId,userId);
+			userInfo.setHaveFocus(userFocus==null?false:true);
+		}
 		return userInfo;
 	}
 

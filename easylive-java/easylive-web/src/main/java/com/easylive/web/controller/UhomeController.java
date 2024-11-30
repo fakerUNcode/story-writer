@@ -1,7 +1,10 @@
 package com.easylive.web.controller;
 
+import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.po.UserInfo;
+import com.easylive.entity.query.UserFocusQuery;
+import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.entity.vo.UserInfoVO;
 import com.easylive.service.UserActionService;
@@ -66,6 +69,7 @@ public class UhomeController extends ABaseController{
         return getSuccessResponseVO(null);
     }
 
+    //保存主题
     @RequestMapping("saveTheme")
     public ResponseVO saveTheme(@Min(1) @Max(10) @NotNull Integer theme){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
@@ -74,4 +78,46 @@ public class UhomeController extends ABaseController{
         userInfoService.updateUserInfoByUserId(userInfo,tokenUserInfoDto.getUserId());
         return getSuccessResponseVO(null);
     }
+
+    //关注用户
+    @RequestMapping("/focus")
+    public ResponseVO focus(@NotEmpty String focusUserId){
+
+        userFocusService.focusUser(getTokenUserInfoDto().getUserId(),focusUserId);
+        return getSuccessResponseVO(null);
+    }
+    //取消关注用户
+    @RequestMapping("/cancelFocus")
+    public ResponseVO cancelFocus(@NotEmpty String focusUserId){
+
+        userFocusService.cancelFocus(getTokenUserInfoDto().getUserId(),focusUserId);
+        return getSuccessResponseVO(null);
+    }
+
+    //加载关注列表
+    @RequestMapping("/loadFocusList")
+    public ResponseVO loadFocusList(Integer pageNo){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        UserFocusQuery focusQuery = new UserFocusQuery();
+        focusQuery.setUserId(tokenUserInfoDto.getUserId());
+        focusQuery.setPageNo(pageNo);
+        focusQuery.setOrderBy("focus_time desc");
+        focusQuery.setQueryType(Constants.ZERO);
+        PaginationResultVO resultVO = userFocusService.findListByPage(focusQuery);
+        return getSuccessResponseVO(resultVO);
+    }
+
+    //加载粉丝列表
+    @RequestMapping("/loadFansList")
+    public ResponseVO loadFansCount(Integer pageNo){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        UserFocusQuery focusQuery = new UserFocusQuery();
+        focusQuery.setFocusUserId(tokenUserInfoDto.getUserId());
+        focusQuery.setPageNo(pageNo);
+        focusQuery.setOrderBy("focus_time desc");
+        focusQuery.setQueryType(Constants.ONE);
+        PaginationResultVO resultVO = userFocusService.findListByPage(focusQuery);
+        return getSuccessResponseVO(resultVO);
+    }
+
 }

@@ -1,10 +1,10 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.UserFocusQuery;
 import com.easylive.entity.po.UserFocus;
+import com.easylive.entity.query.UserFocusQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -69,4 +69,7 @@ public interface UserFocusService {
 	 */
 	Integer deleteUserFocusByUserIdAndFocusUserId(String userId,String focusUserId);
 
+    void focusUser(String userId,String focusUserId);
+
+	void cancelFocus(String userId,String focusUserId);
 }

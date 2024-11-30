@@ -58,7 +58,21 @@
 
 	<!-- 查询集合-->
 	<select id="selectList" resultMap="base_result_map" >
-		 SELECT <include refid="base_column_list" /> FROM user_focus u <include refid="query_condition" />
+		 SELECT
+		 <include refid="base_column_list" />
+		 <if test="query.queryType!=null">
+			 ,i.nick_name otherNickName,i.user_id otherUserId,i.person_introduction otherPersonIntroduction,i.avatar otherAvatar
+		     ,(select count(1) from user_focus f where u.user_id = f.focus_user_id and u.focus_user_id = f.user_id) focusType
+		 </if>
+		 FROM user_focus u
+		 <if test="query.queryType==0">
+			 inner join user_info i on i.user_id = u.focus_user_id
+		 </if>
+		 <if test="query.queryType==1">
+			inner join user_info i on i.user_id = u.user_id
+		 </if>
+
+		 <include refid="query_condition" />
 		 <if test="query.orderBy!=null">
 			 order by ${query.orderBy}
 		 </if>
@@ -218,4 +232,12 @@
 		select <include refid="base_column_list" /> from user_focus u where user_id=#{userId} and focus_user_id=#{focusUserId}
 	</select>
 
+	<!--获取用户的粉丝数-->
+	<select id="selectFansCount" resultType="java.lang.Integer">
+		select count(1) from user_focus where focus_user_id = #{userId}
+	</select>
+	<!--获取用户的关注数-->
+	<select id="selectFocusCount" resultType="java.lang.Integer">
+		select count(1) from user_focus where user_id = #{userId}
+	</select>
 </mapper>
