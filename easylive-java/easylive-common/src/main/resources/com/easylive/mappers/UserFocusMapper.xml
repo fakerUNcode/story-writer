@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easylive.mappers.UserFocusMapper">
+
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="com.easylive.entity.po.UserFocus">
+		<!--用户ID-->
+		<result column="user_id" property="userId"  />
+		<!--用户ID-->
+		<result column="focus_user_id" property="focusUserId"  />
+		<!---->
+		<result column="focus_time" property="focusTime"  />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="base_column_list">
+		 u.user_id,u.focus_user_id,u.focus_time
+	</sql>
+
+	<sql id="base_condition_filed">
+			<if test="query.userId != null and query.userId!=''">
+				 and  u.user_id = #{query.userId}
+			</if>
+			<if test="query.focusUserId != null and query.focusUserId!=''">
+				 and  u.focus_user_id = #{query.focusUserId}
+			</if>
+			<if test="query.focusTime != null and query.focusTime!=''">
+				 <![CDATA[ and  u.focus_time=str_to_date(#{query.focusTime}, '%Y-%m-%d') ]]>
+			</if>
+	</sql>
+	<!-- 通用条件列-->
+	<sql id="base_condition">
+	 <where>
+		 <include refid="base_condition_filed" />
+	 </where>
+	</sql>
+
+	<!-- 通用查询条件列-->
+	<sql id="query_condition">
+	 <where>
+			<include refid="base_condition_filed" />
+			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
+				 and  u.user_id like concat('%', #{query.userIdFuzzy}, '%')
+			</if>
+			<if test="query.focusUserIdFuzzy!= null  and query.focusUserIdFuzzy!=''">
+				 and  u.focus_user_id like concat('%', #{query.focusUserIdFuzzy}, '%')
+			</if>
+			<if test="query.focusTimeStart!= null and query.focusTimeStart!=''">
+				 <![CDATA[ and  u.focus_time>=str_to_date(#{query.focusTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.focusTimeEnd!= null and query.focusTimeEnd!=''">
+				 <![CDATA[ and  u.focus_time< date_sub(str_to_date(#{query.focusTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+	 </where>
+	</sql>
+
+	<!-- 查询集合-->
+	<select id="selectList" resultMap="base_result_map" >
+		 SELECT <include refid="base_column_list" /> FROM user_focus u <include refid="query_condition" />
+		 <if test="query.orderBy!=null">
+			 order by ${query.orderBy}
+		 </if>
+		 <if test="query.simplePage!=null">
+			 limit #{query.simplePage.start},#{query.simplePage.end}
+		 </if>
+	</select>
+
+	<!-- 查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer" >
+		 SELECT count(1) FROM user_focus u <include refid="query_condition" />
+	</select>
+
+	<!-- 插入 （匹配有值的字段）-->
+	<insert id="insert" parameterType="com.easylive.entity.po.UserFocus">
+		 INSERT INTO user_focus
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.focusUserId != null">
+				 focus_user_id,
+			</if>
+			<if test="bean.focusTime != null">
+				 focus_time,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.focusUserId!=null">
+				 #{bean.focusUserId},
+			</if>
+			<if test="bean.focusTime!=null">
+				 #{bean.focusTime},
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 插入或者更新 （匹配有值的字段）-->
+	<insert id="insertOrUpdate" parameterType="com.easylive.entity.po.UserFocus">
+		 INSERT INTO user_focus
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.focusUserId != null">
+				 focus_user_id,
+			</if>
+			<if test="bean.focusTime != null">
+				 focus_time,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.focusUserId!=null">
+				 #{bean.focusUserId},
+			</if>
+			<if test="bean.focusTime!=null">
+				 #{bean.focusTime},
+			</if>
+		 </trim>
+		 on DUPLICATE key update 
+		 <trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.userId!=null">
+				 user_id = VALUES(user_id),
+			</if>
+			<if test="bean.focusUserId!=null">
+				 focus_user_id = VALUES(focus_user_id),
+			</if>
+			<if test="bean.focusTime!=null">
+				 focus_time = VALUES(focus_time),
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 添加 （批量插入）-->
+	<insert id="insertBatch" parameterType="com.easylive.entity.po.UserFocus">
+		 INSERT INTO user_focus(
+			 user_id,
+			 focus_user_id,
+			 focus_time
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.userId},
+				 #{item.focusUserId},
+				 #{item.focusTime}
+			 )
+		 </foreach>
+	</insert>
+
+	<!-- 批量新增修改 （批量插入）-->
+	<insert id="insertOrUpdateBatch" parameterType="com.easylive.entity.po.UserFocus">
+		 INSERT INTO user_focus(
+			 user_id,
+			 focus_user_id,
+			 focus_time
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.userId},
+				 #{item.focusUserId},
+				 #{item.focusTime}
+			 )
+		 </foreach>
+			on DUPLICATE key update 
+			user_id = VALUES(user_id),
+			focus_user_id = VALUES(focus_user_id),
+			focus_time = VALUES(focus_time)
+	</insert>
+
+	<!--多条件修改-->
+	<update id="updateByParam" parameterType="com.easylive.entity.query.UserFocusQuery">
+		 UPDATE user_focus u
+ 		 <set> 
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.focusUserId != null">
+				 focus_user_id = #{bean.focusUserId},
+			</if>
+			<if test="bean.focusTime != null">
+				 focus_time = #{bean.focusTime},
+			</if>
+ 		 </set>
+ 		 <include refid="query_condition" />
+	</update>
+
+	<!--多条件删除-->
+	<delete id="deleteByParam">
+		 delete u from user_focus u
+ 		 <include refid="query_condition" />
+	</delete>
+
+	<!-- 根据UserIdAndFocusUserId修改-->
+	<update id="updateByUserIdAndFocusUserId" parameterType="com.easylive.entity.po.UserFocus">
+		 UPDATE user_focus
+ 		 <set> 
+			<if test="bean.focusTime != null">
+				 focus_time = #{bean.focusTime},
+			</if>
+ 		 </set>
+ 		 where user_id=#{userId} and focus_user_id=#{focusUserId}
+	</update>
+
+	<!-- 根据UserIdAndFocusUserId删除-->
+	<delete id="deleteByUserIdAndFocusUserId">
+		delete from user_focus where user_id=#{userId} and focus_user_id=#{focusUserId}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByUserIdAndFocusUserId" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from user_focus u where user_id=#{userId} and focus_user_id=#{focusUserId}
+	</select>
+
+</mapper>
