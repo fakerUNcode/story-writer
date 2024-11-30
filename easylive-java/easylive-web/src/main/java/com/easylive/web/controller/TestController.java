@@ -16,12 +16,6 @@ public class TestController extends ABaseController{
         return getSuccessResponseVO(null);
     }
 
-    @RequestMapping("/uhome/getUserInfo")
-    public ResponseVO getUserInfo(){
-        return getSuccessResponseVO(null);
-    }
-
-
 
     @RequestMapping("/video/getVideoRecommend")
     public ResponseVO getVideoRecommend(){
