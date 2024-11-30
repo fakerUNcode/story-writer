@@ -1,19 +1,23 @@
 package com.easylive.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.query.UserFocusQuery;
+import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.po.UserFocus;
-import com.easylive.entity.vo.PaginationResultVO;
+import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.UserFocusQuery;
+import com.easylive.entity.query.UserInfoQuery;
+import com.easylive.entity.vo.PaginationResultVO;
+import com.easylive.exception.BusinessException;
 import com.easylive.mappers.UserFocusMapper;
+import com.easylive.mappers.UserInfoMapper;
 import com.easylive.service.UserFocusService;
 import com.easylive.utils.StringTools;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -24,6 +28,8 @@ public class UserFocusServiceImpl implements UserFocusService {
 
 	@Resource
 	private UserFocusMapper<UserFocus, UserFocusQuery> userFocusMapper;
+	@Resource
+	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -126,5 +132,34 @@ public class UserFocusServiceImpl implements UserFocusService {
 	@Override
 	public Integer deleteUserFocusByUserIdAndFocusUserId(String userId, String focusUserId) {
 		return this.userFocusMapper.deleteByUserIdAndFocusUserId(userId, focusUserId);
+	}
+
+	//关注
+	@Override
+	public void focusUser(String userId, String focusUserId) {
+		if(userId.equals(focusUserId)){
+			throw new BusinessException("不能关注自己哦！");
+		}
+		UserFocus dbInfo = this.userFocusMapper.selectByUserIdAndFocusUserId(userId,focusUserId);
+		if(dbInfo!=null){
+			return;
+		}
+		//只能关注真实存在的用户
+		UserInfo userInfo = userInfoMapper.selectByUserId(focusUserId);
+		if(userInfo==null){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		UserFocus focus = new UserFocus();
+		focus.setUserId(userId);
+		focus.setFocusUserId(focusUserId);
+		focus.setFocusTime(new Date());
+		this.userFocusMapper.insert(focus);
+
+	}
+
+	//取消关注
+	@Override
+	public void cancelFocus(String userId, String focusUserId) {
+		this.userFocusMapper.deleteByUserIdAndFocusUserId(userId,focusUserId);
 	}
 }
