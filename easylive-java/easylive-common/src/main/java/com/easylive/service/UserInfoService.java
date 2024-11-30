@@ -108,4 +108,8 @@ public interface UserInfoService {
 
 	void register(String email, String nickName, String registerPassword);
     TokenUserInfoDto login(String email, String password, String ip);
+
+	UserInfo getUserDetailInfo(String currentUserId,String userId);
+
+	void updateUserInfo(UserInfo userInfo, TokenUserInfoDto tokenUserInfoDto);
 }

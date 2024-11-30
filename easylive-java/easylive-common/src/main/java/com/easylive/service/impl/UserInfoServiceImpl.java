@@ -4,6 +4,7 @@ import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.PageSize;
+import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.UserSexEnum;
 import com.easylive.entity.enums.UserStatusEnum;
 import com.easylive.entity.po.UserInfo;
@@ -16,6 +17,7 @@ import com.easylive.service.UserInfoService;
 import com.easylive.utils.CopyTools;
 import com.easylive.utils.StringTools;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -236,6 +238,47 @@ public class UserInfoServiceImpl implements UserInfoService {
 		redisComponent.saveTokenInfo(tokenUserInfoDto);
 
 		return tokenUserInfoDto;
+	}
+
+	@Override
+	public UserInfo getUserDetailInfo(String currentUserId, String userId) {
+		UserInfo userInfo = getUserInfoByUserId(userId);
+		if(null==userInfo){
+			throw new BusinessException(ResponseCodeEnum.CODE_404);
+		}
+		//TODO 粉丝相关信息
+		return userInfo;
+	}
+
+	@Override
+	@Transactional
+	public void updateUserInfo(UserInfo userInfo, TokenUserInfoDto tokenUserInfoDto) {
+		UserInfo dbInfo = this.userInfoMapper.selectByUserId(userInfo.getUserId());
+		//每次修改昵称消耗五个硬币
+		if(!dbInfo.getNickName().equals(userInfo.getNickName()) && dbInfo.getCurrentCoinCount() < Constants.UPDATE_NICK_NAME_COIN){
+			throw new BusinessException("硬币不足，无法修改昵称！");
+		}
+		if(!dbInfo.getNickName().equals(userInfo.getNickName())){
+			Integer count = this.userInfoMapper.updateCoinCountInfo(userInfo.getUserId(),-Constants.UPDATE_NICK_NAME_COIN);
+			if(count==0){
+				throw new BusinessException("硬币不足，无法修改昵称！");
+			}
+		}
+		this.userInfoMapper.updateByUserId(userInfo,userInfo.getUserId());
+
+		//用户信息有更新也同时更新token刷新
+		Boolean updateTokenInfo = false;
+		if(!userInfo.getAvatar().equals(tokenUserInfoDto.getAvatar())){
+			tokenUserInfoDto.setAvatar(userInfo.getAvatar());
+			updateTokenInfo=true;
+		}
+		if(!tokenUserInfoDto.getNickName().equals(userInfo.getNickName())){
+			tokenUserInfoDto.setNickName(userInfo.getNickName());
+			updateTokenInfo=true;
+		}
+		if(updateTokenInfo){
+			redisComponent.updateTokenInfo(tokenUserInfoDto);
+		}
 	}
 
 }
