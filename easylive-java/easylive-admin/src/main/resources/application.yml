@@ -11,7 +11,7 @@ server:
 spring:
   servlet:
     multipart:
-      max-file-size: 10MB
+      max-file-size: 150MB
       max-request-size: 15MB
   application:
     name: easylive-admin

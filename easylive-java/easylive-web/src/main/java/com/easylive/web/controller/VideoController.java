@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.component.RedisComponent;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.UserActionTypeEnum;
@@ -40,6 +41,10 @@ public class VideoController extends ABaseController{
 	private VideoInfoFileService videoInfoFileService;
 	@Resource
 	private UserActionService userActionService;
+	@Resource
+	private RedisComponent redisComponent;
+
+
 	/*首页推荐视频接口*/
 	@RequestMapping("/loadRecommendVideo")
 	public ResponseVO loadRecommendVideo(){
@@ -102,6 +107,7 @@ public class VideoController extends ABaseController{
 
 	@RequestMapping("/reportVideoPlayOnline")
 	public ResponseVO reportVideoPlayOnline(@NotEmpty String fileId,@NotEmpty String deviceId){
-		return getSuccessResponseVO(null);
+
+		return getSuccessResponseVO(redisComponent.reportVideoPlayOnline(fileId,deviceId));
 	}
 }
