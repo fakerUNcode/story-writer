@@ -206,6 +206,47 @@ public class UserVideoSeriesServiceImpl implements UserVideoSeriesService {
 			videoSeriesVideo.setUserId(userId);
 			seriesVideosList.add(videoSeriesVideo);
 		}
-		this.userVideoSeriesVideoMapper.insertBatch(seriesVideosList);
+		//有更新就更新，无更新插入（给集合中的视频排序时相当于更新）
+		this.userVideoSeriesVideoMapper.insertOrUpdateBatch(seriesVideosList);
+	}
+
+	@Override
+	public void delSeriesVideo(String userId, Integer seriesId, String videoId) {
+		UserVideoSeriesVideoQuery videoSeriesVideoQuery = new UserVideoSeriesVideoQuery();
+		videoSeriesVideoQuery.setUserId(userId);
+		videoSeriesVideoQuery.setSeriesId(seriesId);
+		videoSeriesVideoQuery.setVideoId(videoId);
+		this.userVideoSeriesVideoMapper.deleteByParam(videoSeriesVideoQuery);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void delVideoSeries(String userId,Integer seriesId) {
+		UserVideoSeriesQuery seriesQuery = new UserVideoSeriesQuery();
+		seriesQuery.setUserId(userId);
+		seriesQuery.setSeriesId(seriesId);
+		Integer count = userVideoSeriesMapper.deleteByParam(seriesQuery);
+		if(count==0){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		UserVideoSeriesVideoQuery videoSeriesVideoQuery = new UserVideoSeriesVideoQuery();
+		videoSeriesVideoQuery.setSeriesId(seriesId);
+		videoSeriesVideoQuery.setUserId(userId);
+		userVideoSeriesVideoMapper.deleteByParam(videoSeriesVideoQuery);
+	}
+
+	@Override
+	public void changeVideoSeriesSort(String userId, String seriesIds) {
+		String[] seriesIdArray = seriesIds.split(",");
+		List<UserVideoSeries> videoSeriesList = new ArrayList<>();
+		Integer sort = 0;
+		for(String seriesId : seriesIdArray){
+			UserVideoSeries videoSeries = new UserVideoSeries();
+			videoSeries.setUserId(userId);
+			videoSeries.setSeriesId(Integer.parseInt(seriesId));
+			videoSeries.setSort(++sort);
+			videoSeriesList.add(videoSeries);
+		}
+		userVideoSeriesMapper.changeSort(videoSeriesList);
 	}
 }

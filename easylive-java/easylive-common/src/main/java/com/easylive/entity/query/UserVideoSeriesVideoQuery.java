@@ -32,6 +32,16 @@ public class UserVideoSeriesVideoQuery extends BaseParam {
 	 */
 	private Integer sort;
 
+	//是否查询视频信息
+	private Boolean queryVideoInfo;
+
+	public Boolean getQueryVideoInfo() {
+		return queryVideoInfo;
+	}
+
+	public void setQueryVideoInfo(Boolean queryVideoInfo) {
+		this.queryVideoInfo = queryVideoInfo;
+	}
 
 	public void setSeriesId(Integer seriesId){
 		this.seriesId = seriesId;

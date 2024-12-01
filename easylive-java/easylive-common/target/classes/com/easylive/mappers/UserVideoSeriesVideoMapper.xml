@@ -57,8 +57,17 @@
 
 	<!-- 查询集合-->
 	<select id="selectList" resultMap="base_result_map" >
-		 SELECT <include refid="base_column_list" /> FROM user_video_series_video u <include refid="query_condition" />
-		 <if test="query.orderBy!=null">
+		 SELECT <include refid="base_column_list" />
+		<if test="query.queryVideoInfo">
+			  ,v.video_cover,v.video_name,v.play_count,v.create_time
+		</if>
+	    FROM user_video_series_video u
+		<if test="query.queryVideoInfo">
+			inner join video_info v on v.video_id = u.video_id
+		</if>
+		<include refid="query_condition" />
+
+		<if test="query.orderBy!=null">
 			 order by ${query.orderBy}
 		 </if>
 		 <if test="query.simplePage!=null">

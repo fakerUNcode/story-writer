@@ -74,4 +74,9 @@ public interface UserVideoSeriesService {
 	void saveUserVideoSeries(UserVideoSeries videoSeries, String videoIds);
 
 	void saveSeriesVideo(String userId,Integer seriesId,String videoIds);
+
+	void delSeriesVideo(String userId, Integer seriesId, String videoId);
+	void delVideoSeries(String userId,Integer seriesId);
+
+	void changeVideoSeriesSort(String userId, String seriesIds);
 }

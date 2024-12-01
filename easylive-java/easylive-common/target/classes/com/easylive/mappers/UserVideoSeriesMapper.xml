@@ -306,12 +306,28 @@
 
 	<!--获取所有用户合集-->
 	<select id="selectUserAllSeries" resultMap="base_result_map">
-		select * from user_video_series s where s.user_id = #{userId}
+		SELECT t.*, v.video_cover cover
+		FROM (SELECT *,
+					 (SELECT video_id
+					  FROM user_video_series_video v
+					  WHERE v.series_id = s.series_id
+					  ORDER BY sort ASC
+						 LIMIT 1) video_id FROM user_video_series s where s.user_id = #{userId}
+) t
+LEFT JOIN video_info v
+		ON v.video_id = t.video_id order by t.sort asc;
 	</select>
 
 	<!--获取最大排序数-->
 	<select id="selectMaxSort" resultType="java.lang.Integer">
 		select ifnull(max(sort),0) from user_video_series u where user_id = #{userId}
+	</select>
+
+	<!--重新排序合集顺序-->
+	<select id="changeSort">
+		<foreach collection="videoSeriesList" separator=";" item="item">
+			update user_video_series set sort = #{item.sort} where user_id = #{item.userId} and series_id = #{item.seriesId}
+		</foreach>
 	</select>
 
 </mapper>

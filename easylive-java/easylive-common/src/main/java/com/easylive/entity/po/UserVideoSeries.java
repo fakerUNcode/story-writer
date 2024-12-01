@@ -1,13 +1,12 @@
 package com.easylive.entity.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
 import com.easylive.entity.enums.DateTimePatternEnum;
 import com.easylive.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -48,6 +47,15 @@ public class UserVideoSeries implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateTime;
 
+	private String cover;
+
+	public String getCover() {
+		return cover;
+	}
+
+	public void setCover(String cover) {
+		this.cover = cover;
+	}
 
 	public void setSeriesId(Integer seriesId){
 		this.seriesId = seriesId;

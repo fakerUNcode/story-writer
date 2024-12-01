@@ -1,5 +1,6 @@
 package com.easylive.mappers;
 
+import com.easylive.entity.po.UserVideoSeries;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface UserVideoSeriesMapper<T,P> extends BaseMapper<T,P> {
     List<T> selectUserAllSeries(@Param("userId")String userId);
 
 	Integer selectMaxSort(@Param("userId") String userId);
+
+	void changeSort(@Param("videoSeriesList")List<UserVideoSeries> videoSeriesList);
 }
