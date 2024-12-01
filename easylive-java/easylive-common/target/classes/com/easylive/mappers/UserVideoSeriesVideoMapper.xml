@@ -243,4 +243,9 @@
 		select <include refid="base_column_list" /> from user_video_series_video u where series_id=#{seriesId} and video_id=#{videoId}
 	</select>
 
+	<!--获取最大排序数-->
+	<select id="selectMaxSort" resultType="java.lang.Integer">
+		select ifnull(max(sort),0) from user_video_series_video u where series_id = #{seriesId}
+	</select>
+
 </mapper>
