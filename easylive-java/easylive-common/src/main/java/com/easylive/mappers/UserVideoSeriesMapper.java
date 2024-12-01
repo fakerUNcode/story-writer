@@ -2,6 +2,8 @@ package com.easylive.mappers;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 用户视频序列归档 数据库操作接口
  */
@@ -25,4 +27,5 @@ public interface UserVideoSeriesMapper<T,P> extends BaseMapper<T,P> {
 	 T selectBySeriesId(@Param("seriesId") Integer seriesId);
 
 
+    List<T> selectUserAllSeries(@Param("userId")String userId);
 }

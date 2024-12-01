@@ -304,4 +304,8 @@
 		select <include refid="base_column_list" /> from user_video_series u where series_id=#{seriesId}
 	</select>
 
+	<select id="selectUserAllSeries" resultMap="base_result_map">
+		select * from user_video_series s where s.user_id = #{userId}
+	</select>
+
 </mapper>

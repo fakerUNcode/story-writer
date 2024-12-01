@@ -1,19 +1,19 @@
 package com.easylive.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.query.UserVideoSeriesQuery;
+import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.po.UserVideoSeries;
-import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.UserVideoSeriesQuery;
+import com.easylive.entity.vo.PaginationResultVO;
+import com.easylive.exception.BusinessException;
 import com.easylive.mappers.UserVideoSeriesMapper;
 import com.easylive.service.UserVideoSeriesService;
 import com.easylive.utils.StringTools;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -126,5 +126,19 @@ public class UserVideoSeriesServiceImpl implements UserVideoSeriesService {
 	@Override
 	public Integer deleteUserVideoSeriesBySeriesId(Integer seriesId) {
 		return this.userVideoSeriesMapper.deleteBySeriesId(seriesId);
+	}
+
+	@Override
+	public List<UserVideoSeries> getUserAllSeries(String userId) {
+		return userVideoSeriesMapper.selectUserAllSeries(userId);
+	}
+
+	@Override
+	public void saveUserVideoSeries(UserVideoSeries bean, String videoIds) {
+		//创建集合时必须指名集合名和要放入集合的视频
+		if(bean.getSeriesId()==null && StringTools.isEmpty(videoIds)){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		if
 	}
 }

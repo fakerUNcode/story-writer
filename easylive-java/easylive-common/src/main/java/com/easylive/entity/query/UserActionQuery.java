@@ -57,6 +57,17 @@ public class UserActionQuery extends BaseParam {
 	private String actionTimeEnd;
 	private Integer[] actionTypeArray;
 
+	//是否查询视频信息
+	private Boolean queryVideoInfo;
+
+	public Boolean getQueryVideoInfo() {
+		return queryVideoInfo;
+	}
+
+	public void setQueryVideoInfo(Boolean queryVideoInfo) {
+		this.queryVideoInfo = queryVideoInfo;
+	}
+
 	public Integer[] getActionTypeArray() {
 		return actionTypeArray;
 	}

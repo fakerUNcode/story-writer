@@ -2,8 +2,13 @@ package com.easylive.web.controller;
 
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.enums.PageSize;
+import com.easylive.entity.enums.UserActionTypeEnum;
+import com.easylive.entity.enums.VideoOrderTypeEnum;
 import com.easylive.entity.po.UserInfo;
+import com.easylive.entity.query.UserActionQuery;
 import com.easylive.entity.query.UserFocusQuery;
+import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.entity.vo.UserInfoVO;
@@ -119,5 +124,44 @@ public class UhomeController extends ABaseController{
         PaginationResultVO resultVO = userFocusService.findListByPage(focusQuery);
         return getSuccessResponseVO(resultVO);
     }
+
+    //加载视频列表
+    @RequestMapping("/loadVideoList")
+    public ResponseVO loadVideoList(@NotEmpty String userId,Integer type, Integer pageNo,String videoName, Integer orderType){
+
+        VideoInfoQuery infoQuery = new VideoInfoQuery();
+        if(type!=null){
+            infoQuery.setPageSize(PageSize.SIZE10.getSize());
+        }
+        //获取视频排序类型：最新发布、最多点赞、最多收藏
+        VideoOrderTypeEnum videoOrderTypeEnum = VideoOrderTypeEnum.getByType(orderType);
+        //没传入则默认按最新发布排序
+        if(videoOrderTypeEnum==null){
+            videoOrderTypeEnum = VideoOrderTypeEnum.CREATE_TIME;
+        }
+        infoQuery.setOrderBy(videoOrderTypeEnum.getField() + " desc");
+        infoQuery.setVideoNameFuzzy(videoName);
+        infoQuery.setPageNo(pageNo);
+        infoQuery.setUserId(userId);
+        PaginationResultVO resultVO = videoInfoService.findListByPage(infoQuery);
+        return getSuccessResponseVO(resultVO);
+    }
+
+    //加载用户收藏视频
+    @RequestMapping("/loadUserCollection")
+    public ResponseVO loadUserCollection(@NotEmpty String userId, Integer pageNo){
+
+        UserActionQuery actionQuery = new UserActionQuery();
+        actionQuery.setActionType(UserActionTypeEnum.VIDEO_COLLECT.getType());
+        actionQuery.setUserId(userId);
+        actionQuery.setPageNo(pageNo);
+        //按收藏时间排序
+        actionQuery.setOrderBy("action_time desc");
+        actionQuery.setQueryVideoInfo(true);
+        PaginationResultVO resultVO = userActionService.findListByPage(actionQuery);
+        return getSuccessResponseVO(resultVO);
+    }
+
+
 
 }
