@@ -1,12 +1,15 @@
 package com.easylive.web.controller;
 
 import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.po.UserVideoSeries;
 import com.easylive.entity.po.UserVideoSeriesVideo;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.query.UserVideoSeriesVideoQuery;
 import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.ResponseVO;
+import com.easylive.entity.vo.UserVideoSeriesDetailVO;
+import com.easylive.exception.BusinessException;
 import com.easylive.service.UserVideoSeriesService;
 import com.easylive.service.UserVideoSeriesVideoService;
 import com.easylive.service.VideoInfoService;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,6 +87,54 @@ public class UhomeVideoSeriesController extends ABaseController{
         return getSuccessResponseVO(videoInfoList);
     }
 
+    //获取视频合集中的视频详情
+    @RequestMapping("/getVideoSeriesDetail")
+    public ResponseVO getVideoSeriesDetail(@NotNull Integer seriesId) {
+        UserVideoSeries videoSeries = userVideoSeriesService.getUserVideoSeriesBySeriesId(seriesId);
+        if(videoSeries==null){
+            throw new BusinessException(ResponseCodeEnum.CODE_404);
+        }
 
+        UserVideoSeriesVideoQuery videoSeriesVideoQuery = new UserVideoSeriesVideoQuery();
+        videoSeriesVideoQuery.setOrderBy("sort asc");
+        videoSeriesVideoQuery.setQueryVideoInfo(true);
+        videoSeriesVideoQuery.setSeriesId(seriesId);
+        List<UserVideoSeriesVideo> seriesVideoList = userVideoSeriesVideoService.findListByParam(videoSeriesVideoQuery);
+        // // 封装系列信息和视频列表
+        UserVideoSeriesDetailVO userVideoSeriesDetailVO = new  UserVideoSeriesDetailVO(videoSeries,seriesVideoList);
+        return getSuccessResponseVO(userVideoSeriesDetailVO);
+    }
+
+    //向合集添加视频
+    @RequestMapping("/saveSeriesVideo")
+    public ResponseVO saveSeriesVideo(@NotNull Integer seriesId,@NotEmpty String videoIds) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        this.userVideoSeriesService.saveSeriesVideo(tokenUserInfoDto.getUserId(),seriesId,videoIds);
+        return getSuccessResponseVO(null);
+    }
+
+    //删除合集内的视频
+    @RequestMapping("/delSeriesVideo")
+    public ResponseVO delSeriesVideo(String userId,Integer seriesId,String videoId) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        this.userVideoSeriesService.delSeriesVideo(tokenUserInfoDto.getUserId(),seriesId,videoId);
+        return getSuccessResponseVO(null);
+    }
+
+    //删除视频集合
+    @RequestMapping("/delVideoSeries")
+    public ResponseVO delVideoSeries(@NotNull Integer seriesId) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        this.userVideoSeriesService.delVideoSeries(tokenUserInfoDto.getUserId(),seriesId);
+        return getSuccessResponseVO(null);
+    }
+
+    //视频集合排序
+    @RequestMapping("/changeVideoSeriesSort")
+    public ResponseVO changeVideoSeriesSort(@NotNull String seriesIds) {
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        this.userVideoSeriesService.changeVideoSeriesSort(tokenUserInfoDto.getUserId(),seriesIds);
+        return getSuccessResponseVO(null);
+    }
 
 }
