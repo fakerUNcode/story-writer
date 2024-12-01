@@ -128,6 +128,7 @@
 			<if test="query.lastPlayTime != null and query.lastPlayTime!=''">
 				 <![CDATA[ and  v.last_play_time=str_to_date(#{query.lastPlayTime}, '%Y-%m-%d') ]]>
 			</if>
+
 	</sql>
 	<!-- 通用条件列-->
 	<sql id="base_condition">
@@ -182,6 +183,19 @@
 			<if test="query.lastPlayTimeEnd!= null and query.lastPlayTimeEnd!=''">
 				 <![CDATA[ and  v.last_play_time< date_sub(str_to_date(#{query.lastPlayTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
 			</if>
+		 <if test="query.videoIdArray != null and query.videoIdArray.length > 0">
+			 AND v.video_id IN
+			 (<foreach collection="query.videoIdArray"  separator=","  item="item">
+			 #{item}
+		 </foreach>)
+		 </if>
+		 <if test="query.excludeVideoIdArray != null and query.excludeVideoIdArray.length > 0">
+			 AND v.video_id NOT IN
+			 (<foreach collection="query.excludeVideoIdArray"  separator=","  item="item">
+			 #{item}
+		 </foreach>)
+		 </if>
+
 	 </where>
 	</sql>
 
@@ -202,6 +216,7 @@
 		 <if test="query.simplePage!=null">
 			 limit #{query.simplePage.start},#{query.simplePage.end}
 		 </if>
+
 	</select>
 
 	<!-- 查询数量-->

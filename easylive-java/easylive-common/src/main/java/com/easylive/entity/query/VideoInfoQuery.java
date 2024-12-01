@@ -145,6 +145,26 @@ public class VideoInfoQuery extends BaseParam {
 	private String lastPlayTimeEnd;
 	private Boolean queryUserInfo;
 
+	private String[] videoIdArray;
+
+	private String[] excludeVideoIdArray;
+
+	public String[] getExcludeVideoIdArray() {
+		return excludeVideoIdArray;
+	}
+
+	public void setExcludeVideoIdArray(String[] excludeVideoIdArray) {
+		this.excludeVideoIdArray = excludeVideoIdArray;
+	}
+
+	public String[] getVideoIdArray() {
+		return videoIdArray;
+	}
+
+	public void setVideoIdArray(String[] videoIdArray) {
+		this.videoIdArray = videoIdArray;
+	}
+
 	public Boolean getQueryUserInfo() {
 		return queryUserInfo;
 	}

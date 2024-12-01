@@ -36,6 +36,9 @@
     <logger name="com.zaxxer.hikari" level="info"></logger>
     <logger name="io.lettuce.core" level="info"></logger>
     <logger name="org.springframework.data.redis" level="info"></logger>
+    <logger name="org.apache.ibatis" level="DEBUG"/>
+    <logger name="java.sql" level="DEBUG"/>
+    <logger name="com.zaxxer.hikari" level="DEBUG"/>
     <root level="${log.root.level}">
         <appender-ref ref="stdot"/>
         <appender-ref ref="file"/>

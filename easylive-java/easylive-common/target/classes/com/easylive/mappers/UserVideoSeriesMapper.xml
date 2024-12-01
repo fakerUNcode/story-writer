@@ -304,8 +304,14 @@
 		select <include refid="base_column_list" /> from user_video_series u where series_id=#{seriesId}
 	</select>
 
+	<!--获取所有用户合集-->
 	<select id="selectUserAllSeries" resultMap="base_result_map">
 		select * from user_video_series s where s.user_id = #{userId}
+	</select>
+
+	<!--获取最大排序数-->
+	<select id="selectMaxSort" resultType="java.lang.Integer">
+		select ifnull(max(sort),0) from user_video_series u where user_id = #{userId}
 	</select>
 
 </mapper>

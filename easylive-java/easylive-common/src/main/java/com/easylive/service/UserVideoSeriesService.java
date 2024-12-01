@@ -72,4 +72,6 @@ public interface UserVideoSeriesService {
     List<UserVideoSeries> getUserAllSeries(String userId);
 
 	void saveUserVideoSeries(UserVideoSeries videoSeries, String videoIds);
+
+	void saveSeriesVideo(String userId,Integer seriesId,String videoIds);
 }
