@@ -1,10 +1,10 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.UserVideoSeriesQuery;
 import com.easylive.entity.po.UserVideoSeries;
+import com.easylive.entity.query.UserVideoSeriesQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -69,4 +69,7 @@ public interface UserVideoSeriesService {
 	 */
 	Integer deleteUserVideoSeriesBySeriesId(Integer seriesId);
 
+    List<UserVideoSeries> getUserAllSeries(String userId);
+
+	void saveUserVideoSeries(UserVideoSeries videoSeries, String videoIds);
 }

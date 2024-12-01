@@ -1,13 +1,12 @@
 package com.easylive.entity.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
 import com.easylive.entity.enums.DateTimePatternEnum;
 import com.easylive.utils.DateUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -58,6 +57,26 @@ public class UserAction implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date actionTime;
 
+
+	//查看用户视频列表的封面和视频名
+	private String videoCover;
+	private String videoName;
+
+	public String getVideoCover() {
+		return videoCover;
+	}
+
+	public void setVideoCover(String videoCover) {
+		this.videoCover = videoCover;
+	}
+
+	public String getVideoName() {
+		return videoName;
+	}
+
+	public void setVideoName(String videoName) {
+		this.videoName = videoName;
+	}
 
 	public void setActionId(Integer actionId){
 		this.actionId = actionId;
