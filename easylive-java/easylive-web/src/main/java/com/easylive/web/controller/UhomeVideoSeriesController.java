@@ -5,6 +5,7 @@ import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.po.UserVideoSeries;
 import com.easylive.entity.po.UserVideoSeriesVideo;
 import com.easylive.entity.po.VideoInfo;
+import com.easylive.entity.query.UserVideoSeriesQuery;
 import com.easylive.entity.query.UserVideoSeriesVideoQuery;
 import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.ResponseVO;
@@ -135,6 +136,16 @@ public class UhomeVideoSeriesController extends ABaseController{
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         this.userVideoSeriesService.changeVideoSeriesSort(tokenUserInfoDto.getUserId(),seriesIds);
         return getSuccessResponseVO(null);
+    }
+
+    //加载用户主页的“我的视频列表”（包含视频展示）
+    @RequestMapping("/loadVideoSeriesWithVideo")
+    public ResponseVO loadVideoSeriesWithVideo(@NotNull String userId) {
+        UserVideoSeriesQuery seriesQuery = new UserVideoSeriesQuery();
+        seriesQuery.setUserId(userId);
+        seriesQuery.setOrderBy("sort asc");
+        List<UserVideoSeries> videoSeries = userVideoSeriesService.findListWithVideoList(seriesQuery);
+        return getSuccessResponseVO(videoSeries);
     }
 
 }

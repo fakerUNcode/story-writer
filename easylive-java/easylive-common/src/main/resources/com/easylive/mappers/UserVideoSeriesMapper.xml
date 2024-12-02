@@ -330,4 +330,30 @@ LEFT JOIN video_info v
 		</foreach>
 	</select>
 
+	<resultMap id="base_result_map_video" type="com.easylive.entity.po.UserVideoSeries" extends="base_result_map">
+		<collection property="videoInfoList" column="series_id" select="com.easylive.mappers.UserVideoSeriesMapper.selectVideoList">
+
+		</collection>
+	</resultMap>
+
+	<select id="selectVideoList" resultType="com.easylive.entity.po.VideoInfo">
+			select v.video_id,v.video_name,v.video_cover,v.play_count,v.create_time
+			from user_video_series_video sv inner join video_info v on sv.video_id = v.video_id
+			where sv.series_id = #{seriesId} order by sv.sort asc limit 5
+	</select>
+
+	<!--加载我的视频列表-->
+	<select id="selectListWithVideo" resultMap="base_result_map_video">
+		select
+		<include refid="base_column_list"/>
+		from user_video_series u
+		<include refid="query_condition"/>
+		<if test="query.orderBy!=null">
+			order by ${query.orderBy}
+		</if>
+		<if test="query.simplePage!=null">
+			limit #{query.simplePage.start},#{query.simplePage.end}
+		</if>
+	</select>
+
 </mapper>

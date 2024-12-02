@@ -33,4 +33,6 @@ public interface UserVideoSeriesMapper<T,P> extends BaseMapper<T,P> {
 	Integer selectMaxSort(@Param("userId") String userId);
 
 	void changeSort(@Param("videoSeriesList")List<UserVideoSeries> videoSeriesList);
+
+	List<T> selectListWithVideo(@Param("query") P p);
 }
