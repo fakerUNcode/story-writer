@@ -144,22 +144,34 @@
 	</select>
 
 	<!-- 查询集合-->
-	<select id="selectList" resultMap="base_result_map" >
-		 SELECT
-		 <include refid="base_column_list" />
-		     FROM video_comment v
-		     <include refid="query_condition" />
-		 <if test="query.orderBy!=null">
-			 order by ${query.orderBy}
-		 </if>
-		 <if test="query.simplePage!=null">
-			 limit #{query.simplePage.start},#{query.simplePage.end}
-		 </if>
+	<select id="selectList" resultMap="base_result_map">
+		SELECT
+		<include refid="base_column_list" />
+		<if test="query.queryVideoInfo">
+			,vd.video_name, vd.video_cover, u.nick_name, u.avatar, u2.nick_name AS replayNickName
+		</if>
+		FROM video_comment v
+		<if test="query.queryVideoInfo">
+			inner join video_info vd on vd.video_id = v.video_id
+			left join user_info u on u.user_id = v.user_id
+			left join user_info u2 on u2.user_id = v.reply_user_id
+		</if>
+		<include refid="query_condition" />
+		<if test="query.orderBy != null">
+			order by ${query.orderBy}
+		</if>
+		<if test="query.simplePage != null">
+			limit #{query.simplePage.start}, #{query.simplePage.end}
+		</if>
 	</select>
 
 	<!-- 查询数量-->
 	<select id="selectCount" resultType="java.lang.Integer" >
-		 SELECT count(1) FROM video_comment v <include refid="query_condition" />
+		 SELECT count(1) FROM video_comment v
+		 <if test="query.queryVideoInfo">
+			 inner join video_info vd on vd.video_id = v.video_id
+		 </if>
+		 <include refid="query_condition" />
 	</select>
 
 	<!-- 插入 （匹配有值的字段）-->
