@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -48,6 +49,15 @@ public class UserVideoSeries implements Serializable {
 	private Date updateTime;
 
 	private String cover;
+	private List<VideoInfo> videoInfoList;
+
+	public List<VideoInfo> getVideoInfoList() {
+		return videoInfoList;
+	}
+
+	public void setVideoInfoList(List<VideoInfo> videoInfoList) {
+		this.videoInfoList = videoInfoList;
+	}
 
 	public String getCover() {
 		return cover;

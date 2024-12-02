@@ -249,4 +249,9 @@ public class UserVideoSeriesServiceImpl implements UserVideoSeriesService {
 		}
 		userVideoSeriesMapper.changeSort(videoSeriesList);
 	}
+
+	@Override
+	public List<UserVideoSeries> findListWithVideoList(UserVideoSeriesQuery seriesQuery) {
+		return userVideoSeriesMapper.selectListWithVideo(seriesQuery);
+	}
 }

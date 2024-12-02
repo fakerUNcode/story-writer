@@ -79,4 +79,6 @@ public interface UserVideoSeriesService {
 	void delVideoSeries(String userId,Integer seriesId);
 
 	void changeVideoSeriesSort(String userId, String seriesIds);
+
+	List<UserVideoSeries> findListWithVideoList(UserVideoSeriesQuery seriesQuery);
 }
