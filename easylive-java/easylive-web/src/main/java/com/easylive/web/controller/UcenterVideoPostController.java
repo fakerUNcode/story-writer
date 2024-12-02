@@ -1,13 +1,17 @@
 package com.easylive.web.controller;
 
 import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.VideoStatusEnum;
 import com.easylive.entity.po.VideoInfoFilePost;
 import com.easylive.entity.po.VideoInfoPost;
+import com.easylive.entity.query.VideoInfoFilePostQuery;
 import com.easylive.entity.query.VideoInfoPostQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.vo.ResponseVO;
+import com.easylive.entity.vo.VideoPostEditInfoVO;
 import com.easylive.entity.vo.VideoStatusCountVO;
+import com.easylive.exception.BusinessException;
 import com.easylive.service.VideoInfoFilePostService;
 import com.easylive.service.VideoInfoPostService;
 import com.easylive.service.VideoInfoService;
@@ -113,5 +117,40 @@ public class UcenterVideoPostController extends ABaseController{
         countVO.setAuditFailCount(auditFailCount);
         countVO.setInProgress(inProgress);
         return getSuccessResponseVO(countVO);
+    }
+
+    //创作中心稿件
+    @RequestMapping("/getVideoByVideoId")
+    public ResponseVO getVideoByVideoId(@NotEmpty String videoId){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        //用户只对自己的稿件有权限
+        VideoInfoPost videoInfoPost = this.videoInfoPostService.getVideoInfoPostByVideoId(videoId);
+        if(videoInfoPost == null || !videoInfoPost.getUserId().equals(tokenUserInfoDto.getUserId())){
+            throw new BusinessException(ResponseCodeEnum.CODE_404);
+        }
+        VideoInfoFilePostQuery videoInfoFilePostQuery = new VideoInfoFilePostQuery();
+        videoInfoFilePostQuery.setVideoId(videoId);
+        videoInfoFilePostQuery.setOrderBy("file_index asc");
+        List<VideoInfoFilePost> videoInfoFilePostList = this.videoInfoFilePostService.findListByParam(videoInfoFilePostQuery);
+        VideoPostEditInfoVO vo = new VideoPostEditInfoVO();
+        vo.setVideoInfo(videoInfoPost);
+        vo.setVideoInfoFileList(videoInfoFilePostList);
+        return getSuccessResponseVO(vo);
+    }
+
+    //修改互动信息
+    @RequestMapping("/saveVideoInteraction")
+    public ResponseVO saveVideoInteraction(@NotEmpty String videoId,String interaction){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        videoInfoService.changeInteraction(videoId, tokenUserInfoDto.getUserId(),interaction);
+        return getSuccessResponseVO(null);
+    }
+
+    //删除稿件
+    @RequestMapping("/deleteVideo")
+    public ResponseVO deleteVideo(@NotEmpty String videoId){
+        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        videoInfoService.deleteVideo(videoId, tokenUserInfoDto.getUserId());
+        return getSuccessResponseVO(null);
     }
 }

@@ -69,5 +69,7 @@ public interface VideoInfoService {
 	 */
 	Integer deleteVideoInfoByVideoId(String videoId);
 
+	void changeInteraction(String videoId, String userId,String interaction);
 
+	void deleteVideo(String videoId, String userId);
 }

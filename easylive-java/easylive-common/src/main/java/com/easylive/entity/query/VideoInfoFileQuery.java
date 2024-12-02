@@ -57,6 +57,15 @@ public class VideoInfoFileQuery extends BaseParam {
 	 * 持续时间（秒）
 	 */
 	private Integer duration;
+	private String queryCountInfo;
+
+	public String getQueryCountInfo() {
+		return queryCountInfo;
+	}
+
+	public void setQueryCountInfo(String queryCountInfo) {
+		this.queryCountInfo = queryCountInfo;
+	}
 
 
 	public void setFileId(String fileId){
