@@ -84,6 +84,16 @@ public class VideoCommentQuery extends BaseParam {
 	//是否加载子评论
 	private Boolean loadChildren;
 
+	private Boolean queryVideoInfo;
+
+	public Boolean getQueryVideoInfo() {
+		return queryVideoInfo;
+	}
+
+	public void setQueryVideoInfo(Boolean queryVideoInfo) {
+		this.queryVideoInfo = queryVideoInfo;
+	}
+
 	public Boolean getLoadChildren() {
 		return loadChildren;
 	}
