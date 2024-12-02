@@ -277,7 +277,7 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		if(!videoInfoPost.getVideoCover().equals(dbInfo.getVideoCover()) ||
 				!videoInfoPost.getVideoName().equals(dbInfo.getVideoName()) ||
 				!videoInfoPost.getTags().equals(dbInfo.getTags()) ||
-				!videoInfoPost.getIntroduction().equals(dbInfo.getIntroduction())){
+				!videoInfoPost.getIntroduction().equals(dbInfo.getIntroduction()==null?"":dbInfo.getIntroduction())){
 			return true;
 		}
 		return false;
