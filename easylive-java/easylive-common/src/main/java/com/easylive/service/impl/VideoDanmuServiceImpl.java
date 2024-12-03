@@ -155,4 +155,20 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		this.videoInfoMapper.updateCountInfo(videoDanmu.getVideoId(),UserActionTypeEnum.VIDEO_DANMU.getField(),1);
 		//TODO 更新ES 弹幕数量
 	}
+
+	@Override
+	public void deleteDanmu(String userId, Integer danmuId) {
+		VideoDanmu videoDanmu = videoDanmuMapper.selectByDanmuId(danmuId);
+		if(videoDanmu==null){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoDanmu.getVideoId());
+		if(videoInfo==null){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		if(userId!=null && !videoInfo.getUserId().equals(userId)){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		videoDanmuMapper.deleteByDanmuId(danmuId);
+	}
 }

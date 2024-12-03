@@ -1,8 +1,5 @@
 package com.easylive.entity.query;
 
-import java.util.Date;
-
-
 /**
  * 视频弹幕参数
  */
@@ -68,6 +65,25 @@ public class VideoDanmuQuery extends BaseParam {
 	 */
 	private Integer time;
 
+	private String videoUserId;
+
+	private Boolean queryVideoInfo;
+
+	public Boolean getQueryVideoInfo() {
+		return queryVideoInfo;
+	}
+
+	public void setQueryVideoInfo(Boolean queryVideoInfo) {
+		this.queryVideoInfo = queryVideoInfo;
+	}
+
+	public String getVideoUserId() {
+		return videoUserId;
+	}
+
+	public void setVideoUserId(String videoUserId) {
+		this.videoUserId = videoUserId;
+	}
 
 	public void setDanmuId(Integer danmuId){
 		this.danmuId = danmuId;

@@ -70,4 +70,6 @@ public interface VideoDanmuService {
 	Integer deleteVideoDanmuByDanmuId(Integer danmuId);
 
     void saveVideoDanmu(VideoDanmu videoDanmu);
+
+	void deleteDanmu(String userId,Integer danmuId);
 }
