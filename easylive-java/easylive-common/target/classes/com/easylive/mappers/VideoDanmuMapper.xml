@@ -93,12 +93,25 @@
 			<if test="query.colorFuzzy!= null  and query.colorFuzzy!=''">
 				 and  v.color like concat('%', #{query.colorFuzzy}, '%')
 			</if>
+		    <if test="query.videoUserId!= null  and query.videoUserId!=''">
+			 and  vd.user_id = #{query.videoUserId}
+		    </if>
+
 	 </where>
 	</sql>
 
 	<!-- 查询集合-->
 	<select id="selectList" resultMap="base_result_map" >
-		 SELECT <include refid="base_column_list" /> FROM video_danmu v <include refid="query_condition" />
+		 SELECT <include refid="base_column_list" />
+		 <if test="query.queryVideoInfo">
+			 v,vd.video_name,vd.video_cover,u.nick_name
+		 </if>
+		 FROM video_danmu v
+		 <if test="query.queryVideoInfo">
+			 inner join video_info vd on vd.video_id = v.video_id
+		 	 left join user_info u on u.user_id = v.user_id
+		 </if>
+		 <include refid="query_condition" />
 		 <if test="query.orderBy!=null">
 			 order by ${query.orderBy}
 		 </if>
@@ -109,7 +122,11 @@
 
 	<!-- 查询数量-->
 	<select id="selectCount" resultType="java.lang.Integer" >
-		 SELECT count(1) FROM video_danmu v <include refid="query_condition" />
+		 SELECT count(1) FROM video_danmu v
+		<if test="query.queryVideoInfo">
+		    inner join video_info vd on vd.video_id = v.video_id
+		</if>
+		 <include refid="query_condition" />
 	</select>
 
 	<!-- 插入 （匹配有值的字段）-->
