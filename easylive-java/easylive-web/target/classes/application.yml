@@ -49,3 +49,7 @@ log:
 admin:
   account: admin
   password: admin123
+
+logging:
+  file:
+    path: logs/${spring.application.name}
