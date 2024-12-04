@@ -17,6 +17,24 @@ public class AppConfig {
     @Value("${showFFmpegLog:true}")
     private boolean showFFmpegLog;
 
+    @Value("${es.host.port:127.0.0.1:9200}")
+    private String esHostPort;
+
+    @Value("${es.index.video.name:easylive_video}")
+    private String esIndexVideoName;
+
+    public boolean isShowFFmpegLog() {
+        return showFFmpegLog;
+    }
+
+    public String getEsHostPort() {
+        return esHostPort;
+    }
+
+    public String getEsIndexVideoName() {
+        return esIndexVideoName;
+    }
+
     public String getProjectFolder() {
         return projectFolder;
     }

@@ -1,0 +1,203 @@
+2024-12-03 00:21:30 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m19s229ms).
+2024-12-03 00:40:21 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=18m20s797ms).
+2024-12-03 01:23:48 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=13m27s23ms).
+2024-12-03 01:44:04 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m46s115ms).
+2024-12-03 02:18:51 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m47s37ms).
+2024-12-03 02:41:43 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m52s).
+2024-12-03 03:00:08 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m24s386ms).
+2024-12-03 03:18:03 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m54s856ms).
+2024-12-03 03:35:21 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m48s180ms).
+2024-12-03 03:53:22 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m30s993ms).
+2024-12-03 04:11:51 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m58s715ms).
+2024-12-03 04:29:23 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m32s546ms).
+2024-12-03 04:47:42 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m19s116ms).
+2024-12-03 05:08:50 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m7s211ms).
+2024-12-03 05:21:46 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=11m26s34ms).
+2024-12-03 05:40:34 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m48s319ms).
+2024-12-03 06:00:38 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=18m4s551ms).
+2024-12-03 06:19:06 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m27s985ms).
+2024-12-03 06:38:40 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m33s470ms).
+2024-12-03 06:57:03 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m22s920ms).
+2024-12-03 07:15:35 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m31s975ms).
+2024-12-03 07:23:00 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=5m24s668ms).
+2024-12-03 07:25:24 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=54s756ms).
+2024-12-03 07:43:52 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m57s562ms).
+2024-12-03 08:02:58 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m6s388ms).
+2024-12-03 08:18:55 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m56s769ms).
+2024-12-03 08:39:07 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m11s984ms).
+2024-12-03 08:55:56 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m19s309ms).
+2024-12-03 09:13:47 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m50s944ms).
+2024-12-03 09:23:44 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=7m56s584ms).
+2024-12-03 09:42:31 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m47s286ms).
+2024-12-03 10:01:07 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m5s458ms).
+2024-12-03 10:20:36 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m58s684ms).
+2024-12-03 10:24:37 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=2m31s826ms).
+2024-12-03 10:43:18 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m40s703ms).
+2024-12-03 11:00:29 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m41s169ms).
+2024-12-03 11:11:36 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=8m36s322ms).
+2024-12-03 11:20:44 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=7m38s411ms).
+2024-12-03 11:25:31 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=3m17s361ms).
+2024-12-03 11:44:35 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m3s208ms).
+2024-12-03 12:02:07 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m32s154ms).
+2024-12-03 12:21:19 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m11s880ms).
+2024-12-03 12:26:37 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=3m47s969ms).
+2024-12-03 12:45:17 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m10s443ms).
+2024-12-03 13:03:43 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m25s673ms).
+2024-12-03 13:21:32 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m19s199ms).
+2024-12-03 13:27:57 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=4m24s702ms).
+2024-12-03 13:46:11 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m44s31ms).
+2024-12-03 14:03:44 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m33s585ms).
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/category/loadCategory", parameters={multipart}
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/videoInfo/loadVideoList", parameters={multipart}
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.VideoInfoController#loadVideoPost(VideoInfoPostQuery)
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.CategoryController#loadCategory(CategoryInfoQuery)
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@74262574] was not registered for synchronization because synchronization is not active
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@114bfedc] was not registered for synchronization because synchronization is not active
+2024-12-03 14:12:50 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:12:50 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@2128498180 wrapping com.mysql.cj.jdbc.ConnectionImpl@3bdccfbb] will not be managed by Spring
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@1397789505 wrapping com.mysql.cj.jdbc.ConnectionImpl@655700a9] will not be managed by Spring
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> ==>  Preparing: SELECT c.category_id,c.category_code,c.category_name,c.p_category_id,c.icon, c.background,c.sort FROM category_info c order by sort asc 
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> ==>  Preparing: SELECT count(1) FROM video_info_post v 
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> ==> Parameters: 
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> ==> Parameters: 
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> <==      Total: 1
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@114bfedc]
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@637bca88] was not registered for synchronization because synchronization is not active
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> <==      Total: 50
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@74262574]
+2024-12-03 14:12:50 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@1047845894 wrapping com.mysql.cj.jdbc.ConnectionImpl@655700a9] will not be managed by Spring
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> ==>  Preparing: SELECT v.video_id,v.video_cover,v.video_name,v.user_id,v.create_time, v.last_update_time,v.p_category_id,v.category_id,v.status,v.post_type, v.origin_info,v.tags,v.introduction,v.interaction,v.duration ,c.play_count,c.like_count,c.danmu_count,c.comment_count,c.coin_count,c.collect_count,c.recommend_type ,u.nick_name,u.avatar FROM video_info_post v left join video_info c on c.video_id = v.video_id left join user_info u on u.user_id = v.user_id order by v.last_update_time desc limit ?,? 
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> ==> Parameters: 0(Integer), 15(Integer)
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@68f8689]
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 14:12:50 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> <==      Total: 7
+2024-12-03 14:12:50 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@637bca88]
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@dbaf60e]
+2024-12-03 14:12:50 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/category/loadCategory", parameters={multipart}
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/videoInfo/loadVideoList", parameters={multipart}
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.CategoryController#loadCategory(CategoryInfoQuery)
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.VideoInfoController#loadVideoPost(VideoInfoPostQuery)
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@51907af5] was not registered for synchronization because synchronization is not active
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@19693227] was not registered for synchronization because synchronization is not active
+2024-12-03 14:21:31 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:21:31 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@1611915263 wrapping com.mysql.cj.jdbc.ConnectionImpl@3bdccfbb] will not be managed by Spring
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@1168707157 wrapping com.mysql.cj.jdbc.ConnectionImpl@655700a9] will not be managed by Spring
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> ==>  Preparing: SELECT count(1) FROM video_info_post v 
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> ==>  Preparing: SELECT c.category_id,c.category_code,c.category_name,c.p_category_id,c.icon, c.background,c.sort FROM category_info c order by sort asc 
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> ==> Parameters: 
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> ==> Parameters: 
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> <==      Total: 1
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@19693227]
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3dd5882a] was not registered for synchronization because synchronization is not active
+2024-12-03 14:21:31 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@1011109921 wrapping com.mysql.cj.jdbc.ConnectionImpl@655700a9] will not be managed by Spring
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> ==>  Preparing: SELECT v.video_id,v.video_cover,v.video_name,v.user_id,v.create_time, v.last_update_time,v.p_category_id,v.category_id,v.status,v.post_type, v.origin_info,v.tags,v.introduction,v.interaction,v.duration ,c.play_count,c.like_count,c.danmu_count,c.comment_count,c.coin_count,c.collect_count,c.recommend_type ,u.nick_name,u.avatar FROM video_info_post v left join video_info c on c.video_id = v.video_id left join user_info u on u.user_id = v.user_id order by v.last_update_time desc limit ?,? 
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> ==> Parameters: 0(Integer), 15(Integer)
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> <==      Total: 50
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@51907af5]
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@7b80afd9]
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 14:21:31 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> <==      Total: 7
+2024-12-03 14:21:31 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3dd5882a]
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@3754db67]
+2024-12-03 14:21:31 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/videoInfo/loadVideoList", parameters={multipart}
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/category/loadCategory", parameters={multipart}
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.CategoryController#loadCategory(CategoryInfoQuery)
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.VideoInfoController#loadVideoPost(VideoInfoPostQuery)
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@20e2c742] was not registered for synchronization because synchronization is not active
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6c7dff51] was not registered for synchronization because synchronization is not active
+2024-12-03 14:21:39 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:21:39 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@1872547456 wrapping com.mysql.cj.jdbc.ConnectionImpl@3bdccfbb] will not be managed by Spring
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> ==>  Preparing: SELECT count(1) FROM video_info_post v 
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> ==> Parameters: 
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@1086858639 wrapping com.mysql.cj.jdbc.ConnectionImpl@655700a9] will not be managed by Spring
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> ==>  Preparing: SELECT c.category_id,c.category_code,c.category_name,c.p_category_id,c.icon, c.background,c.sort FROM category_info c order by sort asc 
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> ==> Parameters: 
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectCount][debug][159]-> <==      Total: 1
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6c7dff51]
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][getSqlSession][97]-> Creating a new SqlSession
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][registerSessionHolder][148]-> SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1b2c6836] was not registered for synchronization because synchronization is not active
+2024-12-03 14:21:39 [DEBUG][org.springframework.jdbc.datasource.DataSourceUtils][doGetConnection][117]-> Fetching JDBC Connection from DataSource
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.transaction.SpringManagedTransaction][openConnection][87]-> JDBC Connection [HikariProxyConnection@891922191 wrapping com.mysql.cj.jdbc.ConnectionImpl@3bdccfbb] will not be managed by Spring
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> ==>  Preparing: SELECT v.video_id,v.video_cover,v.video_name,v.user_id,v.create_time, v.last_update_time,v.p_category_id,v.category_id,v.status,v.post_type, v.origin_info,v.tags,v.introduction,v.interaction,v.duration ,c.play_count,c.like_count,c.danmu_count,c.comment_count,c.coin_count,c.collect_count,c.recommend_type ,u.nick_name,u.avatar FROM video_info_post v left join video_info c on c.video_id = v.video_id left join user_info u on u.user_id = v.user_id order by v.last_update_time desc limit ?,? 
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> ==> Parameters: 0(Integer), 15(Integer)
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.CategoryInfoMapper.selectList][debug][159]-> <==      Total: 50
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@20e2c742]
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@6079516f]
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 14:21:39 [DEBUG][com.easylive.mappers.VideoInfoPostMapper.selectList][debug][159]-> <==      Total: 7
+2024-12-03 14:21:39 [DEBUG][org.mybatis.spring.SqlSessionUtils][closeSqlSession][191]-> Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1b2c6836]
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@606453db]
+2024-12-03 14:21:39 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 14:24:59 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=3m14s850ms).
+2024-12-03 14:41:41 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m41s869ms).
+2024-12-03 14:58:01 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m49s948ms).
+2024-12-03 15:18:08 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m36s352ms).
+2024-12-03 15:35:22 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m43s948ms).
+2024-12-03 15:38:36 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=2m43s950ms).
+2024-12-03 15:42:02 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=1m55s985ms).
+2024-12-03 16:07:39 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m36s873ms).
+2024-12-03 16:22:51 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=13m42s57ms).
+2024-12-03 16:42:11 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=1m20s20ms).
+2024-12-03 17:02:22 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m11s182ms).
+2024-12-03 17:14:17 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=9m54s676ms).
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/category/loadCategory", parameters={multipart}
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/videoInfo/loadVideoList", parameters={multipart}
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.VideoInfoController#loadVideoPost(VideoInfoPostQuery)
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.CategoryController#loadCategory(CategoryInfoQuery)
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver][doResolveHandlerMethodException][416]-> Using @ExceptionHandler com.easylive.controller.AGlobalExceptionHandlerController#handleException(Exception, HttpServletRequest)
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver][doResolveHandlerMethodException][416]-> Using @ExceptionHandler com.easylive.controller.AGlobalExceptionHandlerController#handleException(Exception, HttpServletRequest)
+2024-12-03 18:37:00 [ERROR][com.easylive.controller.AGlobalExceptionHandlerController][handleException][28]-> 请求错误，请求地址http://localhost:7070/admin/category/loadCategory,错误信息:
+com.easylive.exception.BusinessException: 未登录或登录超时
+2024-12-03 18:37:00 [ERROR][com.easylive.controller.AGlobalExceptionHandlerController][handleException][28]-> 请求错误，请求地址http://localhost:7070/admin/videoInfo/loadVideoList,错误信息:
+com.easylive.exception.BusinessException: 未登录或登录超时
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@29420242]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@7f5d33a]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver][resolveException][146]-> Resolved [com.easylive.exception.BusinessException: 未登录或登录超时]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver][resolveException][146]-> Resolved [com.easylive.exception.BusinessException: 未登录或登录超时]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/account/checkCode", parameters={multipart}
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.AccountController#checkCode()
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@4faa97e9]
+2024-12-03 18:37:00 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 18:52:41 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m53s868ms).
+2024-12-03 19:08:45 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m33s816ms).
+2024-12-03 19:32:20 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=13m35s295ms).
+2024-12-03 20:48:06 [DEBUG][org.springframework.web.servlet.DispatcherServlet][traceDebug][120]-> POST "/admin/account/checkCode", parameters={multipart}
+2024-12-03 20:48:06 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping][getHandler][522]-> Mapped to com.easylive.admin.controller.AccountController#checkCode()
+2024-12-03 20:48:06 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][writeWithMessageConverters][268]-> Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json, application/json, application/*+json, application/x-jackson-smile, application/cbor]
+2024-12-03 20:48:06 [DEBUG][org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor][traceDebug][120]-> Writing [com.easylive.entity.vo.ResponseVO@1175e84b]
+2024-12-03 20:48:06 [DEBUG][org.springframework.web.servlet.DispatcherServlet][logResult][1131]-> Completed 200 OK
+2024-12-03 21:04:39 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m47s695ms).
+2024-12-03 21:29:59 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m20s568ms).
+2024-12-03 21:46:11 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=15m41s649ms).
+2024-12-03 22:10:39 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m27s457ms).
+2024-12-03 22:27:22 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m13s340ms).
+2024-12-03 22:46:12 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m20s93ms).
+2024-12-03 22:49:22 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=1m39s913ms).
+2024-12-03 23:18:14 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=16m51s954ms).
+2024-12-03 23:38:03 [WARN][com.zaxxer.hikari.pool.HikariPool][run][788]-> HikariCPDatasource - Thread starvation or clock leap detected (housekeeper delta=17m49s174ms).
