@@ -1,5 +1,6 @@
 package com.easylive.service.impl;
 
+import com.easylive.component.EsSearchComponent;
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.config.AppConfig;
 import com.easylive.entity.constants.Constants;
@@ -62,6 +63,9 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 	private VideoInfoFileMapper<VideoInfoFile, VideoInfoFileQuery> videoInfoFileMapper;
 	@Resource
 	private AppConfig appConfig;
+
+	@Resource
+	private EsSearchComponent esSearchComponent;
 
 
 	/**
@@ -473,6 +477,7 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		}
 		//把与该视频有关的目录缓存清空
 		redisComponent.cleanDelFileList(videoId);
-		//TODO 保存信息到es
+		//保存信息到es
+		esSearchComponent.saveDoc(videoInfo);
 	}
 }

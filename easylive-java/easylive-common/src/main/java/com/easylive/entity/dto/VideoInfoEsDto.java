@@ -4,6 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.Date;
 
+//视频es信息数据传输对象
 public class VideoInfoEsDto {
     /**
      * 视频ID

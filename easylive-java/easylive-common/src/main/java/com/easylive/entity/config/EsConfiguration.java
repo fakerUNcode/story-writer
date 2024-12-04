@@ -9,6 +9,7 @@ import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfig
 
 import javax.annotation.Resource;
 
+/*用于配置 Elasticsearch 客户端连接的 Spring 配置类*/
 @Configuration
 public class EsConfiguration extends AbstractElasticsearchConfiguration implements DisposableBean {
 
@@ -18,10 +19,11 @@ public class EsConfiguration extends AbstractElasticsearchConfiguration implemen
     @Override
     public void destroy() throws Exception {
         if(client!=null){
-            client.close();
+            client.close();// 关闭客户端连接，释放资源
         }
     }
 
+    /*创建一个与es交互的RestHighLevelClient实例*/
     @Override
     public RestHighLevelClient elasticsearchClient() {
         final ClientConfiguration clientConfiguration = ClientConfiguration.builder().connectedTo(appConfig.getEsHostPort()).build();
