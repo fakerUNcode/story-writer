@@ -412,72 +412,91 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 	@Transactional(rollbackFor = Exception.class)
 	public void auditVideo(String videoId, Integer status, String reason) {
 		VideoStatusEnum videoStatusEnum = VideoStatusEnum.getByStatus(status);
-		if(videoStatusEnum ==null){
+		if (videoStatusEnum == null) {
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
+
 		VideoInfoPost videoInfoPost = new VideoInfoPost();
 		videoInfoPost.setStatus(status);
+		videoInfoPost.setVideoId(videoId);
 
 		VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
-		//必须保证视频状态为待审核才能进行审核，每一次进行审核前从数据库层面确认条件：where video_id = {video_id} and status = 2
-		//只要前后视频的status发生了改变不再是待审核，那么查询结果传入到auditCount就是0，解决了并发审核的问题
+		// 必须保证视频状态为待审核才能进行审核，每一次进行审核前从数据库层面确认条件：where video_id = {video_id} and status = 2
 		videoInfoPostQuery.setStatus(VideoStatusEnum.STATUS2.getStatus());
 		videoInfoPostQuery.setVideoId(videoId);
-		Integer auditCount = this.videoInfoPostMapper.updateByParam(videoInfoPost,videoInfoPostQuery);
-		if(auditCount==0){
+		Integer auditCount = this.videoInfoPostMapper.updateByParam(videoInfoPost, videoInfoPostQuery);
+		if (auditCount == 0) {
 			throw new BusinessException("审核失败，请稍后重试！");
 		}
-		//对视频中的文件进行更新
-		VideoInfoFilePost videoInfoFilePost = new VideoInfoFilePost();
-		videoInfoFilePost.setUpdateType(VideoFileUpdateTypeEnum.NO_UPDATE.getStatus());
 
+		// 查询需要审核的视频文件
 		VideoInfoFilePostQuery filePostQuery = new VideoInfoFilePostQuery();
 		filePostQuery.setVideoId(videoId);
-		this.videoInfoFilePostMapper.updateByParam(videoInfoFilePost,filePostQuery);
-		//审核不通过则直接打回不用进行操作
-		if(VideoStatusEnum.STATUS4 == videoStatusEnum){
-			return;
-		}
-		VideoInfoPost infoPost = this.videoInfoPostMapper.selectByVideoId(videoId);
-		VideoInfo dvVideoInfo = this.videoInfoMapper.selectByVideoId(videoId);
-		//如果此时数据库没有查询结果，说明用户是第一次投稿该视频，我们审核通过后给用户赠送硬币奖励
-		if(dvVideoInfo==null){
-			SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
-			//TODO 给用户加硬币
+		List<VideoInfoFilePost> videoInfoFilePostList = this.videoInfoFilePostMapper.selectList(filePostQuery);
+
+		// 检查视频文件信息是否完整，不完整则尝试从正式表补全
+		for (VideoInfoFilePost filePost : videoInfoFilePostList) {
+			if (filePost.getFilePath() == null || filePost.getFileSize() == null || filePost.getDuration() == null) {
+				VideoInfoFile file = this.videoInfoFileMapper.selectByFileId(filePost.getFileId());
+				if (file != null) {
+					filePost.setFilePath(file.getFilePath());
+					filePost.setFileSize(file.getFileSize());
+					filePost.setDuration(file.getDuration());
+					this.videoInfoFilePostMapper.update(filePost); // 更新文件信息到数据库
+				} else {
+					log.error("文件信息不完整，且无法从正式表补全，fileId: {}", filePost.getFileId());
+					throw new BusinessException("文件信息不完整，审核失败");
+				}
+			}
 		}
 
-		VideoInfo videoInfo = CopyTools.copy(infoPost,VideoInfo.class);
-		//更新发布信息到正式表：已有视频就更新，没视频就插入
+		// 如果审核不通过则直接返回
+		if (VideoStatusEnum.STATUS4 == videoStatusEnum) {
+			return;
+		}
+
+		// 查询视频信息
+		VideoInfoPost infoPost = this.videoInfoPostMapper.selectByVideoId(videoId);
+		VideoInfo dvVideoInfo = this.videoInfoMapper.selectByVideoId(videoId);
+
+		// 如果是用户第一次投稿该视频，审核通过后给予奖励
+		if (dvVideoInfo == null) {
+			SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
+			// TODO: 给用户加硬币奖励
+		}
+
+		VideoInfo videoInfo = CopyTools.copy(infoPost, VideoInfo.class);
+		// 更新发布信息到正式表：已有视频就更新，没视频就插入
 		this.videoInfoMapper.insertOrUpdate(videoInfo);
-		//更新视频信息到正式表：把原有的正式表内数据删除再重新添加
+
+		// 删除正式表中的旧文件信息
 		VideoInfoFileQuery videoInfoFileQuery = new VideoInfoFileQuery();
 		videoInfoFileQuery.setVideoId(videoId);
 		this.videoInfoFileMapper.deleteByParam(videoInfoFileQuery);
 
-		VideoInfoFilePostQuery videoInfoFilePostQuery = new VideoInfoFilePostQuery();
-		videoInfoFilePostQuery.setVideoId(videoId);
-		List<VideoInfoFilePost> videoInfoFilePostList = this.videoInfoFilePostMapper.selectList(videoInfoFilePostQuery);
-
-		List<VideoInfoFile> videoInfoFileList = CopyTools.copyList(videoInfoFilePostList,VideoInfoFile.class);
+		// 将审核表中的文件信息同步到正式表
+		List<VideoInfoFile> videoInfoFileList = CopyTools.copyList(videoInfoFilePostList, VideoInfoFile.class);
 		this.videoInfoFileMapper.insertBatch(videoInfoFileList);
 
-		/*删除服务器中原文件*/
+		/* 删除服务器中的原文件 */
 		List<String> filePathList = redisComponent.getDelFileList(videoId);
-		if(filePathList!=null){
-			for(String path : filePathList){
-				File file = new File(appConfig.getProjectFolder()+Constants.FILE_FOLDER+path);
-				if(file.exists()){
+		if (filePathList != null) {
+			for (String path : filePathList) {
+				File file = new File(appConfig.getProjectFolder() + Constants.FILE_FOLDER + path);
+				if (file.exists()) {
 					try {
 						FileUtils.deleteDirectory(file);
-					}catch (IOException e){
-						log.error("删除文件失败",e);
+					} catch (IOException e) {
+						log.error("删除文件失败", e);
 					}
 				}
 			}
 		}
-		//把与该视频有关的目录缓存清空
+
+		// 清空与该视频有关的目录缓存
 		redisComponent.cleanDelFileList(videoId);
-		//保存信息到es
+
+		// 保存视频信息到 Elasticsearch
 		esSearchComponent.saveDoc(videoInfo);
 	}
 }

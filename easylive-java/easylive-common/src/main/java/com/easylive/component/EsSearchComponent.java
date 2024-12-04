@@ -2,12 +2,15 @@ package com.easylive.component;
 
 import com.easylive.entity.config.AppConfig;
 import com.easylive.entity.dto.VideoInfoEsDto;
+import com.easylive.entity.enums.SearchOrderTypeEnum;
 import com.easylive.entity.po.VideoInfo;
+import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.utils.CopyTools;
 import com.easylive.utils.JsonUtils;
 import com.easylive.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -17,6 +20,11 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.ScriptType;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +32,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -110,7 +119,7 @@ public class EsSearchComponent {
     public void saveDoc(VideoInfo videoInfo) {
         try {
             //若doc已存在则更新，否则作插入
-            if(!docExist(videoInfo.getVideoId())){
+            if(docExist(videoInfo.getVideoId())){
                 updateDoc(videoInfo);
             }else {
                 // 将 VideoInfo 转换为 VideoInfoEsDto
@@ -159,7 +168,7 @@ public class EsSearchComponent {
                 Method method = videoInfo.getClass().getMethod(methodName);
 
                 Object object = method.invoke(videoInfo);
-                if(object!=null && object instanceof String && StringTools.isEmpty(object.toString())
+                if(object!=null && object instanceof String && !StringTools.isEmpty(object.toString())
                 || object!=null && !(object instanceof String)){
                     dataMap.put(field.getName(),object);
                 }
@@ -176,6 +185,40 @@ public class EsSearchComponent {
         }
     }
 
+    //更新doc数量
+    public void updateDocCount(String videoId, String fieldName, Integer count) {
+        try {
+            UpdateRequest updateRequest = new UpdateRequest(appConfig.getEsIndexVideoName(),videoId);
+            Script script = new Script(ScriptType.INLINE,"painless","ctx._source."+fieldName+" += params.count", Collections.singletonMap("count",count));
+            updateRequest.script(script);
+            restHighLevelClient.update(updateRequest,RequestOptions.DEFAULT);
+        }catch (Exception e){
+            log.error("更新数量到es失败",e);
+            throw new BusinessException("保存到es失败");
+        }
+    }
 
+    public void delDoc(String videoId){
+        DeleteRequest deleteRequest = new DeleteRequest(appConfig.getEsIndexVideoName(),videoId);
+        try {
+            restHighLevelClient.delete(deleteRequest,RequestOptions.DEFAULT);
+        }catch (Exception e){
+            log.error("es:删除视频失败",e);
+            throw new BusinessException("es:视频删除失败");
+        }
+    }
 
+    public PaginationResultVO<VideoInfo> search(Boolean highlight, String keyword, Integer orderType,Integer pageNo,Integer pageSize){
+        SearchOrderTypeEnum searchOrderTypeEnum = SearchOrderTypeEnum.getByType(orderType);
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(keyword,"videoName","tags"));
+
+        if(highlight){
+            HighlightBuilder highlightBuilder = new HighlightBuilder();
+            highlightBuilder.field("videoName");
+        }
+
+        return null;
+    }
 }

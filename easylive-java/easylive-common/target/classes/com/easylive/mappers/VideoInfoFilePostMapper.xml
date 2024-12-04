@@ -531,4 +531,14 @@
 		select ifnull(sum(duration),0) from video_info_file_post where video_id = #{videoId}
 	</select>
 
+	<update id="update" parameterType="com.easylive.entity.po.VideoInfoFilePost">
+		UPDATE video_info_file_post
+		SET file_path = #{filePost.filePath},
+			file_size = #{filePost.fileSize},
+			duration = #{filePost.duration},
+			update_type = #{filePost.updateType},
+			transfer_result = #{filePost.transferResult}
+		WHERE file_id = #{filePost.fileId}
+	</update>
+
 </mapper>

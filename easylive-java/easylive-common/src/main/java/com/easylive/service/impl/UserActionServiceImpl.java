@@ -1,8 +1,10 @@
 package com.easylive.service.impl;
 
+import com.easylive.component.EsSearchComponent;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
+import com.easylive.entity.enums.SearchOrderTypeEnum;
 import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.po.UserAction;
 import com.easylive.entity.po.UserInfo;
@@ -42,6 +44,8 @@ public class UserActionServiceImpl implements UserActionService {
 	private UserInfoMapper<UserInfo,UserInfoMapper> userInfoMapper;
 	@Resource
 	private VideoCommentMapper<VideoComment, VideoCommentQuery> videoCommentMapper;
+	@Resource
+	private EsSearchComponent esSearchComponent;
 
 	/**
 	 * 根据条件查询列表
@@ -200,8 +204,9 @@ public class UserActionServiceImpl implements UserActionService {
 				Integer changeCount = dbAction == null ? Constants.ONE : -Constants.ONE;
 				videoInfoMapper.updateCountInfo(bean.getVideoId(), actionTypeEnum.getField(), changeCount);
 
-				if(actionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT.VIDEO_LIKE){
-					//TODO 更新es收藏数量
+				if(actionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT){
+					// 更新es收藏数量
+					esSearchComponent.updateDocCount(videoInfo.getVideoId(), SearchOrderTypeEnum.VIDEO_COLLECT.getField(),changeCount);
 				}
 				break;
 			/*投币操作*/

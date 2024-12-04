@@ -1,8 +1,10 @@
 package com.easylive.service.impl;
 
+import com.easylive.component.EsSearchComponent;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
+import com.easylive.entity.enums.SearchOrderTypeEnum;
 import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.po.VideoDanmu;
 import com.easylive.entity.po.VideoInfo;
@@ -32,6 +34,8 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
 	@Resource
 	private VideoDanmuMapper<VideoDanmu, VideoDanmuQuery> videoDanmuMapper;
+	@Resource
+	private EsSearchComponent esSearchComponent;
 
 	/**
 	 * 根据条件查询列表
@@ -153,7 +157,8 @@ public class VideoDanmuServiceImpl implements VideoDanmuService {
 		this.videoDanmuMapper.insert(videoDanmu);
 		//使用动态拼接sql解决并发问题，此处第二个参数传入弹幕field，更新弹幕数量
 		this.videoInfoMapper.updateCountInfo(videoDanmu.getVideoId(),UserActionTypeEnum.VIDEO_DANMU.getField(),1);
-		//TODO 更新ES 弹幕数量
+		// 更新ES 弹幕数量
+		esSearchComponent.updateDocCount(videoDanmu.getVideoId(), SearchOrderTypeEnum.VIDEO_DANMU.getField(), 1);
 	}
 
 	@Override
