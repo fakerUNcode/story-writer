@@ -5,7 +5,13 @@ import com.easylive.entity.dto.VideoInfoEsDto;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.exception.BusinessException;
 import com.easylive.utils.CopyTools;
+import com.easylive.utils.JsonUtils;
+import com.easylive.utils.StringTools;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
@@ -16,6 +22,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component("esSearchComponent")
 @Slf4j
@@ -97,9 +107,75 @@ public class EsSearchComponent {
         }
     }
 
-    public void saveDoc(VideoInfo videoInfo){
-        VideoInfoEsDto videoInfoEsDto = CopyTools.copy(videoInfo, VideoInfoEsDto.class);
-        videoInfoEsDto.setCollectCount(0);
-        
+    public void saveDoc(VideoInfo videoInfo) {
+        try {
+            //若doc已存在则更新，否则作插入
+            if(!docExist(videoInfo.getVideoId())){
+                updateDoc(videoInfo);
+            }else {
+                // 将 VideoInfo 转换为 VideoInfoEsDto
+                VideoInfoEsDto videoInfoEsDto = CopyTools.copy(videoInfo, VideoInfoEsDto.class);
+
+                // 设置默认值
+                videoInfoEsDto.setCollectCount(0);
+                videoInfoEsDto.setDanmuCount(0);
+                videoInfoEsDto.setPlayCount(0);
+
+                // 构建索引请求
+                IndexRequest request = new IndexRequest(appConfig.getEsIndexVideoName());
+                request.id(videoInfo.getVideoId()).source(JsonUtils.convertObj2Json(videoInfoEsDto),XContentType.JSON);
+
+                // 执行索引请求
+                restHighLevelClient.index(request, RequestOptions.DEFAULT);
+
+                // 打印插入的文档 JSON（用于日志记录）
+                String json = JsonUtils.convertObj2Json(videoInfoEsDto);
+                log.info("插入的文档 JSON: {}", json);
+            }
+
+        } catch (Exception e) {
+            log.error("保存到 Elasticsearch 失败", e);
+            throw new BusinessException("保存到 Elasticsearch 失败");
+        }
     }
+
+    //判断doc是否存在的辅助方法
+    private Boolean docExist(String id) throws IOException {
+        GetRequest getRequest = new GetRequest(appConfig.getEsIndexVideoName(),id);
+        GetResponse response = restHighLevelClient.get(getRequest,RequestOptions.DEFAULT);
+        return response.isExists();
+    }
+
+    //更新doc方法
+    private void updateDoc(VideoInfo videoInfo) {
+        try {
+            videoInfo.setLastUpdateTime(null);
+            videoInfo.setCreateTime(null);
+
+            Map<String, Object> dataMap = new HashMap<>();
+            Field[] fields = videoInfo.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                String methodName = "get" + StringTools.upperCaseFirstLetter(field.getName());
+                Method method = videoInfo.getClass().getMethod(methodName);
+
+                Object object = method.invoke(videoInfo);
+                if(object!=null && object instanceof String && StringTools.isEmpty(object.toString())
+                || object!=null && !(object instanceof String)){
+                    dataMap.put(field.getName(),object);
+                }
+            }
+            if(dataMap.isEmpty()){
+                return;
+            }
+            UpdateRequest updateRequest = new UpdateRequest(appConfig.getEsIndexVideoName(),videoInfo.getVideoId());
+            updateRequest.doc(dataMap);
+            restHighLevelClient.update(updateRequest,RequestOptions.DEFAULT);
+        }catch (Exception e){
+            log.error("es更新视频失败",e);
+            throw new BusinessException("保存视频失败");
+        }
+    }
+
+
+
 }
