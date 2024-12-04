@@ -6,6 +6,7 @@
         </layout>
     </appender>
 
+    <property name="LOG_PATH" value="${LOG_PATH:- }"/>        //-后面是空格，千万不能错
     <springProperty scope="context" name="log.path" source="project.folder"/>
     <springProperty scope="context" name="log.root.level" source="log.root.level"/>
     <springProperty scope="context" name="appname" source="spring.application.name"/>
