@@ -20,6 +20,16 @@ public class UploadingFileDto implements Serializable {
     private Long fileSize = 0L;
     private String filePath;
 
+    private Integer duration;
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
     public String getUploadId() {
         return uploadId;
     }
