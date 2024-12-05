@@ -77,4 +77,7 @@ public class Constants {
 
     //修改昵称消耗硬币数
     public static final Integer UPDATE_NICK_NAME_COIN = 5;
+
+    //Redis搜索热词Key
+    public static final String REDIS_KEY_VIDEO_SEARCH_COUNT = REDIS_KEY_PREFIX + "video:search:";
 }

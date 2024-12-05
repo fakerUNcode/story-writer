@@ -17,8 +17,5 @@ public class TestController extends ABaseController{
     }
 
 
-    @RequestMapping("/video/getVideoRecommend")
-    public ResponseVO getVideoRecommend(){
-        return getSuccessResponseVO(null);
-    }
+
 }

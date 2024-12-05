@@ -2,10 +2,15 @@ package com.easylive.component;
 
 import com.easylive.entity.config.AppConfig;
 import com.easylive.entity.dto.VideoInfoEsDto;
+import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.SearchOrderTypeEnum;
+import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.po.VideoInfo;
+import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.UserInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
+import com.easylive.mappers.UserInfoMapper;
 import com.easylive.utils.CopyTools;
 import com.easylive.utils.JsonUtils;
 import com.easylive.utils.StringTools;
@@ -14,6 +19,8 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -23,8 +30,11 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Component;
 
@@ -32,15 +42,17 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component("esSearchComponent")
 @Slf4j
 public class EsSearchComponent {
     @Resource
     private AppConfig appConfig;
+    @Resource
+    private UserInfoMapper userInfoMapper;
 
     @Resource
     private RestHighLevelClient restHighLevelClient;
@@ -209,16 +221,65 @@ public class EsSearchComponent {
     }
 
     public PaginationResultVO<VideoInfo> search(Boolean highlight, String keyword, Integer orderType,Integer pageNo,Integer pageSize){
-        SearchOrderTypeEnum searchOrderTypeEnum = SearchOrderTypeEnum.getByType(orderType);
+        try {
+            SearchOrderTypeEnum searchOrderTypeEnum = SearchOrderTypeEnum.getByType(orderType);
 
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(keyword,"videoName","tags"));
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(QueryBuilders.multiMatchQuery(keyword,"videoName","tags"));
 
-        if(highlight){
-            HighlightBuilder highlightBuilder = new HighlightBuilder();
-            highlightBuilder.field("videoName");
+            //使用html标签对videoName中的适配结果高亮
+            if(highlight){
+                HighlightBuilder highlightBuilder = new HighlightBuilder();
+                highlightBuilder.field("videoName");
+                highlightBuilder.preTags("<span class='highlight'>");
+                highlightBuilder.postTags("</span>");
+                searchSourceBuilder.highlighter(highlightBuilder);
+
+            }
+            //排序规则
+            searchSourceBuilder.sort("_score", SortOrder.ASC);
+            if(orderType!=null){
+                searchSourceBuilder.sort(searchOrderTypeEnum.getField(),SortOrder.DESC);
+            }
+            pageNo = pageNo==null?1:pageNo;
+            pageSize = pageSize==null? PageSize.SIZE20.getSize() :pageSize;
+            searchSourceBuilder.size(pageSize);
+            searchSourceBuilder.from((pageNo-1)*pageSize);
+
+            SearchRequest searchRequest = new SearchRequest(appConfig.getEsIndexVideoName());
+            searchRequest.source(searchSourceBuilder);
+
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest,RequestOptions.DEFAULT);
+
+            SearchHits hits = searchResponse.getHits();
+            Integer totalCount = (int)hits.getTotalHits().value;
+
+            List<VideoInfo> videoInfoList = new ArrayList<>();
+            List<String> userIdList = new ArrayList<>();
+
+            for(SearchHit hit : hits.getHits()){
+                VideoInfo videoInfo = JsonUtils.convertJson2Obj(hit.getSourceAsString(),VideoInfo.class);
+                if(hit.getHighlightFields().get("videoName")!=null){
+                    videoInfo.setVideoName(hit.getHighlightFields().get("videoName").fragments()[0].string());
+                }
+                videoInfoList.add(videoInfo);
+                userIdList.add(videoInfo.getUserId());
+            }
+            UserInfoQuery userInfoQuery = new UserInfoQuery();
+            userInfoQuery.setUserIdList(userIdList);
+            List<UserInfo> userInfoList = userInfoMapper.selectList(userInfoQuery);
+            Map<String,UserInfo> userInfoMap = userInfoList.stream().collect(Collectors.toMap(item->item.getUserId(), Function.identity(),(data1,data2)->data2));
+            videoInfoList.forEach(item->{
+                UserInfo userInfo = userInfoMap.get(item.getUserId());
+                item.setNickName(userInfo==null?"":userInfo.getNickName());
+            });
+            SimplePage page = new SimplePage(pageNo,totalCount,pageSize);
+            PaginationResultVO resultVO = new PaginationResultVO<>(totalCount,page.getPageSize(),page.getPageNo(),page.getPageTotal(),videoInfoList);
+
+            return resultVO;
+        }catch (Exception e){
+            log.error("从es查询视频失败",e);
+            throw new BusinessException("从es查询视频失败");
         }
-
-        return null;
     }
 }

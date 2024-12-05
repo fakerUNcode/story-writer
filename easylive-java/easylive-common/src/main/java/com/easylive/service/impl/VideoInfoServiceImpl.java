@@ -1,5 +1,6 @@
 package com.easylive.service.impl;
 
+import com.easylive.component.EsSearchComponent;
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.config.AppConfig;
 import com.easylive.entity.constants.Constants;
@@ -49,6 +50,8 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 	private VideoCommentMapper videoCommentMapper;
 	@Resource
 	private AppConfig appConfig;
+	@Resource
+	private EsSearchComponent esSearchComponent;
 
 	private  static ExecutorService executorService = Executors.newFixedThreadPool(10);
 	/**
@@ -187,7 +190,8 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 		SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
 
 		//TODO 减少用户硬币
-		//TODO 从es中删去视频信息
+		//从es中删去视频信息
+		esSearchComponent.delDoc(videoId);
 
 		executorService.execute(()->{
 			/*删除服务器内文件*/
