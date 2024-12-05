@@ -5,6 +5,7 @@ import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.SysSettingDto;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.dto.UploadingFileDto;
+import com.easylive.entity.dto.VideoPlayInfoDto;
 import com.easylive.entity.enums.DateTimePatternEnum;
 import com.easylive.entity.po.CategoryInfo;
 import com.easylive.entity.po.VideoInfoFilePost;
@@ -198,6 +199,23 @@ public class RedisComponent {
     //获取搜索热词
     public List<String> getKeywordTop(Integer top){
         return redisUtils.getZSetList(Constants.REDIS_KEY_VIDEO_SEARCH_COUNT,top-1);
+    }
+
+    //增加视频播放
+    public void addVideoPlay(VideoPlayInfoDto videoPlayInfoDto){
+        redisUtils.lpush(Constants.REDIS_KEY_QUEUE_VIDEO_PLAY,videoPlayInfoDto,null);
+    }
+
+    //获取消息队列中的视频播放信息
+    public VideoPlayInfoDto getVideoPlayFromVideoPlayQueue(){
+        //右侧推出消息队列
+        return (VideoPlayInfoDto) redisUtils.rpop(Constants.REDIS_KEY_QUEUE_VIDEO_PLAY);
+    }
+
+    //记录视频播放
+    public void recordVideoPlayCount(String videoId){
+        String date = DateUtil.format(new Date(),DateTimePatternEnum.YYYY_MM_DD.getPattern());
+        redisUtils.incrementex(Constants.REDIS_KEY_VIDEO_PLAY_COUNT + date + ":" + videoId,Constants.REDIS_KEY_EXPIRES_ONE_DAY*2);
     }
 
 }

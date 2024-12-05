@@ -6,6 +6,7 @@ import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.SysSettingDto;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.dto.UploadingFileDto;
+import com.easylive.entity.dto.VideoPlayInfoDto;
 import com.easylive.entity.enums.DateTimePatternEnum;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.po.VideoInfoFile;
@@ -169,7 +170,18 @@ public class FileController extends ABaseController {
         VideoInfoFile videoInfoFile = videoInfoFileService.getVideoInfoFileByFileId(fileId);
         String filePath = videoInfoFile.getFilePath();
         readFile(response, filePath + "/" + Constants.M3U8_NAME);
-        //TODO 更新视频的播放信息等
+        //更新视频的播放信息等
+        VideoPlayInfoDto videoPlayInfoDto = new VideoPlayInfoDto();
+        videoPlayInfoDto.setVideoId(videoInfoFile.getVideoId());
+
+        videoPlayInfoDto.setFileIndex(videoInfoFile.getFileIndex());
+
+        TokenUserInfoDto tokenUserInfoDto = getTokenInfoFromCookie();
+        //只有登录的用户的行为才会更新视频播放信息
+        if(tokenUserInfoDto!=null){
+            videoPlayInfoDto.setUserId(tokenUserInfoDto.getUserId());
+        }
+        redisComponent.addVideoPlay(videoPlayInfoDto);
     }
     @RequestMapping("/videoResource/{fileId}/{ts}")
     public void videoResourceTs(HttpServletResponse response, @PathVariable @NotEmpty String fileId,@PathVariable @NotEmpty String ts) {

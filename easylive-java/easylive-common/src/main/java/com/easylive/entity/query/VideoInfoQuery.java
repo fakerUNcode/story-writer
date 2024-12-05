@@ -140,6 +140,17 @@ public class VideoInfoQuery extends BaseParam {
 	 */
 	private String lastPlayTime;
 
+	/*播放的最近24个小时*/
+	private Integer lastPlayHour;
+
+	public Integer getLastPlayHour() {
+		return lastPlayHour;
+	}
+
+	public void setLastPlayHour(Integer lastPlayHour) {
+		this.lastPlayHour = lastPlayHour;
+	}
+
 	private String lastPlayTimeStart;
 
 	private String lastPlayTimeEnd;

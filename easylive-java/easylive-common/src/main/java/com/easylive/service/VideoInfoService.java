@@ -72,4 +72,6 @@ public interface VideoInfoService {
 	void changeInteraction(String videoId, String userId,String interaction);
 
 	void deleteVideo(String videoId, String userId);
+
+	void addReadCount(String videoId);
 }

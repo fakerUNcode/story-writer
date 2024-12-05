@@ -134,4 +134,30 @@ public class ABaseController {
             }
         }
     }
+
+    //从cookie获取TokenInfo
+    public TokenUserInfoDto getTokenInfoFromCookie(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = getTokenFromCookie(request);
+        if(token==null){
+            return null;
+        }
+        return redisComponent.getTokenInfo(token);
+    }
+
+    //获取token的辅助方法
+    private String getTokenFromCookie(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        if(cookies==null){
+            return null;
+        }
+        for (Cookie cookie : cookies){
+            if(cookie.getName().equalsIgnoreCase(Constants.TOKEN_WEB)){
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+
 }
