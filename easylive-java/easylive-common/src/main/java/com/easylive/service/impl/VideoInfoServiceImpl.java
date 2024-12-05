@@ -7,6 +7,7 @@ import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.SysSettingDto;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
+import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.po.VideoInfoFile;
 import com.easylive.entity.po.VideoInfoPost;
@@ -231,6 +232,12 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 		});
 
 
+	}
+
+	//增加视频播放量
+	@Override
+	public void addReadCount(String videoId) {
+		this.videoInfoMapper.updateCountInfo(videoId, UserActionTypeEnum.VIDEO_PLAY.getField(), 1);
 	}
 
 }

@@ -14,6 +14,8 @@ public class Constants {
     public static final Integer LENGTH_30 = 30;
     public static final Long MB_SIZE = 1024*1024L;
 
+    public static final Integer HOUR_24 = 24;
+
     //用于效验密码是否符合规范的正则表达式（必须包含数字字母和特殊符号，8-18位）
     public static final String REGEX_PASSWORD =  "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,18}$";
 
@@ -55,6 +57,7 @@ public class Constants {
     //删除文件组合
     public static final String REDIS_KEY_FILE_DEL =REDIS_KEY_PREFIX + "file:list:del:";
     public static final String REDIS_KEY_QUEUE_TRANSFER = REDIS_KEY_PREFIX + "queue:transfer:";
+    public static final String REDIS_KEY_QUEUE_VIDEO_PLAY = REDIS_KEY_PREFIX + "queue:video:play:";
 
     //合并文件的临时文件名
     public static final String TEMP_VIDEO_NAME = "/temp.mp4";
@@ -80,4 +83,7 @@ public class Constants {
 
     //Redis搜索热词Key
     public static final String REDIS_KEY_VIDEO_SEARCH_COUNT = REDIS_KEY_PREFIX + "video:search:";
+
+    //播放次数
+    public static final String REDIS_KEY_VIDEO_PLAY_COUNT = REDIS_KEY_PREFIX + "video:playcount:";
 }

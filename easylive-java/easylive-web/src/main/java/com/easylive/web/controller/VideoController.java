@@ -139,14 +139,16 @@ public class VideoController extends ABaseController{
 	}
 
 	//加载视频热榜
-	@RequestMapping("/laodHotVideoList")
+	@RequestMapping("/loadHotVideoList")
 	public ResponseVO loadHotVideoList(Integer pageNo){
 		VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
 		videoInfoQuery.setPageNo(pageNo);
 		videoInfoQuery.setQueryUserInfo(true);
 		videoInfoQuery.setOrderBy("play_count desc");
-		PaginationResultVO resultVO = videoInfo
-		return getSuccessResponseVO(videoInfoList);
+		videoInfoQuery.setLastPlayHour(Constants.HOUR_24);
+		PaginationResultVO resultVO = videoInfoService.findListByPage(videoInfoQuery);
+
+		return getSuccessResponseVO(resultVO);
 	}
 
 }

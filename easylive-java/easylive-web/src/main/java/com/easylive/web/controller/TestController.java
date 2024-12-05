@@ -6,10 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestController extends ABaseController{
-    @RequestMapping("/video/getSearchKeywordTop")
-    public ResponseVO getSearchKeywordTop(){
-        return getSuccessResponseVO(null);
-    }
 
     @RequestMapping("/message/getNoReadCount")
     public ResponseVO getNoReadCount(){

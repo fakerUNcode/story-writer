@@ -196,6 +196,10 @@
 		 </foreach>)
 		 </if>
 
+		 <if test="query.lastPlayHour != null ">
+			 <![CDATA[ and  v.last_play_time>=date_sub(now(),interval #{query.lastPlayHour} hour) ]]>
+		 </if>
+
 	 </where>
 	</sql>
 
