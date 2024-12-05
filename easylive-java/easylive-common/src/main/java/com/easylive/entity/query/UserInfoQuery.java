@@ -1,5 +1,7 @@
 package com.easylive.entity.query;
 
+import java.util.List;
+
 /**
  * 参数
  */
@@ -119,6 +121,15 @@ public class UserInfoQuery extends BaseParam {
 
 	private String avatarFuzzy;
 
+	private List<String> userIdList;
+
+	public List<String> getUserIdList() {
+		return userIdList;
+	}
+
+	public void setUserIdList(List<String> userIdList) {
+		this.userIdList = userIdList;
+	}
 
 	public void setUserId(String userId){
 		this.userId = userId;

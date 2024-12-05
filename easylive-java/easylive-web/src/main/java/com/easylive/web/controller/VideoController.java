@@ -1,10 +1,10 @@
 package com.easylive.web.controller;
 
+import com.easylive.component.EsSearchComponent;
 import com.easylive.component.RedisComponent;
+import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
-import com.easylive.entity.enums.ResponseCodeEnum;
-import com.easylive.entity.enums.UserActionTypeEnum;
-import com.easylive.entity.enums.VideoRecommendTypeEnum;
+import com.easylive.entity.enums.*;
 import com.easylive.entity.po.UserAction;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.po.VideoInfoFile;
@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 主页视频 Controller
@@ -43,6 +44,8 @@ public class VideoController extends ABaseController{
 	private UserActionService userActionService;
 	@Resource
 	private RedisComponent redisComponent;
+	@Resource
+	private EsSearchComponent esSearchComponent;
 
 
 	/*首页推荐视频接口*/
@@ -105,9 +108,45 @@ public class VideoController extends ABaseController{
 		return getSuccessResponseVO(fileList);
 	}
 
+	//视频播放
 	@RequestMapping("/reportVideoPlayOnline")
 	public ResponseVO reportVideoPlayOnline(@NotEmpty String fileId,@NotEmpty String deviceId){
 
 		return getSuccessResponseVO(redisComponent.reportVideoPlayOnline(fileId,deviceId));
 	}
+
+	//搜索视频
+	@RequestMapping("/search")
+	public ResponseVO search(@NotEmpty String keyword,Integer orderType,Integer pageNo){
+		//记录搜索热词
+		redisComponent.addKeywordCount(keyword);
+		PaginationResultVO resultVO = esSearchComponent.search(true,keyword,orderType,pageNo,PageSize.SIZE30.getSize());
+		return getSuccessResponseVO(resultVO);
+	}
+	//获取最多的几个搜索热词
+	@RequestMapping("/getSearchKeywordTop")
+	public ResponseVO getSearchKeywordTop(){
+		List<String> keywordList = redisComponent.getKeywordTop(Constants.LENGTH_10);
+		return getSuccessResponseVO(keywordList);
+	}
+
+	//获取推荐视频
+	@RequestMapping("/getVideoRecommend")
+	public ResponseVO getVideoRecommend(@NotEmpty String keyword,@NotEmpty String videoId){
+		List<VideoInfo> videoInfoList = esSearchComponent.search(false,keyword, SearchOrderTypeEnum.VIDEO_PLAY.getType(),1,PageSize.SIZE10.getSize()).getList();
+		videoInfoList = videoInfoList.stream().filter(item->!item.getVideoId().equals(videoId)).collect(Collectors.toList());;
+		return getSuccessResponseVO(videoInfoList);
+	}
+
+	//加载视频热榜
+	@RequestMapping("/laodHotVideoList")
+	public ResponseVO loadHotVideoList(Integer pageNo){
+		VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
+		videoInfoQuery.setPageNo(pageNo);
+		videoInfoQuery.setQueryUserInfo(true);
+		videoInfoQuery.setOrderBy("play_count desc");
+		PaginationResultVO resultVO = videoInfo
+		return getSuccessResponseVO(videoInfoList);
+	}
+
 }

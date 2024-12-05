@@ -190,5 +190,14 @@ public class RedisComponent {
         redisUtils.decrement(key);
     }
 
+    //增加搜索关键词次数
+    public void addKeywordCount(String keyword){
+        redisUtils.zaddCount(Constants.REDIS_KEY_VIDEO_SEARCH_COUNT,keyword);
+    }
+
+    //获取搜索热词
+    public List<String> getKeywordTop(Integer top){
+        return redisUtils.getZSetList(Constants.REDIS_KEY_VIDEO_SEARCH_COUNT,top-1);
+    }
 
 }
