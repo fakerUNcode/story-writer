@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.query.VideoCommentQuery;
@@ -34,6 +35,7 @@ public class UcenterInteractionController extends ABaseController{
 
     //获取视频信息
     @RequestMapping("/loadAllVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadAllVideo(){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
 
@@ -46,6 +48,7 @@ public class UcenterInteractionController extends ABaseController{
 
     //加载视频评论管理
     @RequestMapping("/loadComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadComment(Integer pageNo,String videoId) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
 
@@ -61,6 +64,7 @@ public class UcenterInteractionController extends ABaseController{
 
     //删除视频评论
     @RequestMapping("/delComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delComment(@NotNull Integer commentId) {
         videoCommentService.deleteComment(commentId,getTokenUserInfoDto().getUserId());
         return getSuccessResponseVO(null);
@@ -68,6 +72,7 @@ public class UcenterInteractionController extends ABaseController{
 
     //加载视频弹幕管理
     @RequestMapping("/loadDanmu")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadDanmu( Integer pageNo,String videoId) {
        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         VideoDanmuQuery danmuQuery = new VideoDanmuQuery();
@@ -82,6 +87,7 @@ public class UcenterInteractionController extends ABaseController{
 
     //删除视频弹幕
     @RequestMapping("/delDanmu")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delDanmu(@NotNull Integer danmuId) {
         videoDanmuService.deleteDanmu(getTokenUserInfoDto().getUserId(),danmuId);
         return getSuccessResponseVO(null);

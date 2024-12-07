@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.PageSize;
@@ -50,6 +51,7 @@ public class UhomeController extends ABaseController{
 
     //用户主页信息修改
     @RequestMapping("updateUserInfo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO updateUserInfo(@NotEmpty @Size(max=20)String nickName,
                                      @NotEmpty @Size(max=100)String avatar,
                                      @NotNull Integer sex,
@@ -76,6 +78,7 @@ public class UhomeController extends ABaseController{
 
     //保存主题
     @RequestMapping("saveTheme")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveTheme(@Min(1) @Max(10) @NotNull Integer theme){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         UserInfo userInfo  = new UserInfo();
@@ -86,6 +89,7 @@ public class UhomeController extends ABaseController{
 
     //关注用户
     @RequestMapping("/focus")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO focus(@NotEmpty String focusUserId){
 
         userFocusService.focusUser(getTokenUserInfoDto().getUserId(),focusUserId);
@@ -93,6 +97,7 @@ public class UhomeController extends ABaseController{
     }
     //取消关注用户
     @RequestMapping("/cancelFocus")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO cancelFocus(@NotEmpty String focusUserId){
 
         userFocusService.cancelFocus(getTokenUserInfoDto().getUserId(),focusUserId);
@@ -101,6 +106,7 @@ public class UhomeController extends ABaseController{
 
     //加载关注列表
     @RequestMapping("/loadFocusList")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadFocusList(Integer pageNo){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         UserFocusQuery focusQuery = new UserFocusQuery();
@@ -114,6 +120,7 @@ public class UhomeController extends ABaseController{
 
     //加载粉丝列表
     @RequestMapping("/loadFansList")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadFansCount(Integer pageNo){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         UserFocusQuery focusQuery = new UserFocusQuery();

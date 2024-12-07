@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.po.UserVideoSeries;
@@ -46,6 +47,7 @@ public class UhomeVideoSeriesController extends ABaseController{
 
     //创建用户视频集合
     @RequestMapping("/saveVideoSeries")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveVideoSeries(Integer seriesId,
                                       @NotEmpty @Size(max=100)String seriesName,
                                       @Size(max=200)String seriesDescription,
@@ -65,6 +67,7 @@ public class UhomeVideoSeriesController extends ABaseController{
 
     //加载集合的所有视频
     @RequestMapping("/loadAllVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadAllVideo(Integer seriesId) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         VideoInfoQuery infoQuery = new VideoInfoQuery();
@@ -108,6 +111,7 @@ public class UhomeVideoSeriesController extends ABaseController{
 
     //向合集添加视频
     @RequestMapping("/saveSeriesVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveSeriesVideo(@NotNull Integer seriesId,@NotEmpty String videoIds) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         this.userVideoSeriesService.saveSeriesVideo(tokenUserInfoDto.getUserId(),seriesId,videoIds);
@@ -116,6 +120,7 @@ public class UhomeVideoSeriesController extends ABaseController{
 
     //删除合集内的视频
     @RequestMapping("/delSeriesVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delSeriesVideo(String userId,Integer seriesId,String videoId) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         this.userVideoSeriesService.delSeriesVideo(tokenUserInfoDto.getUserId(),seriesId,videoId);
@@ -124,6 +129,7 @@ public class UhomeVideoSeriesController extends ABaseController{
 
     //删除视频集合
     @RequestMapping("/delVideoSeries")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delVideoSeries(@NotNull Integer seriesId) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         this.userVideoSeriesService.delVideoSeries(tokenUserInfoDto.getUserId(),seriesId);
@@ -132,6 +138,7 @@ public class UhomeVideoSeriesController extends ABaseController{
 
     //视频集合排序
     @RequestMapping("/changeVideoSeriesSort")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO changeVideoSeriesSort(@NotNull String seriesIds) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         this.userVideoSeriesService.changeVideoSeriesSort(tokenUserInfoDto.getUserId(),seriesIds);

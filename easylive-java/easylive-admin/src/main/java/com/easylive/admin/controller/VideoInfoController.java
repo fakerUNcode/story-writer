@@ -44,5 +44,4 @@ public class VideoInfoController extends ABaseController{
         return getSuccessResponseVO(null);
     }
 
-
 }

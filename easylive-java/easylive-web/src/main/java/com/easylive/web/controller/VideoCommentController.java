@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.CommentTopTypeEnum;
@@ -43,6 +44,7 @@ public class VideoCommentController extends ABaseController{
     private VideoInfoService videoInfoService;
 
     @RequestMapping("/postComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO postComment(
             @NotEmpty String videoId,
             @NotEmpty @Size(max = 500) String content,
@@ -127,6 +129,7 @@ public class VideoCommentController extends ABaseController{
 
     //评论置顶请求
     @RequestMapping("/topComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO topComment(@NotNull Integer commentId){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         videoCommentService.topComment(commentId,tokenUserInfoDto.getUserId());
@@ -136,6 +139,7 @@ public class VideoCommentController extends ABaseController{
 
     //取消置顶请求
     @RequestMapping("/cancelTopComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO cancelTopComment(@NotNull Integer commentId) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         videoCommentService.cancelTopComment(commentId,tokenUserInfoDto.getUserId());
@@ -145,6 +149,7 @@ public class VideoCommentController extends ABaseController{
 
     //删除评论
     @RequestMapping("/userDelComment")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO userDelComment(@NotNull Integer commentId) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         videoCommentService.deleteComment(commentId,tokenUserInfoDto.getUserId());

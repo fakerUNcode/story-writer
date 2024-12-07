@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.config.AppConfig;
 import com.easylive.entity.constants.Constants;
@@ -84,6 +85,7 @@ public class FileController extends ABaseController {
 
     //视频预上传处理interface
     @RequestMapping("preUploadVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO preUploadVideo(@NotEmpty String fileName, @NotNull Integer chunks) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         String uploadId = redisComponent.savePreVideoFileInfo(tokenUserInfoDto.getUserId(), fileName, chunks);
@@ -92,6 +94,7 @@ public class FileController extends ABaseController {
 
     //视频上传处理interface
     @RequestMapping("uploadVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO uploadVideo(@NotNull MultipartFile chunkFile, @NotNull Integer chunkIndex, @NotEmpty String uploadId) throws IOException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         UploadingFileDto fileDto = redisComponent.getUploadVideoFile(tokenUserInfoDto.getUserId(), uploadId);
@@ -132,6 +135,7 @@ public class FileController extends ABaseController {
     }
 
     @RequestMapping("delUploadVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO delUploadVideo(@NotEmpty String uploadId) throws IOException {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         UploadingFileDto fileDto = redisComponent.getUploadVideoFile(tokenUserInfoDto.getUserId(), uploadId);
@@ -145,6 +149,7 @@ public class FileController extends ABaseController {
 
 
     @RequestMapping("uploadImage")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO uploadImage(@NotNull MultipartFile file, @NotNull Boolean createThumbnail) throws IOException {
         String day = DateUtil.format(new Date(), DateTimePatternEnum.YYYYMMDD.getPattern());
         String folder = appConfig.getProjectFolder() + Constants.FILE_FOLDER + Constants.FILE_COVER + day;

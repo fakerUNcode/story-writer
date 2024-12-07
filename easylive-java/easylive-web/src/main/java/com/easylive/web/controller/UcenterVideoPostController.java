@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.VideoStatusEnum;
@@ -41,6 +42,7 @@ public class UcenterVideoPostController extends ABaseController{
     private VideoInfoService videoInfoService;
 
     @RequestMapping("/postVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO postVideo(String videoId,
                                 @NotEmpty String videoCover,
                                 @NotEmpty @Size(max = 100) String videoName,
@@ -73,6 +75,7 @@ public class UcenterVideoPostController extends ABaseController{
 
     //加载用户稿件
     @RequestMapping("/loadVideoList")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO loadVideoPost(Integer status, Integer pageNo, String videoNameFuzzy){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         VideoInfoPostQuery videoInfoQuery = new VideoInfoPostQuery();
@@ -97,6 +100,7 @@ public class UcenterVideoPostController extends ABaseController{
 
     //用户的稿件中各个状态的稿件的数量获取
     @RequestMapping("/getVideoCountInfo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO getVideoCountInfo(){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
 
@@ -121,6 +125,7 @@ public class UcenterVideoPostController extends ABaseController{
 
     //创作中心稿件
     @RequestMapping("/getVideoByVideoId")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO getVideoByVideoId(@NotEmpty String videoId){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         //用户只对自己的稿件有权限
@@ -140,6 +145,7 @@ public class UcenterVideoPostController extends ABaseController{
 
     //修改互动信息
     @RequestMapping("/saveVideoInteraction")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO saveVideoInteraction(@NotEmpty String videoId,String interaction){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         videoInfoService.changeInteraction(videoId, tokenUserInfoDto.getUserId(),interaction);
@@ -148,6 +154,7 @@ public class UcenterVideoPostController extends ABaseController{
 
     //删除稿件
     @RequestMapping("/deleteVideo")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO deleteVideo(@NotEmpty String videoId){
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
         videoInfoService.deleteVideo(videoId, tokenUserInfoDto.getUserId());

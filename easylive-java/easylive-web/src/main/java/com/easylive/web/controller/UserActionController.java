@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.po.UserAction;
 import com.easylive.entity.vo.ResponseVO;
@@ -20,6 +21,7 @@ public class UserActionController extends ABaseController{
     private UserActionService userActionService;
 
     @RequestMapping("/doAction")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO doAction(@NotEmpty String videoId,
                                @NotNull Integer actionType,
                                @Max(2) @Min(1) Integer actionCount,
