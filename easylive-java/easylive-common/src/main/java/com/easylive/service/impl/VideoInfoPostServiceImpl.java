@@ -437,14 +437,15 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		// 检查视频文件信息是否完整，不完整则尝试从正式表补全
 		for (VideoInfoFilePost filePost : videoInfoFilePostList) {
 			if (filePost.getFilePath() == null || filePost.getFileSize() == null || filePost.getDuration() == null) {
+				// 从正式表补全数据
 				VideoInfoFile file = this.videoInfoFileMapper.selectByFileId(filePost.getFileId());
 				if (file != null) {
 					filePost.setFilePath(file.getFilePath());
 					filePost.setFileSize(file.getFileSize());
 					filePost.setDuration(file.getDuration());
-					this.videoInfoFilePostMapper.update(filePost); // 更新文件信息到数据库
+					this.videoInfoFilePostMapper.update(filePost); // 更新审核表信息
 				} else {
-					log.error("文件信息不完整，且无法从正式表补全，fileId: {}", filePost.getFileId());
+					log.error("无法从正式表补全文件信息，fileId: {}", filePost.getFileId());
 					throw new BusinessException("文件信息不完整，审核失败");
 				}
 			}
