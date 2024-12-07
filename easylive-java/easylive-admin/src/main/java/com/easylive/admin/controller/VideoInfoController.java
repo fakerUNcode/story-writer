@@ -1,5 +1,7 @@
 package com.easylive.admin.controller;
 
+import com.easylive.annotation.RecordUserMessage;
+import com.easylive.entity.enums.MessageTypeEnum;
 import com.easylive.entity.query.VideoInfoPostQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.vo.ResponseVO;
@@ -39,6 +41,7 @@ public class VideoInfoController extends ABaseController{
     }
 
     @RequestMapping("/auditVideo")
+    @RecordUserMessage(messageType = MessageTypeEnum.SYS)
     public ResponseVO auditVideo(@NotEmpty String videoId, @NotNull Integer status, String reason){
         videoInfoPostService.auditVideo(videoId,status,reason);
         return getSuccessResponseVO(null);

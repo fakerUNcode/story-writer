@@ -1,10 +1,11 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.UserMessageQuery;
+import com.easylive.entity.enums.MessageTypeEnum;
 import com.easylive.entity.po.UserMessage;
+import com.easylive.entity.query.UserMessageQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -68,5 +69,7 @@ public interface UserMessageService {
 	 * 根据MessageId删除
 	 */
 	Integer deleteUserMessageByMessageId(Integer messageId);
+
+	void saveUserMessage(String videoId, String sendUserId, MessageTypeEnum messageTypeEnum, String content,Integer replyCommentId);
 
 }
