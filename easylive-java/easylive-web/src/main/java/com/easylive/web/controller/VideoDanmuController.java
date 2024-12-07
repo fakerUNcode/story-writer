@@ -1,5 +1,6 @@
 package com.easylive.web.controller;
 
+import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.po.VideoDanmu;
 import com.easylive.entity.po.VideoInfo;
@@ -30,6 +31,7 @@ public class VideoDanmuController extends ABaseController{
 
     //弹幕发布接口,传入参数：视频id,文件id，弹幕内容，弹幕位置，弹幕颜色，弹幕在视频中的出现时间点
     @RequestMapping("/postDanmu")
+    @GlobalInterceptor(checkLogin = true)
     public ResponseVO postDanmu(@NotEmpty String videoId, @NotEmpty String fileId,
                                @NotEmpty @Size(max=200) String text, @NotNull Integer mode,
                                @NotNull String color,@NotNull Integer time){

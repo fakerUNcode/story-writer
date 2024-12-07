@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easylive.mappers.StatisticsInfoMapper">
+
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="com.easylive.entity.po.StatisticsInfo">
+		<!--统计日期-->
+		<result column="statistics_date" property="statisticsDate"  />
+		<!--用户ID-->
+		<result column="user_id" property="userId"  />
+		<!--数据统计类型-->
+		<result column="data_type" property="dataType"  />
+		<!--统计数值-->
+		<result column="data_value" property="dataValue"  />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="base_column_list">
+		 s.statistics_date,s.user_id,s.data_type,s.data_value
+	</sql>
+
+	<sql id="base_condition_filed">
+			<if test="query.statisticsDate != null and query.statisticsDate!=''">
+				 and  s.statistics_date = #{query.statisticsDate}
+			</if>
+			<if test="query.userId != null and query.userId!=''">
+				 and  s.user_id = #{query.userId}
+			</if>
+			<if test="query.dataType != null">
+				 and  s.data_type = #{query.dataType}
+			</if>
+			<if test="query.dataValue != null">
+				 and  s.data_value = #{query.dataValue}
+			</if>
+	</sql>
+	<!-- 通用条件列-->
+	<sql id="base_condition">
+	 <where>
+		 <include refid="base_condition_filed" />
+	 </where>
+	</sql>
+
+	<!-- 通用查询条件列-->
+	<sql id="query_condition">
+	 <where>
+			<include refid="base_condition_filed" />
+			<if test="query.statisticsDateFuzzy!= null  and query.statisticsDateFuzzy!=''">
+				 and  s.statistics_date like concat('%', #{query.statisticsDateFuzzy}, '%')
+			</if>
+			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
+				 and  s.user_id like concat('%', #{query.userIdFuzzy}, '%')
+			</if>
+	 </where>
+	</sql>
+
+	<!-- 查询集合-->
+	<select id="selectList" resultMap="base_result_map" >
+		 SELECT <include refid="base_column_list" /> FROM statistics_info s <include refid="query_condition" />
+		 <if test="query.orderBy!=null">
+			 order by ${query.orderBy}
+		 </if>
+		 <if test="query.simplePage!=null">
+			 limit #{query.simplePage.start},#{query.simplePage.end}
+		 </if>
+	</select>
+
+	<!-- 查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer" >
+		 SELECT count(1) FROM statistics_info s <include refid="query_condition" />
+	</select>
+
+	<!-- 插入 （匹配有值的字段）-->
+	<insert id="insert" parameterType="com.easylive.entity.po.StatisticsInfo">
+		 INSERT INTO statistics_info
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="bean.statisticsDate != null">
+				 statistics_date,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.dataType != null">
+				 data_type,
+			</if>
+			<if test="bean.dataValue != null">
+				 data_value,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="bean.statisticsDate!=null">
+				 #{bean.statisticsDate},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.dataType!=null">
+				 #{bean.dataType},
+			</if>
+			<if test="bean.dataValue!=null">
+				 #{bean.dataValue},
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 插入或者更新 （匹配有值的字段）-->
+	<insert id="insertOrUpdate" parameterType="com.easylive.entity.po.StatisticsInfo">
+		 INSERT INTO statistics_info
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.statisticsDate != null">
+				 statistics_date,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.dataType != null">
+				 data_type,
+			</if>
+			<if test="bean.dataValue != null">
+				 data_value,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.statisticsDate!=null">
+				 #{bean.statisticsDate},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.dataType!=null">
+				 #{bean.dataType},
+			</if>
+			<if test="bean.dataValue!=null">
+				 #{bean.dataValue},
+			</if>
+		 </trim>
+		 on DUPLICATE key update 
+		 <trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.statisticsDate!=null">
+				 statistics_date = VALUES(statistics_date),
+			</if>
+			<if test="bean.userId!=null">
+				 user_id = VALUES(user_id),
+			</if>
+			<if test="bean.dataType!=null">
+				 data_type = VALUES(data_type),
+			</if>
+			<if test="bean.dataValue!=null">
+				 data_value = VALUES(data_value),
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 添加 （批量插入）-->
+	<insert id="insertBatch" parameterType="com.easylive.entity.po.StatisticsInfo">
+		 INSERT INTO statistics_info(
+			 statistics_date,
+			 user_id,
+			 data_type,
+			 data_value
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.statisticsDate},
+				 #{item.userId},
+				 #{item.dataType},
+				 #{item.dataValue}
+			 )
+		 </foreach>
+	</insert>
+
+	<!-- 批量新增修改 （批量插入）-->
+	<insert id="insertOrUpdateBatch" parameterType="com.easylive.entity.po.StatisticsInfo">
+		 INSERT INTO statistics_info(
+			 statistics_date,
+			 user_id,
+			 data_type,
+			 data_value
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.statisticsDate},
+				 #{item.userId},
+				 #{item.dataType},
+				 #{item.dataValue}
+			 )
+		 </foreach>
+			on DUPLICATE key update 
+			statistics_date = VALUES(statistics_date),
+			user_id = VALUES(user_id),
+			data_type = VALUES(data_type),
+			data_value = VALUES(data_value)
+	</insert>
+
+	<!--多条件修改-->
+	<update id="updateByParam" parameterType="com.easylive.entity.query.StatisticsInfoQuery">
+		 UPDATE statistics_info s
+ 		 <set> 
+			<if test="bean.statisticsDate != null">
+				 statistics_date = #{bean.statisticsDate},
+			</if>
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.dataType != null">
+				 data_type = #{bean.dataType},
+			</if>
+			<if test="bean.dataValue != null">
+				 data_value = #{bean.dataValue},
+			</if>
+ 		 </set>
+ 		 <include refid="query_condition" />
+	</update>
+
+	<!--多条件删除-->
+	<delete id="deleteByParam">
+		 delete s from statistics_info s
+ 		 <include refid="query_condition" />
+	</delete>
+
+	<!-- 根据StatisticsDateAndUserIdAndDataType修改-->
+	<update id="updateByStatisticsDateAndUserIdAndDataType" parameterType="com.easylive.entity.po.StatisticsInfo">
+		 UPDATE statistics_info
+ 		 <set> 
+			<if test="bean.dataValue != null">
+				 data_value = #{bean.dataValue},
+			</if>
+ 		 </set>
+ 		 where statistics_date=#{statisticsDate} and user_id=#{userId} and data_type=#{dataType}
+	</update>
+
+	<!-- 根据StatisticsDateAndUserIdAndDataType删除-->
+	<delete id="deleteByStatisticsDateAndUserIdAndDataType">
+		delete from statistics_info where statistics_date=#{statisticsDate} and user_id=#{userId} and data_type=#{dataType}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByStatisticsDateAndUserIdAndDataType" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from statistics_info s where statistics_date=#{statisticsDate} and user_id=#{userId} and data_type=#{dataType}
+	</select>
+
+</mapper>

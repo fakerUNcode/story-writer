@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.easylive.mappers.UserMessageMapper">
+
+	<!--实体映射-->
+	<resultMap id="base_result_map" type="com.easylive.entity.po.UserMessage">
+		<!--消息ID自增列-->
+		<id column="message_id" property="messageId"  />
+		<!--用户ID-->
+		<result column="user_id" property="userId"  />
+		<!--主站ID-->
+		<result column="video_id" property="videoId"  />
+		<!--消息类型-->
+		<result column="message_type" property="messageType"  />
+		<!--发送方ID-->
+		<result column="send_user_id" property="sendUserId"  />
+		<!--创建读未读 1:已读-->
+		<result column="read_type" property="readType"  />
+		<!--创建时间-->
+		<result column="create_time" property="createTime"  />
+		<!--扩展信息-->
+		<result column="extend_json" property="extendJson"  />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="base_column_list">
+		 u.message_id,u.user_id,u.video_id,u.message_type,u.send_user_id,
+		 u.read_type,u.create_time,u.extend_json
+	</sql>
+
+	<sql id="base_condition_filed">
+			<if test="query.messageId != null">
+				 and  u.message_id = #{query.messageId}
+			</if>
+			<if test="query.userId != null and query.userId!=''">
+				 and  u.user_id = #{query.userId}
+			</if>
+			<if test="query.videoId != null and query.videoId!=''">
+				 and  u.video_id = #{query.videoId}
+			</if>
+			<if test="query.messageType != null">
+				 and  u.message_type = #{query.messageType}
+			</if>
+			<if test="query.sendUserId != null and query.sendUserId!=''">
+				 and  u.send_user_id = #{query.sendUserId}
+			</if>
+			<if test="query.readType != null">
+				 and  u.read_type = #{query.readType}
+			</if>
+			<if test="query.createTime != null and query.createTime!=''">
+				 <![CDATA[ and  u.create_time=str_to_date(#{query.createTime}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.extendJson != null and query.extendJson!=''">
+				 and  u.extend_json = #{query.extendJson}
+			</if>
+	</sql>
+	<!-- 通用条件列-->
+	<sql id="base_condition">
+	 <where>
+		 <include refid="base_condition_filed" />
+	 </where>
+	</sql>
+
+	<!-- 通用查询条件列-->
+	<sql id="query_condition">
+	 <where>
+			<include refid="base_condition_filed" />
+			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
+				 and  u.user_id like concat('%', #{query.userIdFuzzy}, '%')
+			</if>
+			<if test="query.videoIdFuzzy!= null  and query.videoIdFuzzy!=''">
+				 and  u.video_id like concat('%', #{query.videoIdFuzzy}, '%')
+			</if>
+			<if test="query.sendUserIdFuzzy!= null  and query.sendUserIdFuzzy!=''">
+				 and  u.send_user_id like concat('%', #{query.sendUserIdFuzzy}, '%')
+			</if>
+			<if test="query.createTimeStart!= null and query.createTimeStart!=''">
+				 <![CDATA[ and  u.create_time>=str_to_date(#{query.createTimeStart}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.createTimeEnd!= null and query.createTimeEnd!=''">
+				 <![CDATA[ and  u.create_time< date_sub(str_to_date(#{query.createTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
+			</if>
+			<if test="query.extendJsonFuzzy!= null  and query.extendJsonFuzzy!=''">
+				 and  u.extend_json like concat('%', #{query.extendJsonFuzzy}, '%')
+			</if>
+	 </where>
+	</sql>
+
+	<!-- 查询集合-->
+	<select id="selectList" resultMap="base_result_map" >
+		 SELECT <include refid="base_column_list" /> FROM user_message u <include refid="query_condition" />
+		 <if test="query.orderBy!=null">
+			 order by ${query.orderBy}
+		 </if>
+		 <if test="query.simplePage!=null">
+			 limit #{query.simplePage.start},#{query.simplePage.end}
+		 </if>
+	</select>
+
+	<!-- 查询数量-->
+	<select id="selectCount" resultType="java.lang.Integer" >
+		 SELECT count(1) FROM user_message u <include refid="query_condition" />
+	</select>
+
+	<!-- 插入 （匹配有值的字段）-->
+	<insert id="insert" parameterType="com.easylive.entity.po.UserMessage">
+		<selectKey keyProperty="bean.messageId" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		 INSERT INTO user_message
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.messageType != null">
+				 message_type,
+			</if>
+			<if test="bean.sendUserId != null">
+				 send_user_id,
+			</if>
+			<if test="bean.readType != null">
+				 read_type,
+			</if>
+			<if test="bean.createTime != null">
+				 create_time,
+			</if>
+			<if test="bean.extendJson != null">
+				 extend_json,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.messageType!=null">
+				 #{bean.messageType},
+			</if>
+			<if test="bean.sendUserId!=null">
+				 #{bean.sendUserId},
+			</if>
+			<if test="bean.readType!=null">
+				 #{bean.readType},
+			</if>
+			<if test="bean.createTime!=null">
+				 #{bean.createTime},
+			</if>
+			<if test="bean.extendJson!=null">
+				 #{bean.extendJson},
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 插入或者更新 （匹配有值的字段）-->
+	<insert id="insertOrUpdate" parameterType="com.easylive.entity.po.UserMessage">
+		 INSERT INTO user_message
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="bean.messageId != null">
+				 message_id,
+			</if>
+			<if test="bean.userId != null">
+				 user_id,
+			</if>
+			<if test="bean.videoId != null">
+				 video_id,
+			</if>
+			<if test="bean.messageType != null">
+				 message_type,
+			</if>
+			<if test="bean.sendUserId != null">
+				 send_user_id,
+			</if>
+			<if test="bean.readType != null">
+				 read_type,
+			</if>
+			<if test="bean.createTime != null">
+				 create_time,
+			</if>
+			<if test="bean.extendJson != null">
+				 extend_json,
+			</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="bean.messageId!=null">
+				 #{bean.messageId},
+			</if>
+			<if test="bean.userId!=null">
+				 #{bean.userId},
+			</if>
+			<if test="bean.videoId!=null">
+				 #{bean.videoId},
+			</if>
+			<if test="bean.messageType!=null">
+				 #{bean.messageType},
+			</if>
+			<if test="bean.sendUserId!=null">
+				 #{bean.sendUserId},
+			</if>
+			<if test="bean.readType!=null">
+				 #{bean.readType},
+			</if>
+			<if test="bean.createTime!=null">
+				 #{bean.createTime},
+			</if>
+			<if test="bean.extendJson!=null">
+				 #{bean.extendJson},
+			</if>
+		 </trim>
+		 on DUPLICATE key update 
+		 <trim prefix="" suffix="" suffixOverrides=",">
+			<if test="bean.userId!=null">
+				 user_id = VALUES(user_id),
+			</if>
+			<if test="bean.videoId!=null">
+				 video_id = VALUES(video_id),
+			</if>
+			<if test="bean.messageType!=null">
+				 message_type = VALUES(message_type),
+			</if>
+			<if test="bean.sendUserId!=null">
+				 send_user_id = VALUES(send_user_id),
+			</if>
+			<if test="bean.readType!=null">
+				 read_type = VALUES(read_type),
+			</if>
+			<if test="bean.createTime!=null">
+				 create_time = VALUES(create_time),
+			</if>
+			<if test="bean.extendJson!=null">
+				 extend_json = VALUES(extend_json),
+			</if>
+		 </trim>
+	</insert>
+
+	<!-- 添加 （批量插入）-->
+	<insert id="insertBatch" parameterType="com.easylive.entity.po.UserMessage" useGeneratedKeys="true" keyProperty="messageId">
+		 INSERT INTO user_message(
+			 user_id,
+			 video_id,
+			 message_type,
+			 send_user_id,
+			 read_type,
+			 create_time,
+			 extend_json
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.userId},
+				 #{item.videoId},
+				 #{item.messageType},
+				 #{item.sendUserId},
+				 #{item.readType},
+				 #{item.createTime},
+				 #{item.extendJson}
+			 )
+		 </foreach>
+	</insert>
+
+	<!-- 批量新增修改 （批量插入）-->
+	<insert id="insertOrUpdateBatch" parameterType="com.easylive.entity.po.UserMessage">
+		 INSERT INTO user_message(
+			 user_id,
+			 video_id,
+			 message_type,
+			 send_user_id,
+			 read_type,
+			 create_time,
+			 extend_json
+		 )values
+		 <foreach collection="list" item="item" separator=",">
+			 (
+				 #{item.userId},
+				 #{item.videoId},
+				 #{item.messageType},
+				 #{item.sendUserId},
+				 #{item.readType},
+				 #{item.createTime},
+				 #{item.extendJson}
+			 )
+		 </foreach>
+			on DUPLICATE key update 
+			user_id = VALUES(user_id),
+			video_id = VALUES(video_id),
+			message_type = VALUES(message_type),
+			send_user_id = VALUES(send_user_id),
+			read_type = VALUES(read_type),
+			create_time = VALUES(create_time),
+			extend_json = VALUES(extend_json)
+	</insert>
+
+	<!--多条件修改-->
+	<update id="updateByParam" parameterType="com.easylive.entity.query.UserMessageQuery">
+		 UPDATE user_message u
+ 		 <set> 
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.messageType != null">
+				 message_type = #{bean.messageType},
+			</if>
+			<if test="bean.sendUserId != null">
+				 send_user_id = #{bean.sendUserId},
+			</if>
+			<if test="bean.readType != null">
+				 read_type = #{bean.readType},
+			</if>
+			<if test="bean.createTime != null">
+				 create_time = #{bean.createTime},
+			</if>
+			<if test="bean.extendJson != null">
+				 extend_json = #{bean.extendJson},
+			</if>
+ 		 </set>
+ 		 <include refid="query_condition" />
+	</update>
+
+	<!--多条件删除-->
+	<delete id="deleteByParam">
+		 delete u from user_message u
+ 		 <include refid="query_condition" />
+	</delete>
+
+	<!-- 根据MessageId修改-->
+	<update id="updateByMessageId" parameterType="com.easylive.entity.po.UserMessage">
+		 UPDATE user_message
+ 		 <set> 
+			<if test="bean.userId != null">
+				 user_id = #{bean.userId},
+			</if>
+			<if test="bean.videoId != null">
+				 video_id = #{bean.videoId},
+			</if>
+			<if test="bean.messageType != null">
+				 message_type = #{bean.messageType},
+			</if>
+			<if test="bean.sendUserId != null">
+				 send_user_id = #{bean.sendUserId},
+			</if>
+			<if test="bean.readType != null">
+				 read_type = #{bean.readType},
+			</if>
+			<if test="bean.createTime != null">
+				 create_time = #{bean.createTime},
+			</if>
+			<if test="bean.extendJson != null">
+				 extend_json = #{bean.extendJson},
+			</if>
+ 		 </set>
+ 		 where message_id=#{messageId}
+	</update>
+
+	<!-- 根据MessageId删除-->
+	<delete id="deleteByMessageId">
+		delete from user_message where message_id=#{messageId}
+	</delete>
+
+	<!-- 根据PrimaryKey获取对象-->
+	<select id="selectByMessageId" resultMap="base_result_map" >
+		select <include refid="base_column_list" /> from user_message u where message_id=#{messageId}
+	</select>
+
+</mapper>
