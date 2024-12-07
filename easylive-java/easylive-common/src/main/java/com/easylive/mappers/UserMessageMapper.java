@@ -1,6 +1,9 @@
 package com.easylive.mappers;
 
+import com.easylive.entity.dto.UserMessageCountDto;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 用户消息表 数据库操作接口
@@ -25,4 +28,5 @@ public interface UserMessageMapper<T,P> extends BaseMapper<T,P> {
 	 T selectByMessageId(@Param("messageId") Integer messageId);
 
 
+    List<UserMessageCountDto> getMessageTypeNoReadCount(@Param("userId")String userId);
 }

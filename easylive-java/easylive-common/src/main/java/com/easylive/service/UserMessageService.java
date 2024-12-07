@@ -1,5 +1,6 @@
 package com.easylive.service;
 
+import com.easylive.entity.dto.UserMessageCountDto;
 import com.easylive.entity.enums.MessageTypeEnum;
 import com.easylive.entity.po.UserMessage;
 import com.easylive.entity.query.UserMessageQuery;
@@ -72,4 +73,5 @@ public interface UserMessageService {
 
 	void saveUserMessage(String videoId, String sendUserId, MessageTypeEnum messageTypeEnum, String content,Integer replyCommentId);
 
+	List<UserMessageCountDto> getMessageTypeNoReadCount(String userId);
 }

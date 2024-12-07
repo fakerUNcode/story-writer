@@ -1,5 +1,6 @@
 package com.easylive.service.impl;
 
+import com.easylive.entity.dto.UserMessageCountDto;
 import com.easylive.entity.dto.UserMessageExtendDto;
 import com.easylive.entity.enums.MessageReadTypeEnum;
 import com.easylive.entity.enums.MessageTypeEnum;
@@ -165,7 +166,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 						MessageTypeEnum.LIKE.getType(),
 						MessageTypeEnum.COLLECTION.getType()
 				},
-				messageTypeEnum
+				messageTypeEnum.getType()
 		)) {
 			// 如果消息类型是点赞或收藏，执行相应操作
 			UserMessageQuery userMessageQuery = new UserMessageQuery();
@@ -204,5 +205,10 @@ public class UserMessageServiceImpl implements UserMessageService {
 		userMessage.setUserId(userId);
 		userMessage.setExtendJson(JsonUtils.convertObj2Json(extendDto));
 		this.userMessageMapper.insert(userMessage);
+	}
+
+	@Override
+	public List<UserMessageCountDto> getMessageTypeNoReadCount(String userId) {
+		return this.userMessageMapper.getMessageTypeNoReadCount(userId);
 	}
 }
