@@ -1,5 +1,7 @@
 package com.easylive.web.controller;
 
+import com.easylive.annotation.RecordUserMessage;
+import com.easylive.entity.enums.MessageTypeEnum;
 import com.easylive.web.annotation.GlobalInterceptor;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
@@ -45,6 +47,7 @@ public class VideoCommentController extends ABaseController{
 
     @RequestMapping("/postComment")
     @GlobalInterceptor(checkLogin = true)
+    @RecordUserMessage(messageType = MessageTypeEnum.COMMENT)
     public ResponseVO postComment(
             @NotEmpty String videoId,
             @NotEmpty @Size(max = 500) String content,

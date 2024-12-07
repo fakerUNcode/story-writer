@@ -27,9 +27,7 @@ public class GlobalOperationAspect {
     @Resource
     private RedisUtils redisUtils;
 
-    public GlobalOperationAspect(RedisUtils redisUtils){
-        this.redisUtils = redisUtils;
-    }
+
     @Before("@annotation(com.easylive.web.annotation.GlobalInterceptor)")
     public void interceptorDo(JoinPoint point){
         Method method = ((MethodSignature) point.getSignature()).getMethod();
@@ -48,7 +46,7 @@ public class GlobalOperationAspect {
         if(StringTools.isEmpty(token)){
             throw new BusinessException(ResponseCodeEnum.CODE_901);
         }
-        TokenUserInfoDto tokenUserInfoDto = (TokenUserInfoDto) redisUtils.get(Constants.TOKEN_WEB+token);
+        TokenUserInfoDto tokenUserInfoDto = (TokenUserInfoDto) redisUtils.get(Constants.REDIS_KEY_TOKEN_WEB+token);
         if(tokenUserInfoDto==null){
             throw new BusinessException(ResponseCodeEnum.CODE_901);
         }
