@@ -5,7 +5,6 @@ import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.enums.MessageTypeEnum;
-import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.service.UserMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,44 +37,68 @@ public class UserMessageOperationAspect {
 
     @Around("@annotation(com.easylive.annotation.RecordUserMessage)")
     public ResponseVO interceptorDo(ProceedingJoinPoint point) throws Throwable {
-        ResponseVO responseVO =(ResponseVO) point.proceed();
+        // 执行目标方法
+        ResponseVO responseVO = (ResponseVO) point.proceed();
 
+        // 获取方法信息
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         RecordUserMessage recordUserMessage = method.getAnnotation(RecordUserMessage.class);
-        if(recordUserMessage!=null){
-            saveMessage(recordUserMessage,point.getArgs(),method.getParameters());
+
+        if (recordUserMessage != null) {
+            // 默认从注解中获取 messageType
+            MessageTypeEnum messageTypeEnum = recordUserMessage.messageType();
+
+            // 动态解析参数，调整 messageTypeEnum
+            Object[] args = point.getArgs();
+            Parameter[] parameters = method.getParameters();
+            for (int i = 0; i < parameters.length; i++) {
+                if ("actionType".equals(parameters[i].getName()) && args[i] instanceof Integer) {
+                    Integer actionType = (Integer) args[i];
+                    // 直接使用 MessageTypeEnum 的静态方法解析类型
+                    MessageTypeEnum dynamicMessageType = MessageTypeEnum.getByType(actionType);
+                    if (dynamicMessageType != null) {
+                        messageTypeEnum = dynamicMessageType;
+                    }
+                }
+            }
+
+            // 调用保存消息方法，并传入动态调整的 messageTypeEnum
+            saveMessage(recordUserMessage, point.getArgs(), method.getParameters(), messageTypeEnum);
         }
         return responseVO;
     }
 
 
-    private void saveMessage(RecordUserMessage recordUserMessage, Object[] arguments, Parameter[] parameters) {
+    private void saveMessage(RecordUserMessage recordUserMessage, Object[] arguments, Parameter[] parameters, MessageTypeEnum messageTypeEnum) {
         String videoId = null;
-        Integer actionType = null;
         Integer replyCommentId = null;
         String content = null;
         String reason = null;
+
+        // 解析参数
         for (int i = 0; i < parameters.length; i++) {
-            if (PARAMETERS_VIDEO_ID.equals(parameters[i].getName())) {
+            if ("videoId".equals(parameters[i].getName())) {
                 videoId = (String) arguments[i];
-            } else if (PARAMETERS_ACTION_TYPE.equals(parameters[i])) {
-                actionType = (Integer) arguments[i];
-            } else if (PARAMETERS_REPLY_COMMENTID.equals(parameters[i])) {
+            } else if ("replyCommentId".equals(parameters[i].getName())) {
                 replyCommentId = (Integer) arguments[i];
-            } else if (PARAMETERS_CONTENT.equals(parameters[i])) {
+            } else if ("content".equals(parameters[i].getName())) {
                 content = (String) arguments[i];
-            } else if (PARAMETERS_AUDIT_REJECT_REASON.equals(parameters[i])) {
+            } else if ("reason".equals(parameters[i].getName())) {
                 reason = (String) arguments[i];
             }
         }
-        MessageTypeEnum messageTypeEnum = recordUserMessage.messageType();
-        if (UserActionTypeEnum.VIDEO_COLLECT.getType().equals(actionType)) {
-            messageTypeEnum = MessageTypeEnum.COLLECTION;
-        }
 
-        TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+        // 获取用户信息
+        TokenUserInfoDto tokenUserInfoDto = this.getTokenUserInfoDto();
 
-        userMessageService.saveUserMessage(videoId,tokenUserInfoDto==null?null:tokenUserInfoDto.getUserId(),messageTypeEnum,content,replyCommentId);
+        // 保存用户消息
+        userMessageService.saveUserMessage(
+                videoId,
+                tokenUserInfoDto == null ? null : tokenUserInfoDto.getUserId(),
+                messageTypeEnum, // 使用动态调整的 messageTypeEnum
+                content,
+                replyCommentId
+        );
     }
 
 

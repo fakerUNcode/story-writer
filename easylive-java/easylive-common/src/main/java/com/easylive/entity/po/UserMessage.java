@@ -1,13 +1,15 @@
 package com.easylive.entity.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
+import com.easylive.entity.dto.UserMessageExtendDto;
 import com.easylive.entity.enums.DateTimePatternEnum;
 import com.easylive.utils.DateUtil;
+import com.easylive.utils.JsonUtils;
+import com.easylive.utils.StringTools;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -58,6 +60,51 @@ public class UserMessage implements Serializable {
 	 */
 	private String extendJson;
 
+	private String sendUserAvatar;
+	private String sendUserName;
+	private String videoName;
+	private String videoCover;
+	private UserMessageExtendDto extendDto;
+
+	public UserMessageExtendDto getExtendDto() {
+		return StringTools.isEmpty(extendJson)?new UserMessageExtendDto(): JsonUtils.convertJson2Obj(extendJson, UserMessageExtendDto.class);
+	}
+
+	public void setExtendDto(UserMessageExtendDto extendDto) {
+		this.extendDto = extendDto;
+	}
+
+	public String getSendUserAvatar() {
+		return sendUserAvatar;
+	}
+
+	public void setSendUserAvatar(String sendUserAvatar) {
+		this.sendUserAvatar = sendUserAvatar;
+	}
+
+	public String getSendUserName() {
+		return sendUserName;
+	}
+
+	public void setSendUserName(String sendUserName) {
+		this.sendUserName = sendUserName;
+	}
+
+	public String getVideoName() {
+		return videoName;
+	}
+
+	public void setVideoName(String videoName) {
+		this.videoName = videoName;
+	}
+
+	public String getVideoCover() {
+		return videoCover;
+	}
+
+	public void setVideoCover(String videoCover) {
+		this.videoCover = videoCover;
+	}
 
 	public void setMessageId(Integer messageId){
 		this.messageId = messageId;

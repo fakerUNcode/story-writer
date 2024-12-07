@@ -10,6 +10,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RecordUserMessage {
-
-    MessageTypeEnum messageType();
+    MessageTypeEnum messageType() default MessageTypeEnum.SYS; // 默认值
 }
