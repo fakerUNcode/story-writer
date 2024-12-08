@@ -1,8 +1,5 @@
 package com.easylive.entity.query;
 
-import java.util.Date;
-
-
 /**
  * 视频播放历史参数
  */
@@ -37,6 +34,15 @@ public class VideoPlayHistoryQuery extends BaseParam {
 
 	private String lastUpdateTimeEnd;
 
+	private Boolean queryVideoDetail;
+
+	public Boolean getQueryVideoDetail() {
+		return queryVideoDetail;
+	}
+
+	public void setQueryVideoDetail(Boolean queryVideoDetail) {
+		this.queryVideoDetail = queryVideoDetail;
+	}
 
 	public void setUserId(String userId){
 		this.userId = userId;

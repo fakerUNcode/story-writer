@@ -1,10 +1,10 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.VideoPlayHistoryQuery;
 import com.easylive.entity.po.VideoPlayHistory;
+import com.easylive.entity.query.VideoPlayHistoryQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -68,5 +68,7 @@ public interface VideoPlayHistoryService {
 	 * 根据UserIdAndVideoId删除
 	 */
 	Integer deleteVideoPlayHistoryByUserIdAndVideoId(String userId,String videoId);
+
+	void saveHistory(String userId,String videoId,Integer fileIndex);
 
 }

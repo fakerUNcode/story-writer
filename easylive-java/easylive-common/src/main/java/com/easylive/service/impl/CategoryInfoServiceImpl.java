@@ -6,10 +6,12 @@ import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.po.CategoryInfo;
 import com.easylive.entity.query.CategoryInfoQuery;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.mappers.CategoryInfoMapper;
 import com.easylive.service.CategoryInfoService;
+import com.easylive.service.VideoInfoService;
 import com.easylive.utils.StringTools;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 
 	@Resource
 	private CategoryInfoMapper<CategoryInfo, CategoryInfoQuery> categoryInfoMapper;
+	@Resource
+	private VideoInfoService videoInfoService;
 
 	/**
 	 * 根据条件查询列表
@@ -206,7 +210,13 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 
 	@Override
 	public void delCategory(Integer categoryId) {
-		// TODO 查询分类项是否有视频，有视频的话不能删除
+		//  查询分类项是否有视频，有视频的话不能删除
+		VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
+		videoInfoQuery.setCategoryIdOrPCategoryId(categoryId);
+		Integer count = videoInfoService.findCountByParam(videoInfoQuery);
+		if(count>0){
+			throw new BusinessException("分类下有视频无法删除！");
+		}
 		CategoryInfoQuery categoryInfoQuery = new CategoryInfoQuery();
 		categoryInfoQuery.setCategoryIdOrPCategoryId(categoryId);
 		categoryInfoMapper.deleteByParam(categoryInfoQuery);

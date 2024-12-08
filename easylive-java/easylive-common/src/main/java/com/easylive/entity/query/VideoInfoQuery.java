@@ -143,6 +143,16 @@ public class VideoInfoQuery extends BaseParam {
 	/*播放的最近24个小时*/
 	private Integer lastPlayHour;
 
+	private Integer categoryIdOrPCategoryId;
+
+	public Integer getCategoryIdOrPCategoryId() {
+		return categoryIdOrPCategoryId;
+	}
+
+	public void setCategoryIdOrPCategoryId(Integer categoryIdOrPCategoryId) {
+		this.categoryIdOrPCategoryId = categoryIdOrPCategoryId;
+	}
+
 	public Integer getLastPlayHour() {
 		return lastPlayHour;
 	}

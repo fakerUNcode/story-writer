@@ -470,15 +470,6 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		// 更新发布信息到正式表：已有视频就更新，没视频就插入
 		this.videoInfoMapper.insertOrUpdate(videoInfo);
 
-		// 删除正式表中的旧文件信息
-		VideoInfoFileQuery videoInfoFileQuery = new VideoInfoFileQuery();
-		videoInfoFileQuery.setVideoId(videoId);
-		this.videoInfoFileMapper.deleteByParam(videoInfoFileQuery);
-
-		// 将审核表中的文件信息同步到正式表
-		List<VideoInfoFile> videoInfoFileList = CopyTools.copyList(videoInfoFilePostList, VideoInfoFile.class);
-		this.videoInfoFileMapper.insertBatch(videoInfoFileList);
-
 		/* 删除服务器中的原文件 */
 		List<String> filePathList = redisComponent.getDelFileList(videoId);
 		if (filePathList != null) {
@@ -493,6 +484,17 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 				}
 			}
 		}
+
+		// 删除正式表中的旧文件信息
+		VideoInfoFileQuery videoInfoFileQuery = new VideoInfoFileQuery();
+		videoInfoFileQuery.setVideoId(videoId);
+		this.videoInfoFileMapper.deleteByParam(videoInfoFileQuery);
+
+		// 将审核表中的文件信息同步到正式表
+		List<VideoInfoFile> videoInfoFileList = CopyTools.copyList(videoInfoFilePostList, VideoInfoFile.class);
+		this.videoInfoFileMapper.insertBatch(videoInfoFileList);
+
+
 
 		// 清空与该视频有关的目录缓存
 		redisComponent.cleanDelFileList(videoId);

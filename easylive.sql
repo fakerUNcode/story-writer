@@ -11,7 +11,7 @@
  Target Server Version : 80040 (8.0.40)
  File Encoding         : 65001
 
- Date: 07/12/2024 11:06:53
+ Date: 08/12/2024 16:27:10
 */
 
 SET NAMES utf8mb4;
@@ -90,6 +90,24 @@ INSERT INTO `category_info` (`category_id`, `category_code`, `category_name`, `p
 COMMIT;
 
 -- ----------------------------
+-- Table structure for statistics_info
+-- ----------------------------
+DROP TABLE IF EXISTS `statistics_info`;
+CREATE TABLE `statistics_info` (
+  `statistics_date` varchar(10) COLLATE utf8mb4_general_ci NOT NULL COMMENT '统计日期',
+  `user_id` varchar(10) COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
+  `data_type` tinyint(1) NOT NULL COMMENT '数据统计类型',
+  `data_value` int NOT NULL COMMENT '统计数值',
+  PRIMARY KEY (`statistics_date`,`user_id`,`data_type`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='数据统计';
+
+-- ----------------------------
+-- Records of statistics_info
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
 -- Table structure for user_action
 -- ----------------------------
 DROP TABLE IF EXISTS `user_action`;
@@ -108,13 +126,17 @@ CREATE TABLE `user_action` (
   KEY `idx_user_id` (`user_id`) USING BTREE,
   KEY `idx_type` (`action_type`) USING BTREE,
   KEY `idx_action_time` (`action_time`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=156 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='用户行为 点赞、评论';
+) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='用户行为 点赞、评论';
 
 -- ----------------------------
 -- Records of user_action
 -- ----------------------------
 BEGIN;
-INSERT INTO `user_action` (`action_id`, `video_id`, `video_user_id`, `comment_id`, `action_type`, `action_count`, `user_id`, `action_time`) VALUES (155, 'lRP0sT831T', '8990397154', 0, 3, 1, '8990397154', '2024-12-05 08:55:59');
+INSERT INTO `user_action` (`action_id`, `video_id`, `video_user_id`, `comment_id`, `action_type`, `action_count`, `user_id`, `action_time`) VALUES (171, 'wWGtjD0Gup', '8990397154', 0, 2, 1, '7857543673', '2024-12-07 21:43:50');
+INSERT INTO `user_action` (`action_id`, `video_id`, `video_user_id`, `comment_id`, `action_type`, `action_count`, `user_id`, `action_time`) VALUES (173, 'wWGtjD0Gup', '8990397154', 0, 3, 1, '7857543673', '2024-12-07 21:44:39');
+INSERT INTO `user_action` (`action_id`, `video_id`, `video_user_id`, `comment_id`, `action_type`, `action_count`, `user_id`, `action_time`) VALUES (174, 'lEAuInY9Zn', '8990397154', 0, 3, 1, '7857543673', '2024-12-07 22:17:52');
+INSERT INTO `user_action` (`action_id`, `video_id`, `video_user_id`, `comment_id`, `action_type`, `action_count`, `user_id`, `action_time`) VALUES (176, 'lEAuInY9Zn', '8990397154', 0, 2, 1, '7857543673', '2024-12-07 22:19:05');
+INSERT INTO `user_action` (`action_id`, `video_id`, `video_user_id`, `comment_id`, `action_type`, `action_count`, `user_id`, `action_time`) VALUES (177, 'lRP0sT831T', '8990397154', 0, 2, 1, '7857543673', '2024-12-07 22:19:12');
 COMMIT;
 
 -- ----------------------------
@@ -165,9 +187,46 @@ CREATE TABLE `user_info` (
 -- Records of user_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `user_info` (`user_id`, `nick_name`, `email`, `password`, `sex`, `birthday`, `school`, `person_introduction`, `join_time`, `last_login_time`, `last_login_ip`, `status`, `notice_info`, `total_coin_count`, `current_coin_count`, `theme`, `avatar`) VALUES ('7857543673', 'test1', 'test1@qq.com', '08cace34a1afebc4114675e51a8167f2', 2, '', '', '', '2024-11-27 21:57:50', '2024-12-01 11:07:42', '127.0.0.1', 1, '', 10, 9, 1, 'cover/20241201/JtX2mvatrtqB8pWcjaxbyZXI7svW8y.png');
+INSERT INTO `user_info` (`user_id`, `nick_name`, `email`, `password`, `sex`, `birthday`, `school`, `person_introduction`, `join_time`, `last_login_time`, `last_login_ip`, `status`, `notice_info`, `total_coin_count`, `current_coin_count`, `theme`, `avatar`) VALUES ('7857543673', 'test1', 'test1@qq.com', '08cace34a1afebc4114675e51a8167f2', 2, '', '', '', '2024-11-27 21:57:50', '2024-12-07 20:04:47', '127.0.0.1', 1, '', 10, 9, 1, 'cover/20241201/JtX2mvatrtqB8pWcjaxbyZXI7svW8y.png');
 INSERT INTO `user_info` (`user_id`, `nick_name`, `email`, `password`, `sex`, `birthday`, `school`, `person_introduction`, `join_time`, `last_login_time`, `last_login_ip`, `status`, `notice_info`, `total_coin_count`, `current_coin_count`, `theme`, `avatar`) VALUES ('8067577440', 'Fakeruncode', 'woaixkzero@gmail.com', 'c9502c867f34528020a0ad7cc5a2b8fd', 2, NULL, NULL, NULL, '2024-11-19 12:54:08', NULL, NULL, 1, NULL, 10, 10, 1, NULL);
-INSERT INTO `user_info` (`user_id`, `nick_name`, `email`, `password`, `sex`, `birthday`, `school`, `person_introduction`, `join_time`, `last_login_time`, `last_login_ip`, `status`, `notice_info`, `total_coin_count`, `current_coin_count`, `theme`, `avatar`) VALUES ('8990397154', 'GUMI coder', 'storywriter@gmail.com', 'f420a7897f9c77aa3990fedd25ad3c45', 1, '2004-03-29', 'University of California, Berkeley', '热爱代码的二次元歌姬', '2024-11-20 20:20:23', '2024-12-01 11:58:16', '127.0.0.1', 1, '和我一起写代码吧', 11, 6, 9, 'cover/20241130/PTvsmbiWGq9h9DBkutDnP6g08FWdeI.png');
+INSERT INTO `user_info` (`user_id`, `nick_name`, `email`, `password`, `sex`, `birthday`, `school`, `person_introduction`, `join_time`, `last_login_time`, `last_login_ip`, `status`, `notice_info`, `total_coin_count`, `current_coin_count`, `theme`, `avatar`) VALUES ('8990397154', 'GUMI coder', 'storywriter@gmail.com', 'f420a7897f9c77aa3990fedd25ad3c45', 1, '2004-03-29', 'University of California, Berkeley', '热爱代码的二次元歌姬', '2024-11-20 20:20:23', '2024-12-07 16:38:29', '127.0.0.1', 1, '和我一起写代码吧', 11, 6, 9, 'cover/20241130/PTvsmbiWGq9h9DBkutDnP6g08FWdeI.png');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for user_message
+-- ----------------------------
+DROP TABLE IF EXISTS `user_message`;
+CREATE TABLE `user_message` (
+  `message_id` int NOT NULL AUTO_INCREMENT COMMENT '消息ID自增列',
+  `user_id` varchar(10) COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
+  `video_id` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主站ID',
+  `message_type` tinyint(1) DEFAULT NULL COMMENT '消息类型',
+  `send_user_id` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '发送方ID',
+  `read_type` tinyint(1) DEFAULT NULL COMMENT '创建读未读 1:已读',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `extend_json` text COLLATE utf8mb4_general_ci COMMENT '扩展信息',
+  PRIMARY KEY (`message_id`) USING BTREE,
+  KEY `idx_user` (`user_id`) USING BTREE,
+  KEY `idx_read_type` (`read_type`) USING BTREE,
+  KEY `idx_message_type` (`message_type`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='用户消息表';
+
+-- ----------------------------
+-- Records of user_message
+-- ----------------------------
+BEGIN;
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (24, '8990397154', 'lEAuInY9Zn', 2, '7857543673', 1, '2024-12-07 20:49:44', '{}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (25, '8990397154', 'wWGtjD0Gup', 2, '7857543673', 1, '2024-12-07 21:38:36', '{}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (26, '8990397154', 'lEAuInY9Zn', 3, '7857543673', 1, '2024-12-07 22:17:52', '{}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (27, '8990397154', 'wWGtjD0Gup', 3, '7857543673', 1, '2024-12-07 22:18:30', '{}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (28, '8990397154', 'lRP0sT831T', 3, '7857543673', 1, '2024-12-07 22:18:40', '{}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (29, '8990397154', 'lRP0sT831T', 2, '7857543673', 1, '2024-12-07 22:19:13', '{}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (30, '8990397154', 'wWGtjD0Gup', 4, '7857543673', 1, '2024-12-07 22:30:55', '{\"messageContent\":\"贝爷牛逼\"}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (31, '7857543673', 'wWGtjD0Gup', 4, '8990397154', 1, '2024-12-07 22:45:14', '{\"messageContent\":\"贝爷确实帅\",\"messageContentReply\":\"贝爷牛逼\"}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (32, '8990397154', 'wWGtjD0Gup', 4, '7857543673', 1, '2024-12-07 22:45:29', '{\"messageContent\":\"爱贝爷更爱mc\",\"messageContentReply\":\"贝爷确实帅\"}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (33, '8990397154', 'wWGtjD0Gup', 4, '7857543673', 1, '2024-12-07 22:49:05', '{\"messageContent\":\"还有什么比贝爷帅！\",\"messageContentReply\":\"贝爷确实帅\"}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (34, '8990397154', 'zEggigt6WH', 1, NULL, 1, '2024-12-08 11:24:54', '{\"auditStatus\":3}');
+INSERT INTO `user_message` (`message_id`, `user_id`, `video_id`, `message_type`, `send_user_id`, `read_type`, `create_time`, `extend_json`) VALUES (35, '8990397154', 'zEggigt6WH', 1, NULL, 1, '2024-12-08 11:25:51', '{\"auditStatus\":3}');
 COMMIT;
 
 -- ----------------------------
@@ -232,12 +291,16 @@ CREATE TABLE `video_comment` (
   KEY `idx_p_id` (`p_comment_id`) USING BTREE,
   KEY `idx_user_id` (`user_id`) USING BTREE,
   KEY `idx_video_id` (`video_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='评论';
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='评论';
 
 -- ----------------------------
 -- Records of video_comment
 -- ----------------------------
 BEGIN;
+INSERT INTO `video_comment` (`comment_id`, `p_comment_id`, `video_id`, `video_user_id`, `content`, `img_path`, `user_id`, `reply_user_id`, `top_type`, `post_time`, `like_count`, `hate_count`) VALUES (53, 0, 'wWGtjD0Gup', '8990397154', '贝爷牛逼', '', '7857543673', NULL, 0, '2024-12-07 22:30:55', 0, 0);
+INSERT INTO `video_comment` (`comment_id`, `p_comment_id`, `video_id`, `video_user_id`, `content`, `img_path`, `user_id`, `reply_user_id`, `top_type`, `post_time`, `like_count`, `hate_count`) VALUES (54, 53, 'wWGtjD0Gup', '8990397154', '贝爷确实帅', NULL, '8990397154', NULL, 0, '2024-12-07 22:45:14', 0, 0);
+INSERT INTO `video_comment` (`comment_id`, `p_comment_id`, `video_id`, `video_user_id`, `content`, `img_path`, `user_id`, `reply_user_id`, `top_type`, `post_time`, `like_count`, `hate_count`) VALUES (55, 53, 'wWGtjD0Gup', '8990397154', '爱贝爷更爱mc', NULL, '7857543673', '8990397154', 0, '2024-12-07 22:45:29', 0, 0);
+INSERT INTO `video_comment` (`comment_id`, `p_comment_id`, `video_id`, `video_user_id`, `content`, `img_path`, `user_id`, `reply_user_id`, `top_type`, `post_time`, `like_count`, `hate_count`) VALUES (57, 53, 'wWGtjD0Gup', '8990397154', '还有什么比贝爷帅！', NULL, '7857543673', '8990397154', 0, '2024-12-07 22:49:05', 0, 0);
 COMMIT;
 
 -- ----------------------------
@@ -304,9 +367,12 @@ CREATE TABLE `video_info` (
 -- Records of video_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('lEAuInY9Zn', 'cover/20241205/yiHGLsIpBL8TiIycOIkvLD5AJS8KsZ.png', '【初代NDS】你说得对，但任天堂其实非常懂手机游戏', '8990397154', '2024-12-05 10:20:26', '2024-12-05 10:45:58', 46, 46, 0, NULL, '任天堂,游戏,游戏机,数码', '', '', 680, 2, 0, 0, 0, 0, 0, 1, '2024-12-05 15:41:28');
-INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('lRP0sT831T', 'cover/20241205/N2B78kEWzUaVlxgK4ga62EqRfBIClG.png', '早期数值怪  葫芦娃！', '8990397154', '2024-12-04 23:17:28', '2024-12-05 08:54:07', 50, 71, 1, NULL, '葫芦娃,搞笑', '葫芦娃！！~', '1,0', 41, 1, 0, 0, 1, 0, 1, 0, '2024-12-05 15:43:59');
-INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('wWGtjD0Gup', 'cover/20241205/DU0GKEaMHq2QWxutQnsDhdoPwSKPdE.png', '贝爷展示如何在《我的世界》游戏的艰难环境中求生!', '8990397154', '2024-12-05 10:38:34', '2024-12-05 10:45:49', 46, 46, 0, NULL, '游戏,我的世界', '贝尔格里尔斯在游戏中的表现', '', 167, 9, 0, 0, 0, 0, 0, 0, '2024-12-05 15:43:56');
+INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('iSq5pqzhDU', 'cover/20241207/fvIckkWOYHWWHIRceuR90l1dyb4dL4.png', '【线代应用】学线性代数到底有什么用？', '8990397154', '2024-12-07 22:53:34', '2024-12-07 22:53:34', 37, 40, 0, NULL, '线性代数,数学', '线性代数有什么用呢？和up一起探索吧！', '', 540, 4, 0, 0, 0, 0, 0, 0, '2024-12-08 16:07:18');
+INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('IxDGR9WN3Z', 'cover/20241207/qeKoqMjSmg8rl5ZpkOS64qspHkTFl2.png', '“接下来有请红星集团党委书记” ~！!', '8990397154', '2024-12-07 22:55:32', '2024-12-07 23:08:34', 50, 71, 0, NULL, '搞笑,香港电影,电影,红星', '红星集团？', '', 39, 5, 0, 0, 0, 0, 0, 0, '2024-12-08 16:21:11');
+INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('lEAuInY9Zn', 'cover/20241205/yiHGLsIpBL8TiIycOIkvLD5AJS8KsZ.png', '【初代NDS】你说得对，但任天堂其实非常懂手机游戏', '8990397154', '2024-12-05 10:20:26', '2024-12-05 10:45:58', 46, 46, 0, NULL, '任天堂,游戏,游戏机,数码', '', '', 680, 16, 1, 0, 0, 0, 1, 1, '2024-12-08 16:16:04');
+INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('lRP0sT831T', 'cover/20241205/N2B78kEWzUaVlxgK4ga62EqRfBIClG.png', '早期数值怪  葫芦娃！', '8990397154', '2024-12-04 23:17:28', '2024-12-05 08:54:07', 50, 71, 1, NULL, '葫芦娃,搞笑', '葫芦娃！！~', '', 41, 15, 1, 0, 1, 0, 0, 0, '2024-12-08 16:07:27');
+INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('wWGtjD0Gup', 'cover/20241205/DU0GKEaMHq2QWxutQnsDhdoPwSKPdE.png', '贝爷展示如何在《我的世界》游戏的艰难环境中求生!', '8990397154', '2024-12-05 10:38:34', '2024-12-05 10:45:49', 46, 46, 0, NULL, '游戏,我的世界', '贝尔格里尔斯在游戏中的表现', '', 167, 55, 1, 0, 1, 0, 1, 0, '2024-12-08 16:15:55');
+INSERT INTO `video_info` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`, `play_count`, `like_count`, `danmu_count`, `comment_count`, `coin_count`, `collect_count`, `recommend_type`, `last_play_time`) VALUES ('zEggigt6WH', 'cover/20241208/ZLeOOTvlnl8dDZNwHxuktkHS0LhKq2.png', '坏了！苹果真有生产力了：我用3500块的Mac mini跑了这些大模型 ！', '8990397154', '2024-12-08 11:24:27', '2024-12-08 11:25:45', 37, 39, 0, NULL, '科技,大模型,Mac,苹果,Apple, Mac mini', 'Mac mini也能跑大模型？', '', 431, 13, 0, 0, 0, 0, 0, 0, '2024-12-08 16:21:17');
 COMMIT;
 
 -- ----------------------------
@@ -332,7 +398,10 @@ CREATE TABLE `video_info_file` (
 BEGIN;
 INSERT INTO `video_info_file` (`file_id`, `user_id`, `video_id`, `file_name`, `file_index`, `file_size`, `file_path`, `duration`) VALUES ('Cq5s1KoiEa8jXANYLTPj', '8990397154', 'lEAuInY9Zn', '【初代NDS】你说得对，但任天堂其实非常懂手游 - 001 - 【初代NDS】你说得对，但任天堂其实非常懂手游', 1, 49886084, 'video/20241205/8990397154QVdymsWpyYWb7Cg', 680);
 INSERT INTO `video_info_file` (`file_id`, `user_id`, `video_id`, `file_name`, `file_index`, `file_size`, `file_path`, `duration`) VALUES ('d0mAhuxSEjnYTAMjNuid', '8990397154', 'lRP0sT831T', '早期数值怪 - 001 - 早期数值怪', 2, 6357418, 'video/20241205/8990397154wS1NvrvqXR5NZgR', 41);
+INSERT INTO `video_info_file` (`file_id`, `user_id`, `video_id`, `file_name`, `file_index`, `file_size`, `file_path`, `duration`) VALUES ('FkxJfkXxgt8iVG8ocx6g', '8990397154', 'IxDGR9WN3Z', '“接下来有请红星集团党委书记”', 1, 1213131, 'video/20241207/8990397154R2nN7xcjz1bezpx', 41);
+INSERT INTO `video_info_file` (`file_id`, `user_id`, `video_id`, `file_name`, `file_index`, `file_size`, `file_path`, `duration`) VALUES ('liznjRe5g00iom70Sqzl', '8990397154', 'zEggigt6WH', '坏了！苹果真有生产力了：我用3500块的Mac mini跑了这些大模型 - 001 - 坏了！苹果真有生产力了：我用3500块的Mac mini跑了这些大模型', 1, 17539535, 'video/20241208/8990397154dGHh3Fk3WP762EQ', 431);
 INSERT INTO `video_info_file` (`file_id`, `user_id`, `video_id`, `file_name`, `file_index`, `file_size`, `file_path`, `duration`) VALUES ('mTELmFAwabpspBDoFlnI', '8990397154', 'wWGtjD0Gup', '贝爷展示如何在《我的世界》的艰难环境中求生 - 001 - 贝爷展示如何在《我的世界》的艰难环境中求生', 1, 19560756, 'video/20241205/8990397154HPFPabVU3PvPuT0', 167);
+INSERT INTO `video_info_file` (`file_id`, `user_id`, `video_id`, `file_name`, `file_index`, `file_size`, `file_path`, `duration`) VALUES ('RbpryXx5daaTh4RrC44T', '8990397154', 'iSq5pqzhDU', '【线代应用】学线性代数到底有什么用？ - 001 - 【线代应用】学线性代数到底有什么用？', 1, 16045925, 'video/20241207/8990397154MIYQNekLw5MM9dW', 540);
 INSERT INTO `video_info_file` (`file_id`, `user_id`, `video_id`, `file_name`, `file_index`, `file_size`, `file_path`, `duration`) VALUES ('Y4Tp82hKXCL49SegCZwt', '8990397154', 'lRP0sT831T', '早期数值怪 - 001 - 早期数值怪！', 1, 6357418, 'video/20241204/8990397154HeFRO0WhOgeRbi8', 41);
 COMMIT;
 
@@ -363,7 +432,10 @@ CREATE TABLE `video_info_file_post` (
 BEGIN;
 INSERT INTO `video_info_file_post` (`file_id`, `upload_id`, `user_id`, `video_id`, `file_index`, `file_name`, `file_size`, `file_path`, `update_type`, `transfer_result`, `duration`) VALUES ('Cq5s1KoiEa8jXANYLTPj', 'QVdymsWpyYWb7Cg', '8990397154', 'lEAuInY9Zn', 1, '【初代NDS】你说得对，但任天堂其实非常懂手游 - 001 - 【初代NDS】你说得对，但任天堂其实非常懂手游', 49886084, 'video/20241205/8990397154QVdymsWpyYWb7Cg', NULL, NULL, 680);
 INSERT INTO `video_info_file_post` (`file_id`, `upload_id`, `user_id`, `video_id`, `file_index`, `file_name`, `file_size`, `file_path`, `update_type`, `transfer_result`, `duration`) VALUES ('d0mAhuxSEjnYTAMjNuid', 'wS1NvrvqXR5NZgR', '8990397154', 'lRP0sT831T', 2, '早期数值怪 - 001 - 早期数值怪', 6357418, 'video/20241205/8990397154wS1NvrvqXR5NZgR', 1, 1, 41);
+INSERT INTO `video_info_file_post` (`file_id`, `upload_id`, `user_id`, `video_id`, `file_index`, `file_name`, `file_size`, `file_path`, `update_type`, `transfer_result`, `duration`) VALUES ('FkxJfkXxgt8iVG8ocx6g', 'R2nN7xcjz1bezpx', '8990397154', 'IxDGR9WN3Z', 1, '“接下来有请红星集团党委书记”', 1213131, 'video/20241207/8990397154R2nN7xcjz1bezpx', NULL, NULL, 41);
+INSERT INTO `video_info_file_post` (`file_id`, `upload_id`, `user_id`, `video_id`, `file_index`, `file_name`, `file_size`, `file_path`, `update_type`, `transfer_result`, `duration`) VALUES ('liznjRe5g00iom70Sqzl', 'dGHh3Fk3WP762EQ', '8990397154', 'zEggigt6WH', 1, '坏了！苹果真有生产力了：我用3500块的Mac mini跑了这些大模型 - 001 - 坏了！苹果真有生产力了：我用3500块的Mac mini跑了这些大模型', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `video_info_file_post` (`file_id`, `upload_id`, `user_id`, `video_id`, `file_index`, `file_name`, `file_size`, `file_path`, `update_type`, `transfer_result`, `duration`) VALUES ('mTELmFAwabpspBDoFlnI', 'HPFPabVU3PvPuT0', '8990397154', 'wWGtjD0Gup', 1, '贝爷展示如何在《我的世界》的艰难环境中求生 - 001 - 贝爷展示如何在《我的世界》的艰难环境中求生', 19560756, 'video/20241205/8990397154HPFPabVU3PvPuT0', NULL, NULL, 167);
+INSERT INTO `video_info_file_post` (`file_id`, `upload_id`, `user_id`, `video_id`, `file_index`, `file_name`, `file_size`, `file_path`, `update_type`, `transfer_result`, `duration`) VALUES ('RbpryXx5daaTh4RrC44T', 'MIYQNekLw5MM9dW', '8990397154', 'iSq5pqzhDU', 1, '【线代应用】学线性代数到底有什么用？ - 001 - 【线代应用】学线性代数到底有什么用？', 16045925, 'video/20241207/8990397154MIYQNekLw5MM9dW', 1, 1, 540);
 INSERT INTO `video_info_file_post` (`file_id`, `upload_id`, `user_id`, `video_id`, `file_index`, `file_name`, `file_size`, `file_path`, `update_type`, `transfer_result`, `duration`) VALUES ('Y4Tp82hKXCL49SegCZwt', 'HeFRO0WhOgeRbi8', '8990397154', 'lRP0sT831T', 1, '早期数值怪 - 001 - 早期数值怪！', 6357418, 'video/20241204/8990397154HeFRO0WhOgeRbi8', NULL, NULL, 41);
 COMMIT;
 
@@ -398,9 +470,32 @@ CREATE TABLE `video_info_post` (
 -- Records of video_info_post
 -- ----------------------------
 BEGIN;
+INSERT INTO `video_info_post` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `status`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`) VALUES ('iSq5pqzhDU', 'cover/20241207/fvIckkWOYHWWHIRceuR90l1dyb4dL4.png', '【线代应用】学线性代数到底有什么用？', '8990397154', '2024-12-07 22:53:34', '2024-12-07 22:53:34', 37, 40, 3, 0, NULL, '线性代数,数学', '线性代数有什么用呢？和up一起探索吧！', '', 540);
+INSERT INTO `video_info_post` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `status`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`) VALUES ('IxDGR9WN3Z', 'cover/20241207/qeKoqMjSmg8rl5ZpkOS64qspHkTFl2.png', '“接下来有请红星集团党委书记” ~！!', '8990397154', '2024-12-07 22:55:32', '2024-12-07 23:08:34', 50, 71, 3, 0, NULL, '搞笑,香港电影,电影,红星', '红星集团？', '', 39);
 INSERT INTO `video_info_post` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `status`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`) VALUES ('lEAuInY9Zn', 'cover/20241205/yiHGLsIpBL8TiIycOIkvLD5AJS8KsZ.png', '【初代NDS】你说得对，但任天堂其实非常懂手机游戏', '8990397154', '2024-12-05 10:20:26', '2024-12-05 10:45:58', 46, 46, 3, 0, NULL, '任天堂,游戏,游戏机,数码', '', '', 680);
-INSERT INTO `video_info_post` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `status`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`) VALUES ('lRP0sT831T', 'cover/20241205/N2B78kEWzUaVlxgK4ga62EqRfBIClG.png', '早期数值怪  葫芦娃！', '8990397154', '2024-12-04 23:17:28', '2024-12-05 08:54:07', 50, 71, 3, 1, NULL, '葫芦娃,搞笑', '葫芦娃！！~', '1,0', 41);
+INSERT INTO `video_info_post` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `status`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`) VALUES ('lRP0sT831T', 'cover/20241205/N2B78kEWzUaVlxgK4ga62EqRfBIClG.png', '早期数值怪  葫芦娃！', '8990397154', '2024-12-04 23:17:28', '2024-12-05 08:54:07', 50, 71, 3, 1, NULL, '葫芦娃,搞笑', '葫芦娃！！~', '', 41);
 INSERT INTO `video_info_post` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `status`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`) VALUES ('wWGtjD0Gup', 'cover/20241205/DU0GKEaMHq2QWxutQnsDhdoPwSKPdE.png', '贝爷展示如何在《我的世界》游戏的艰难环境中求生!', '8990397154', '2024-12-05 10:38:34', '2024-12-05 10:45:49', 46, 46, 3, 0, NULL, '游戏,我的世界', '贝尔格里尔斯在游戏中的表现', '', 167);
+INSERT INTO `video_info_post` (`video_id`, `video_cover`, `video_name`, `user_id`, `create_time`, `last_update_time`, `p_category_id`, `category_id`, `status`, `post_type`, `origin_info`, `tags`, `introduction`, `interaction`, `duration`) VALUES ('zEggigt6WH', 'cover/20241208/ZLeOOTvlnl8dDZNwHxuktkHS0LhKq2.png', '坏了！苹果真有生产力了：我用3500块的Mac mini跑了这些大模型 ！', '8990397154', '2024-12-08 11:24:27', '2024-12-08 11:27:11', 37, 37, 3, 0, NULL, '科技,大模型,Mac,苹果,Apple, Mac mini', 'Mac mini也能跑大模型？', '', 431);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for video_play_history
+-- ----------------------------
+DROP TABLE IF EXISTS `video_play_history`;
+CREATE TABLE `video_play_history` (
+  `user_id` varchar(10) COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户ID',
+  `video_id` varchar(10) COLLATE utf8mb4_general_ci NOT NULL COMMENT '视频ID',
+  `file_index` int NOT NULL COMMENT '文件索引',
+  `last_update_time` datetime NOT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`user_id`,`video_id`) USING BTREE,
+  KEY `idx_video_id` (`video_id`) USING BTREE,
+  KEY `idx_user_id` (`user_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='视频播放历史';
+
+-- ----------------------------
+-- Records of video_play_history
+-- ----------------------------
+BEGIN;
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
