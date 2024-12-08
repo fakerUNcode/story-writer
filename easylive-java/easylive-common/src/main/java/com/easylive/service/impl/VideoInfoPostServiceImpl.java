@@ -7,17 +7,11 @@ import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.SysSettingDto;
 import com.easylive.entity.dto.UploadingFileDto;
 import com.easylive.entity.enums.*;
-import com.easylive.entity.po.VideoInfo;
-import com.easylive.entity.po.VideoInfoFile;
-import com.easylive.entity.po.VideoInfoFilePost;
-import com.easylive.entity.po.VideoInfoPost;
+import com.easylive.entity.po.*;
 import com.easylive.entity.query.*;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
-import com.easylive.mappers.VideoInfoFileMapper;
-import com.easylive.mappers.VideoInfoFilePostMapper;
-import com.easylive.mappers.VideoInfoMapper;
-import com.easylive.mappers.VideoInfoPostMapper;
+import com.easylive.mappers.*;
 import com.easylive.service.VideoInfoPostService;
 import com.easylive.utils.CopyTools;
 import com.easylive.utils.FFmpegUtils;
@@ -66,6 +60,8 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 
 	@Resource
 	private EsSearchComponent esSearchComponent;
+	@Resource
+	private UserInfoMapper<UserInfo,UserInfoQuery> userInfoMapper;
 
 
 	/**
@@ -463,7 +459,9 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 		// 如果是用户第一次投稿该视频，审核通过后给予奖励
 		if (dvVideoInfo == null) {
 			SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
-			// TODO: 给用户加硬币奖励
+			//给用户加硬币奖励
+			userInfoMapper.updateCoinCountInfo(infoPost.getUserId(),sysSettingDto.getPostVideoCoinCount());
+
 		}
 
 		VideoInfo videoInfo = CopyTools.copy(infoPost, VideoInfo.class);

@@ -2,6 +2,8 @@ package com.easylive.service.impl;
 
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
+import com.easylive.entity.dto.CountInfoDto;
+import com.easylive.entity.dto.SysSettingDto;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.dto.UserCountInfoDto;
 import com.easylive.entity.enums.PageSize;
@@ -10,13 +12,16 @@ import com.easylive.entity.enums.UserSexEnum;
 import com.easylive.entity.enums.UserStatusEnum;
 import com.easylive.entity.po.UserFocus;
 import com.easylive.entity.po.UserInfo;
+import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.query.SimplePage;
 import com.easylive.entity.query.UserFocusQuery;
 import com.easylive.entity.query.UserInfoQuery;
+import com.easylive.entity.query.VideoInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.mappers.UserFocusMapper;
 import com.easylive.mappers.UserInfoMapper;
+import com.easylive.mappers.VideoInfoMapper;
 import com.easylive.service.UserInfoService;
 import com.easylive.utils.CopyTools;
 import com.easylive.utils.StringTools;
@@ -42,6 +47,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 	private RedisComponent redisComponent;
 	@Resource
 	private UserFocusMapper<UserFocus, UserFocusQuery> userFocusMapper;
+	@Resource
+	private VideoInfoMapper<VideoInfo, VideoInfoQuery> videoInfoMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -219,8 +226,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 		userInfo.setSex(UserSexEnum.SECRECY.getType());
 		userInfo.setTheme(Constants.ONE);
 		//初始化硬币数
-		userInfo.setCurrentCoinCount(10);
-		userInfo.setTotalCoinCount(10);
+		SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
+		userInfo.setCurrentCoinCount(sysSettingDto.getRegisterCoinCount());
+		userInfo.setTotalCoinCount(sysSettingDto.getRegisterCoinCount());
 		//插入对象到数据库
 		this.userInfoMapper.insert(userInfo);
 	}
@@ -252,7 +260,11 @@ public class UserInfoServiceImpl implements UserInfoService {
 		if(null==userInfo){
 			throw new BusinessException(ResponseCodeEnum.CODE_404);
 		}
-		//TODO 获赞数，播放数
+		//获取获赞数，播放数
+		CountInfoDto countInfoDto = videoInfoMapper.selectSumCountInfo(userId);
+		CopyTools.copyProperties(countInfoDto,userInfo);
+
+
 		Integer fansCount = userFocusMapper.selectFansCount(userId);
 		Integer focusCount = userFocusMapper.selectFocusCount(userId);
 		userInfo.setFansCount(fansCount);
