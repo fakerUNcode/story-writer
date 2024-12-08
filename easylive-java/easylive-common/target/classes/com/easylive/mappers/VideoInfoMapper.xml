@@ -874,6 +874,7 @@
 	<select id="selectByVideoId" resultMap="base_result_map" >
 		select <include refid="base_column_list" /> from video_info v where video_id=#{videoId}
 	</select>
+
 	<!--更新弹幕数量信息-->
 	<update id="updateCountInfo">
 /*在 SQL 执行时，数据库会将字段的读取和更新操作当作一个原子操作。*/
@@ -885,4 +886,9 @@
 		where video_id = #{videoId}
 	</update>
 
+	<!--获取获赞数播放数-->
+	<select id="selectSumCountInfo" resultType="com.easylive.entity.dto.CountInfoDto">
+		select ifnull(sum(play_count),0) playCount, ifnull(sum(like_count),0) likeCount
+		from video_info where user_id = #{userId}
+	</select>
 </mapper>

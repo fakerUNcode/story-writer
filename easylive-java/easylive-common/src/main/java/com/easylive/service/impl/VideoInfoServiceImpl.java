@@ -8,6 +8,7 @@ import com.easylive.entity.dto.SysSettingDto;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.UserActionTypeEnum;
+import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.po.VideoInfoFile;
 import com.easylive.entity.po.VideoInfoPost;
@@ -53,6 +54,8 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 	private AppConfig appConfig;
 	@Resource
 	private EsSearchComponent esSearchComponent;
+	@Resource
+	private UserInfoMapper<UserInfo,UserInfoQuery> userInfoMapper;
 
 	private  static ExecutorService executorService = Executors.newFixedThreadPool(10);
 	/**
@@ -190,7 +193,9 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 
 		SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
 
-		//TODO 减少用户硬币
+		//减少用户因视频获得的奖励硬币
+		userInfoMapper.updateCoinCountInfo(videoInfo.getUserId(),-sysSettingDto.getPostVideoCoinCount());
+
 		//从es中删去视频信息
 		esSearchComponent.delDoc(videoId);
 
