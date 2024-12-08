@@ -1,19 +1,18 @@
 package com.easylive.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.query.VideoPlayHistoryQuery;
 import com.easylive.entity.po.VideoPlayHistory;
-import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.VideoPlayHistoryQuery;
+import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.mappers.VideoPlayHistoryMapper;
 import com.easylive.service.VideoPlayHistoryService;
 import com.easylive.utils.StringTools;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -24,6 +23,7 @@ public class VideoPlayHistoryServiceImpl implements VideoPlayHistoryService {
 
 	@Resource
 	private VideoPlayHistoryMapper<VideoPlayHistory, VideoPlayHistoryQuery> videoPlayHistoryMapper;
+
 
 	/**
 	 * 根据条件查询列表
@@ -126,5 +126,18 @@ public class VideoPlayHistoryServiceImpl implements VideoPlayHistoryService {
 	@Override
 	public Integer deleteVideoPlayHistoryByUserIdAndVideoId(String userId, String videoId) {
 		return this.videoPlayHistoryMapper.deleteByUserIdAndVideoId(userId, videoId);
+	}
+
+	@Override
+	public void saveHistory(String userId, String videoId, Integer fileIndex) {
+
+		VideoPlayHistory videoPlayHistory = new VideoPlayHistory();
+
+		videoPlayHistory.setVideoId(videoId);         // 设置视频ID
+		videoPlayHistory.setFileIndex(fileIndex);     // 设置文件索引
+		videoPlayHistory.setUserId(userId);           // 设置用户ID
+		videoPlayHistory.setLastUpdateTime(new Date()); // 设置最后更新时间
+
+		this.videoPlayHistoryMapper.insertOrUpdate(videoPlayHistory);
 	}
 }

@@ -200,6 +200,10 @@
 			 <![CDATA[ and  v.last_play_time>=date_sub(now(),interval #{query.lastPlayHour} hour) ]]>
 		 </if>
 
+		  <if test="query.categoryIdOrPCategoryId!=null">
+			  and category_id = #{query.categoryIdOrPCategoryId} or p_category_id = #{query.categoryIdOrPCategoryId}
+		  </if>
+
 	 </where>
 	</sql>
 

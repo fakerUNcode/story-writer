@@ -3,6 +3,7 @@ package com.easylive.web.controller;
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.dto.UserCountInfoDto;
 import com.easylive.entity.vo.ResponseVO;
 import com.easylive.exception.BusinessException;
 import com.easylive.service.UserInfoService;
@@ -78,7 +79,6 @@ public class AccountController extends ABaseController{
 			String ip = getIpAddr();
 			TokenUserInfoDto tokenUserInfoDto = userInfoService.login(email,password,ip);
 			saveToken2Cookie(response,tokenUserInfoDto.getToken());
-			//TODO 粉丝等数据
 			return getSuccessResponseVO(tokenUserInfoDto);
 		}finally {
 			redisComponent.cleanCheckCode(checkCodeKey);
@@ -119,5 +119,13 @@ public class AccountController extends ABaseController{
 	public ResponseVO logout(HttpServletResponse response){
 		cleanCookie(response);
 		return getSuccessResponseVO(null);
+	}
+
+	//加载粉丝数等数据
+	@RequestMapping("/getUserCountInfo")
+	public ResponseVO getUserCountInfo(HttpServletResponse response){
+		TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
+		UserCountInfoDto userCountInfoDto = userInfoService.getUserCountInfo(tokenUserInfoDto.getUserId());
+		return getSuccessResponseVO(userCountInfoDto);
 	}
 }

@@ -3,6 +3,7 @@ package com.easylive.service.impl;
 import com.easylive.component.RedisComponent;
 import com.easylive.entity.constants.Constants;
 import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.dto.UserCountInfoDto;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.UserSexEnum;
@@ -294,6 +295,21 @@ public class UserInfoServiceImpl implements UserInfoService {
 		if(updateTokenInfo){
 			redisComponent.updateTokenInfo(tokenUserInfoDto);
 		}
+	}
+
+	@Override
+	public UserCountInfoDto getUserCountInfo(String userId) {
+		UserInfo userInfo = getUserInfoByUserId(userId);
+
+		Integer fansCount = userFocusMapper.selectFansCount(userId);
+		Integer focusCount = userFocusMapper.selectFocusCount(userId);
+
+		UserCountInfoDto userCountInfoDto = new UserCountInfoDto();
+		userCountInfoDto.setFansCount(fansCount);
+		userCountInfoDto.setFocusCount(focusCount);
+		userCountInfoDto.setCurrentCoinCount(userInfo.getCurrentCoinCount());
+
+		return userCountInfoDto;
 	}
 
 }

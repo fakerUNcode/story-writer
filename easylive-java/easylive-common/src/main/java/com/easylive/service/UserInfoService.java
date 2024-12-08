@@ -1,6 +1,7 @@
 package com.easylive.service;
 
 import com.easylive.entity.dto.TokenUserInfoDto;
+import com.easylive.entity.dto.UserCountInfoDto;
 import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.query.UserInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
@@ -112,4 +113,6 @@ public interface UserInfoService {
 	UserInfo getUserDetailInfo(String currentUserId,String userId);
 
 	void updateUserInfo(UserInfo userInfo, TokenUserInfoDto tokenUserInfoDto);
+
+    UserCountInfoDto getUserCountInfo(String userId);
 }
