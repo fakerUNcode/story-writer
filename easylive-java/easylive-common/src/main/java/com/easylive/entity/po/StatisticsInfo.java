@@ -1,6 +1,5 @@
 package com.easylive.entity.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 
 
@@ -28,7 +27,7 @@ public class StatisticsInfo implements Serializable {
 	/**
 	 * 统计数值
 	 */
-	private Integer dataValue;
+	private Integer statisticsCount;
 
 
 	public void setStatisticsDate(String statisticsDate){
@@ -55,16 +54,16 @@ public class StatisticsInfo implements Serializable {
 		return this.dataType;
 	}
 
-	public void setDataValue(Integer dataValue){
-		this.dataValue = dataValue;
+	public void setStatisticsCount(Integer statisticsCount){
+		this.statisticsCount = statisticsCount;
 	}
 
-	public Integer getDataValue(){
-		return this.dataValue;
+	public Integer getStatisticsCount(){
+		return this.statisticsCount;
 	}
 
 	@Override
 	public String toString (){
-		return "统计日期:"+(statisticsDate == null ? "空" : statisticsDate)+"，用户ID:"+(userId == null ? "空" : userId)+"，数据统计类型:"+(dataType == null ? "空" : dataType)+"，统计数值:"+(dataValue == null ? "空" : dataValue);
+		return "统计日期:"+(statisticsDate == null ? "空" : statisticsDate)+"，用户ID:"+(userId == null ? "空" : userId)+"，数据统计类型:"+(dataType == null ? "空" : dataType)+"，统计数值:"+(statisticsCount == null ? "空" : statisticsCount);
 	}
 }

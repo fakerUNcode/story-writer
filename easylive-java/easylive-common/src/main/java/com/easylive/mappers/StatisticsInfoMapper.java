@@ -2,6 +2,8 @@ package com.easylive.mappers;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 数据统计 数据库操作接口
  */
@@ -24,5 +26,8 @@ public interface StatisticsInfoMapper<T,P> extends BaseMapper<T,P> {
 	 */
 	 T selectByStatisticsDateAndUserIdAndDataType(@Param("statisticsDate") String statisticsDate,@Param("userId") String userId,@Param("dataType") Integer dataType);
 
+	List<T> selectStatisticsFans(@Param("statisticsDate")String statisticsDate);
+	List<T> selectStatisticsComment(@Param("statisticsDate")String statisticsDate);
 
+	List<T> selectStatisticsInfo(@Param("statisticsDate")String statisticsDate,@Param("actionTypeArray")Integer[] actionTypeArray);
 }

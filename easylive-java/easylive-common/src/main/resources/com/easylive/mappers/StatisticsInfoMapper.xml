@@ -12,13 +12,13 @@
 		<!--数据统计类型-->
 		<result column="data_type" property="dataType"  />
 		<!--统计数值-->
-		<result column="data_value" property="dataValue"  />
+		<result column="statistics_count" property="statisticsCount"  />
 	</resultMap>
 
 
 	<!-- 通用查询结果列-->
 	<sql id="base_column_list">
-		 s.statistics_date,s.user_id,s.data_type,s.data_value
+		 s.statistics_date,s.user_id,s.data_type,s.statistics_count
 	</sql>
 
 	<sql id="base_condition_filed">
@@ -31,8 +31,8 @@
 			<if test="query.dataType != null">
 				 and  s.data_type = #{query.dataType}
 			</if>
-			<if test="query.dataValue != null">
-				 and  s.data_value = #{query.dataValue}
+			<if test="query.statisticsCount != null">
+				 and  s.statistics_count = #{query.statisticsCount}
 			</if>
 	</sql>
 	<!-- 通用条件列-->
@@ -84,8 +84,8 @@
 			<if test="bean.dataType != null">
 				 data_type,
 			</if>
-			<if test="bean.dataValue != null">
-				 data_value,
+			<if test="bean.statisticsCount != null">
+				 statistics_count,
 			</if>
 		 </trim>
 		 <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -98,8 +98,8 @@
 			<if test="bean.dataType!=null">
 				 #{bean.dataType},
 			</if>
-			<if test="bean.dataValue!=null">
-				 #{bean.dataValue},
+			<if test="bean.statisticsCount!=null">
+				 #{bean.statisticsCount},
 			</if>
 		 </trim>
 	</insert>
@@ -117,8 +117,8 @@
 			<if test="bean.dataType != null">
 				 data_type,
 			</if>
-			<if test="bean.dataValue != null">
-				 data_value,
+			<if test="bean.statisticsCount != null">
+				 statistics_count,
 			</if>
 		 </trim>
 		 <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -131,8 +131,8 @@
 			<if test="bean.dataType!=null">
 				 #{bean.dataType},
 			</if>
-			<if test="bean.dataValue!=null">
-				 #{bean.dataValue},
+			<if test="bean.statisticsCount!=null">
+				 #{bean.statisticsCount},
 			</if>
 		 </trim>
 		 on DUPLICATE key update 
@@ -146,8 +146,8 @@
 			<if test="bean.dataType!=null">
 				 data_type = VALUES(data_type),
 			</if>
-			<if test="bean.dataValue!=null">
-				 data_value = VALUES(data_value),
+			<if test="bean.statisticsCount!=null">
+				 statistics_count = VALUES(statistics_count),
 			</if>
 		 </trim>
 	</insert>
@@ -158,14 +158,14 @@
 			 statistics_date,
 			 user_id,
 			 data_type,
-			 data_value
+			 statistics_count
 		 )values
 		 <foreach collection="list" item="item" separator=",">
 			 (
 				 #{item.statisticsDate},
 				 #{item.userId},
 				 #{item.dataType},
-				 #{item.dataValue}
+				 #{item.statisticsCount}
 			 )
 		 </foreach>
 	</insert>
@@ -176,21 +176,21 @@
 			 statistics_date,
 			 user_id,
 			 data_type,
-			 data_value
+			 statistics_count
 		 )values
 		 <foreach collection="list" item="item" separator=",">
 			 (
 				 #{item.statisticsDate},
 				 #{item.userId},
 				 #{item.dataType},
-				 #{item.dataValue}
+				 #{item.statisticsCount}
 			 )
 		 </foreach>
 			on DUPLICATE key update 
 			statistics_date = VALUES(statistics_date),
 			user_id = VALUES(user_id),
 			data_type = VALUES(data_type),
-			data_value = VALUES(data_value)
+			statistics_count = VALUES(statistics_count)
 	</insert>
 
 	<!--多条件修改-->
@@ -206,8 +206,8 @@
 			<if test="bean.dataType != null">
 				 data_type = #{bean.dataType},
 			</if>
-			<if test="bean.dataValue != null">
-				 data_value = #{bean.dataValue},
+			<if test="bean.statisticsCount != null">
+				 statistics_count = #{bean.statisticsCount},
 			</if>
  		 </set>
  		 <include refid="query_condition" />
@@ -223,8 +223,8 @@
 	<update id="updateByStatisticsDateAndUserIdAndDataType" parameterType="com.easylive.entity.po.StatisticsInfo">
 		 UPDATE statistics_info
  		 <set> 
-			<if test="bean.dataValue != null">
-				 data_value = #{bean.dataValue},
+			<if test="bean.statisticsCount != null">
+				 statistics_count = #{bean.statisticsCount},
 			</if>
  		 </set>
  		 where statistics_date=#{statisticsDate} and user_id=#{userId} and data_type=#{dataType}
@@ -238,6 +238,29 @@
 	<!-- 根据PrimaryKey获取对象-->
 	<select id="selectByStatisticsDateAndUserIdAndDataType" resultMap="base_result_map" >
 		select <include refid="base_column_list" /> from statistics_info s where statistics_date=#{statisticsDate} and user_id=#{userId} and data_type=#{dataType}
+	</select>
+
+	<!--粉丝数统计-->
+	<select id="selectStatisticsFans" resultMap="base_result_map">
+		select focus_user_id userId,count(1) statistics_count from user_focus
+		WHERE DATE(focus_time) = #{statisticsDate}
+		group by focus_user_id
+	</select>
+	<!--评论数统计-->
+	<select id="selectStatisticsComment" resultMap="base_result_map">
+		select video_user_id user_id,count(1) statistics_count from video_comment
+		WHERE DATE(post_time) = #{statisticsDate}
+		group by  video_id,video_user_id
+	</select>
+	<!--统计其他数据-->
+	<select id="selectStatisticsInfo" resultMap="base_result_map">
+		select video_user_id user_id,
+		action_type data_type,
+		sum(action_count) statistics_count
+		from user_action
+		WHERE DATE(action_time) = #{statisticsDate}
+		and action_type in (<foreach collection="actionTypeArray" separator="," item="item">#{item}</foreach> )
+		group by video_user_id, action_type
 	</select>
 
 </mapper>

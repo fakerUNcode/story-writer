@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.easylive.entity.constants.Constants.LENGTH_15;
@@ -216,6 +217,11 @@ public class RedisComponent {
     public void recordVideoPlayCount(String videoId){
         String date = DateUtil.format(new Date(),DateTimePatternEnum.YYYY_MM_DD.getPattern());
         redisUtils.incrementex(Constants.REDIS_KEY_VIDEO_PLAY_COUNT + date + ":" + videoId,Constants.REDIS_KEY_EXPIRES_ONE_DAY*2);
+    }
+
+    public Map<String,Integer> getVideoPlayCount (String date){
+        Map<String,Integer> videoPlayMap = redisUtils.getBatch(Constants.REDIS_KEY_VIDEO_PLAY_COUNT+date);
+        return videoPlayMap;
     }
 
 }

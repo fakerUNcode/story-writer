@@ -1,8 +1,11 @@
 package com.easylive.utils;
 
 
+import com.easylive.entity.enums.DateTimePatternEnum;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,4 +47,11 @@ public class DateUtil {
         }
         return new Date();
     }
+
+    public static String getBeforeDayDate(Integer day){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR,-day);
+        return format(calendar.getTime(), DateTimePatternEnum.YYYY_MM_DD.getPattern());
+    }
+
 }
