@@ -30,7 +30,7 @@ public class StatisticsInfoQuery extends BaseParam {
 	/**
 	 * 统计数值
 	 */
-	private Integer dataValue;
+	private Integer statisticsCount;
 
 
 	public void setStatisticsDate(String statisticsDate){
@@ -73,12 +73,12 @@ public class StatisticsInfoQuery extends BaseParam {
 		return this.dataType;
 	}
 
-	public void setDataValue(Integer dataValue){
-		this.dataValue = dataValue;
+	public void setStatisticsCount(Integer statisticsCount){
+		this.statisticsCount = statisticsCount;
 	}
 
-	public Integer getDataValue(){
-		return this.dataValue;
+	public Integer getStatisticsCount(){
+		return this.statisticsCount;
 	}
 
 }

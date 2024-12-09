@@ -3,6 +3,7 @@ package com.easylive.web.controller;
 import com.easylive.entity.dto.TokenUserInfoDto;
 import com.easylive.entity.query.VideoPlayHistoryQuery;
 import com.easylive.entity.vo.ResponseVO;
+import com.easylive.service.StatisticsInfoService;
 import com.easylive.service.VideoPlayHistoryService;
 import com.easylive.web.annotation.GlobalInterceptor;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ import javax.validation.constraints.NotEmpty;
 public class VideoPlayHistoryController extends ABaseController{
     @Resource
     private VideoPlayHistoryService videoPlayHistoryService;
+    @Resource
+    private StatisticsInfoService statisticsInfoService;
 
     //加载历史记录
     @RequestMapping("/loadHistory")
@@ -53,5 +56,7 @@ public class VideoPlayHistoryController extends ABaseController{
         videoPlayHistoryService.deleteVideoPlayHistoryByUserIdAndVideoId(tokenUserInfoDto.getUserId(),videoId);
         return getSuccessResponseVO(null);
     }
+
+
 
 }

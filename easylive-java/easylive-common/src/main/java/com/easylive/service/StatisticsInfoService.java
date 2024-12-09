@@ -1,10 +1,10 @@
 package com.easylive.service;
 
-import java.util.List;
-
-import com.easylive.entity.query.StatisticsInfoQuery;
 import com.easylive.entity.po.StatisticsInfo;
+import com.easylive.entity.query.StatisticsInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
+
+import java.util.List;
 
 
 /**
@@ -68,5 +68,7 @@ public interface StatisticsInfoService {
 	 * 根据StatisticsDateAndUserIdAndDataType删除
 	 */
 	Integer deleteStatisticsInfoByStatisticsDateAndUserIdAndDataType(String statisticsDate,String userId,Integer dataType);
+
+	void statisticsData();
 
 }
