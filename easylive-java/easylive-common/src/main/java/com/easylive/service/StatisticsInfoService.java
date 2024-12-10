@@ -5,6 +5,7 @@ import com.easylive.entity.query.StatisticsInfoQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -70,5 +71,7 @@ public interface StatisticsInfoService {
 	Integer deleteStatisticsInfoByStatisticsDateAndUserIdAndDataType(String statisticsDate,String userId,Integer dataType);
 
 	void statisticsData();
+
+	Map<String,Integer> getStatisticsInfoActualTime(String userId);
 
 }

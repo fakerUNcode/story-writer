@@ -3,6 +3,7 @@ package com.easylive.mappers;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据统计 数据库操作接口
@@ -30,4 +31,6 @@ public interface StatisticsInfoMapper<T,P> extends BaseMapper<T,P> {
 	List<T> selectStatisticsComment(@Param("statisticsDate")String statisticsDate);
 
 	List<T> selectStatisticsInfo(@Param("statisticsDate")String statisticsDate,@Param("actionTypeArray")Integer[] actionTypeArray);
+
+	Map<String,Integer> selectTotalCountInfo(@Param("userId")String userId);
 }

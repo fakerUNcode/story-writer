@@ -57,6 +57,10 @@ public class VideoPlayHistoryController extends ABaseController{
         return getSuccessResponseVO(null);
     }
 
-
+    @RequestMapping("/test")
+    public ResponseVO test(){
+        statisticsInfoService.statisticsData();
+        return getSuccessResponseVO(null);
+    }
 
 }

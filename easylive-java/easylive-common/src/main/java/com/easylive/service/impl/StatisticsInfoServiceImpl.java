@@ -6,12 +6,14 @@ import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.StatisticsTypeEnum;
 import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.po.StatisticsInfo;
+import com.easylive.entity.po.UserFocus;
+import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.po.VideoInfo;
-import com.easylive.entity.query.SimplePage;
-import com.easylive.entity.query.StatisticsInfoQuery;
-import com.easylive.entity.query.VideoInfoQuery;
+import com.easylive.entity.query.*;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.mappers.StatisticsInfoMapper;
+import com.easylive.mappers.UserFocusMapper;
+import com.easylive.mappers.UserInfoMapper;
 import com.easylive.mappers.VideoInfoMapper;
 import com.easylive.service.StatisticsInfoService;
 import com.easylive.utils.DateUtil;
@@ -37,6 +39,10 @@ public class StatisticsInfoServiceImpl implements StatisticsInfoService {
 	private RedisComponent redisComponent;
 	@Resource
 	private VideoInfoMapper<VideoInfo,VideoInfoQuery> videoInfoMapper;
+	@Resource
+	private UserFocusMapper<UserFocus, UserFocusQuery> userFocusMapper;
+	@Resource
+	private UserInfoMapper<UserInfo, UserInfoQuery> userInfoMapper;
 
 	/**
 	 * 根据条件查询列表
@@ -201,5 +207,17 @@ public class StatisticsInfoServiceImpl implements StatisticsInfoService {
 		statisticsInfoList.addAll(statisticsOthers);
 
 		this.statisticsInfoMapper.insertOrUpdateBatch(statisticsInfoList);
+	}
+
+	@Override
+	public Map<String, Integer> getStatisticsInfoActualTime(String userId) {
+		Map<String,Integer> result = statisticsInfoMapper.selectTotalCountInfo(userId);
+		//用户端和管理端使用不同的查表
+		if(!StringTools.isEmpty(userId)){
+			result.put("userCount",userFocusMapper.selectFansCount(userId));
+		}else {
+			result.put("userCount",userInfoMapper.selectCount(new UserInfoQuery()));
+		}
+		return result;
 	}
 }
