@@ -52,6 +52,13 @@
 			<if test="query.userIdFuzzy!= null  and query.userIdFuzzy!=''">
 				 and  s.user_id like concat('%', #{query.userIdFuzzy}, '%')
 			</if>
+		 <!-- 充值查询条件 -->
+		   <if test="query.statisticsDateStart!=null">
+			 <![CDATA[ and s.statistics_date >= #{query.statisticsDateStart} ]]>
+		   </if>
+		   <if test="query.statisticsDateEnd!=null">
+			 <![CDATA[ and s.statistics_date <= #{query.statisticsDateEnd} ]]>
+		   </if>
 	 </where>
 	</sql>
 
@@ -261,6 +268,29 @@
 		WHERE DATE(action_time) = #{statisticsDate}
 		and action_type in (<foreach collection="actionTypeArray" separator="," item="item">#{item}</foreach> )
 		group by video_user_id, action_type
+	</select>
+
+	<!--获取总统计数据-->
+	<select id="selectTotalCountInfo" resultType="java.util.Map">
+		select
+		ifnull(sum(v.play_count),0) playCount,
+		ifnull(sum(v.like_count),0) likeCount,
+		ifnull(sum(v.danmu_count),0) danmuCount,
+		ifnull(sum(v.comment_count),0) commentCount,
+		ifnull(sum(v.coin_count),0) coinCount,
+		ifnull(sum(v.collect_count),0) collectCount,
+		ifnull(f.fansCount, 0) as fansCount
+		from video_info v
+		left join (
+		select focus_user_id, count(1) as fansCount
+		from user_focus
+		group by focus_user_id
+		) f on v.user_id = f.focus_user_id
+		<where>
+			<if test="userId != null">
+				and v.user_id = #{userId}
+			</if>
+		</where>
 	</select>
 
 </mapper>

@@ -32,6 +32,24 @@ public class StatisticsInfoQuery extends BaseParam {
 	 */
 	private Integer statisticsCount;
 
+	private String statisticsDateStart;
+	private String statisticsDateEnd;
+
+	public String getStatisticsDateStart() {
+		return statisticsDateStart;
+	}
+
+	public void setStatisticsDateStart(String statisticsDateStart) {
+		this.statisticsDateStart = statisticsDateStart;
+	}
+
+	public String getStatisticsDateEnd() {
+		return statisticsDateEnd;
+	}
+
+	public void setStatisticsDateEnd(String statisticsDateEnd) {
+		this.statisticsDateEnd = statisticsDateEnd;
+	}
 
 	public void setStatisticsDate(String statisticsDate){
 		this.statisticsDate = statisticsDate;
