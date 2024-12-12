@@ -132,6 +132,9 @@ public class RedisComponent {
         }
         return sysSettingDto;
     }
+    public void saveSetting(SysSettingDto sysSettingDto) {
+        redisUtils.set(Constants.REDIS_KEY_SYS_SETTING,sysSettingDto);
+    }
 
     public void updateVideoFileInfo(String userId, UploadingFileDto fileDto){
         redisUtils.setex(Constants.REDIS_KEY_UPLOADING_FILE + userId+ fileDto.getUploadId(), fileDto, Constants.REDIS_KEY_EXPIRES_ONE_DAY);
@@ -223,5 +226,6 @@ public class RedisComponent {
         Map<String,Integer> videoPlayMap = redisUtils.getBatch(Constants.REDIS_KEY_VIDEO_PLAY_COUNT+date);
         return videoPlayMap;
     }
+
 
 }

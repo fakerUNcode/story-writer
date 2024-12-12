@@ -75,4 +75,5 @@ public interface VideoInfoPostService {
 	void transferVideoFile(VideoInfoFilePost videoInfoFilePost);
 
     void auditVideo(String videoId, Integer status, String reason);
+
 }

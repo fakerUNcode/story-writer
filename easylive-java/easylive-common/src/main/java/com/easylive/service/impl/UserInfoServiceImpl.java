@@ -324,4 +324,11 @@ public class UserInfoServiceImpl implements UserInfoService {
 		return userCountInfoDto;
 	}
 
+
+	@Override
+	public void changeUserStatus(String userId, Integer status) {
+		UserInfo userInfo = new UserInfo();
+		userInfo.setStatus(status);
+		this.userInfoMapper.updateByUserId(userInfo,userId);
+	}
 }

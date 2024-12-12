@@ -220,4 +220,14 @@ public class StatisticsInfoServiceImpl implements StatisticsInfoService {
 		}
 		return result;
 	}
+
+	@Override
+	public List<StatisticsInfo> findListTotalInfoByParam(StatisticsInfoQuery query) {
+		return this.statisticsInfoMapper.selectListTotalInfoByParam(query);
+	}
+
+	@Override
+	public List<StatisticsInfo> findUserCountTotalInfoByParam(StatisticsInfoQuery query) {
+		return statisticsInfoMapper.selectUserCountTotalInfoByParam(query);
+	}
 }

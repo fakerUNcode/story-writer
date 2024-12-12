@@ -531,6 +531,23 @@
 		select ifnull(sum(duration),0) from video_info_file_post where video_id = #{videoId}
 	</select>
 
+	<!-- 根据 fileId 查询审核表，返回 VideoInfoFile -->
+	<select id="getVideoFilePost" resultType="com.easylive.entity.po.VideoInfoFile">
+		SELECT
+			file_id AS fileId,
+			video_id AS videoId,
+			file_index AS fileIndex,
+			file_name AS fileName,
+			file_size AS fileSize,
+			file_path AS filePath,
+			duration,
+			update_type AS updateType
+		FROM
+			video_info_file_post
+		WHERE
+			file_id = #{fileId}
+	</select>
+
 	<update id="update" parameterType="com.easylive.entity.po.VideoInfoFilePost">
 		UPDATE video_info_file_post
 		SET file_path = #{filePost.filePath},
