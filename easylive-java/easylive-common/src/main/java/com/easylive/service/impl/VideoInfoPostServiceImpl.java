@@ -461,7 +461,6 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 			SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
 			//给用户加硬币奖励
 			userInfoMapper.updateCoinCountInfo(infoPost.getUserId(),sysSettingDto.getPostVideoCoinCount());
-
 		}
 
 		VideoInfo videoInfo = CopyTools.copy(infoPost, VideoInfo.class);
@@ -499,5 +498,14 @@ public class VideoInfoPostServiceImpl implements VideoInfoPostService {
 
 		// 保存视频信息到 Elasticsearch
 		esSearchComponent.saveDoc(videoInfo);
+
+		// 审核成功后，将 video_info_file_post 表中 update_type 字段设置为 0（未更新）
+		for (VideoInfoFilePost filePost : videoInfoFilePostList) {
+			filePost.setUpdateType(0); // 设置 update_type 为 0
+			this.videoInfoFilePostMapper.update(filePost); // 更新记录
+		}
 	}
+
+
+
 }

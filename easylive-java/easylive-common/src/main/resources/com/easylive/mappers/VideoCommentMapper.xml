@@ -112,6 +112,9 @@
 			<if test="query.postTimeEnd!= null and query.postTimeEnd!=''">
 				 <![CDATA[ and  v.post_time< date_sub(str_to_date(#{query.postTimeEnd},'%Y-%m-%d'),interval -1 day) ]]>
 			</if>
+			<if test="query.videoNameFuzzy!=null and query.videoNameFuzzy!=''">
+				and vd.video_name like concat('%',#{query.videoNameFuzzy},'%')
+			</if>
 	 </where>
 	</sql>
 

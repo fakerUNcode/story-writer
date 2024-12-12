@@ -97,6 +97,11 @@
 			 and  vd.user_id = #{query.videoUserId}
 		    </if>
 
+		    <if test="query.videoNameFuzzy!=null and query.videoNameFuzzy!=''">
+			 and vd.video_name like concat('%',#{query.videoNameFuzzy},'%')
+		    </if>
+
+
 	 </where>
 	</sql>
 

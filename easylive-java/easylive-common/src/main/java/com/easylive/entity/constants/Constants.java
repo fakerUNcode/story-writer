@@ -17,7 +17,7 @@ public class Constants {
     public static final Integer HOUR_24 = 24;
 
     //用于效验密码是否符合规范的正则表达式（必须包含数字字母和特殊符号，8-18位）
-    public static final String REGEX_PASSWORD =  "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,18}$";
+    public static final String REGEX_PASSWORD =  "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&。.'-+=()])[A-Za-z\\d@$!%*?&.]{8,18}$";
 
     public static final Integer REDIS_KEY_EXPIRES_ONE_SECOND = 1000;
     //将REDIS失效时间常数设为一分钟（60000毫秒）

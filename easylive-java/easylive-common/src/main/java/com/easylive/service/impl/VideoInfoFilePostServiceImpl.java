@@ -1,19 +1,18 @@
 package com.easylive.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.easylive.entity.enums.PageSize;
-import com.easylive.entity.query.VideoInfoFilePostQuery;
+import com.easylive.entity.po.VideoInfoFile;
 import com.easylive.entity.po.VideoInfoFilePost;
-import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.query.SimplePage;
+import com.easylive.entity.query.VideoInfoFilePostQuery;
+import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.mappers.VideoInfoFilePostMapper;
 import com.easylive.service.VideoInfoFilePostService;
 import com.easylive.utils.StringTools;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -150,5 +149,10 @@ public class VideoInfoFilePostServiceImpl implements VideoInfoFilePostService {
 	@Override
 	public Integer deleteVideoInfoFilePostByUploadIdAndUserId(String uploadId, String userId) {
 		return this.videoInfoFilePostMapper.deleteByUploadIdAndUserId(uploadId, userId);
+	}
+
+	@Override
+	public VideoInfoFile getVideoInfoFileByFileId(String fileId) {
+		return videoInfoFilePostMapper.getVideoFilePost(fileId);
 	}
 }

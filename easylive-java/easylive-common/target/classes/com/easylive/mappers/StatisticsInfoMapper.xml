@@ -273,24 +273,36 @@
 	<!--获取总统计数据-->
 	<select id="selectTotalCountInfo" resultType="java.util.Map">
 		select
-		ifnull(sum(v.play_count),0) playCount,
-		ifnull(sum(v.like_count),0) likeCount,
-		ifnull(sum(v.danmu_count),0) danmuCount,
-		ifnull(sum(v.comment_count),0) commentCount,
-		ifnull(sum(v.coin_count),0) coinCount,
-		ifnull(sum(v.collect_count),0) collectCount,
-		ifnull(f.fansCount, 0) as fansCount
+		ifnull(sum(play_count),0) playCount,
+		ifnull(sum(like_count),0) likeCount,
+		ifnull(sum(danmu_count),0) danmuCount,
+		ifnull(sum(comment_count),0) commentCount,
+		ifnull(sum(coin_count),0) coinCount,
+		ifnull(sum(collect_count),0) collectCount,
+		ifnull((
+		select count(1)
+		from user_focus uf
+		where uf.focus_user_id = #{userId}
+		), 0) as fansCount
 		from video_info v
-		left join (
-		select focus_user_id, count(1) as fansCount
-		from user_focus
-		group by focus_user_id
-		) f on v.user_id = f.focus_user_id
 		<where>
 			<if test="userId != null">
 				and v.user_id = #{userId}
 			</if>
 		</where>
+	</select>
+
+
+	<select id="selectListTotalInfoByParam" resultMap="base_result_map">
+		select ifnull(sum(statistics_count),0) statistics_count,statistics_date, data_type
+		from statistics_info s
+		<include refid="query_condition"/>
+		group by data_type,statistics_date
+	</select>
+
+	<select id="selectUserCountTotalInfoByParam" resultMap="base_result_map">
+		select count(1) statistics_count,DATE_FORMAT(join_time,'%Y-%m-%d') statistics_date from user_info group by
+		statistics_date order by statistics_date asc
 	</select>
 
 </mapper>

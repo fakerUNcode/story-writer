@@ -229,7 +229,7 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
 		//视频发布者和评论发布者可以删除对应的评论
-		if(!videoInfo.getUserId().equals(userId) && !comment.getUserId().equals(userId)){
+		if(userId!=null && !videoInfo.getUserId().equals(userId) && !comment.getUserId().equals(userId)){
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
 		videoCommentMapper.deleteByCommentId(commentId);

@@ -2,6 +2,8 @@ package com.easylive.admin.controller;
 
 import com.easylive.annotation.RecordUserMessage;
 import com.easylive.entity.enums.MessageTypeEnum;
+import com.easylive.entity.po.VideoInfoFilePost;
+import com.easylive.entity.query.VideoInfoFilePostQuery;
 import com.easylive.entity.query.VideoInfoPostQuery;
 import com.easylive.entity.vo.PaginationResultVO;
 import com.easylive.entity.vo.ResponseVO;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequestMapping("/videoInfo")
@@ -47,4 +50,25 @@ public class VideoInfoController extends ABaseController{
         return getSuccessResponseVO(null);
     }
 
+    @RequestMapping("/recommendVideo")
+    public ResponseVO auditVideo(@NotEmpty String videoId){
+        videoInfoService.recommendVideo(videoId);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/deleteVideo")
+    public ResponseVO deleteVideo(@NotEmpty String videoId){
+        //管理员删除不需要传入userId
+        videoInfoService.deleteVideo(videoId,null);
+        return getSuccessResponseVO(null);
+    }
+
+    @RequestMapping("/loadVideoPList")
+    public ResponseVO loadVideoPList(@NotEmpty String videoId){
+        VideoInfoFilePostQuery postQuery = new VideoInfoFilePostQuery();
+        postQuery.setOrderBy("file_index asc");
+        postQuery.setVideoId(videoId);
+        List<VideoInfoFilePost> videoInfoFilePostList = videoInfoFilePostService.findListByParam(postQuery);
+        return getSuccessResponseVO(videoInfoFilePostList);
+    }
 }

@@ -1,5 +1,6 @@
 package com.easylive.mappers;
 
+import com.easylive.entity.po.VideoInfoFile;
 import com.easylive.entity.po.VideoInfoFilePost;
 import org.apache.ibatis.annotations.Param;
 
@@ -49,4 +50,6 @@ public interface VideoInfoFilePostMapper<T,P> extends BaseMapper<T,P> {
 
     Integer sumDuration(@Param("videoId") String videoId);
 	int update(@Param("filePost") VideoInfoFilePost videoInfoFilePost);
+
+    VideoInfoFile getVideoFilePost(String fileId);
 }

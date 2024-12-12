@@ -8,6 +8,7 @@ import com.easylive.entity.dto.SysSettingDto;
 import com.easylive.entity.enums.PageSize;
 import com.easylive.entity.enums.ResponseCodeEnum;
 import com.easylive.entity.enums.UserActionTypeEnum;
+import com.easylive.entity.enums.VideoRecommendTypeEnum;
 import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.po.VideoInfo;
 import com.easylive.entity.po.VideoInfoFile;
@@ -245,4 +246,24 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 		this.videoInfoMapper.updateCountInfo(videoId, UserActionTypeEnum.VIDEO_PLAY.getField(), 1);
 	}
 
+	@Override
+	public void recommendVideo(String videoId) {
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoId);
+		//未审核的不允许绕过前端修改数据来推荐视频
+		if(videoInfo==null){
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+		Integer recommendType = null;
+
+		//已经推荐过的再次点击则为取消推荐
+		if (VideoRecommendTypeEnum.RECOMMEND.getType().equals(videoInfo.getRecommendType())){
+			recommendType = VideoRecommendTypeEnum.NO_RECOMMEND.getType();
+		}else {
+			recommendType = VideoRecommendTypeEnum.RECOMMEND.getType();
+		}
+		VideoInfo updateInfo = new VideoInfo();
+		updateInfo.setRecommendType(recommendType);
+		videoInfoMapper.updateByVideoId(updateInfo,videoId);
+
+	}
 }

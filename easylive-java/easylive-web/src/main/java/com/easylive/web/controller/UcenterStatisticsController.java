@@ -43,7 +43,7 @@ public class UcenterStatisticsController extends ABaseController{
         param.setStatisticsDate(preDate);
         param.setUserId(tokenUserInfoDto.getUserId());
 
-        List<StatisticsInfo> preDayData = statisticsInfoService.findListByParam(param);
+        List<StatisticsInfo> preDayData = statisticsInfoService.findListTotalInfoByParam(param);
 
         Map<Integer,Integer> preDayDataMap = preDayData.stream().collect(Collectors.toMap(StatisticsInfo::getDataType,StatisticsInfo::getStatisticsCount
                 ,(item1,item2)->item2));
