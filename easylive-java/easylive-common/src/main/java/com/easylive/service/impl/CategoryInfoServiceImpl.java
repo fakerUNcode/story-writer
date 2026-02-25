@@ -264,5 +264,6 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 			}
 		}
 		return categoryInfoList;
+		
 	}
 }
