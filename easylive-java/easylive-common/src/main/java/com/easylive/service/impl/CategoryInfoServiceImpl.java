@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * 分类信息 业务接口实现
  */
@@ -38,8 +37,14 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 	 */
 	@Override
 	public List<CategoryInfo> findListByParam(CategoryInfoQuery param) {
+		// 1. 数据库查询结果可能为NULL，先判空
 		List<CategoryInfo> categoryInfoList = this.categoryInfoMapper.selectList(param);
+		if (categoryInfoList == null) {
+			categoryInfoList = new ArrayList<>();
+		}
 		System.out.println("Linear data: " + categoryInfoList);
+
+		// 2. 树形转换前先判空，避免空列表转换
 		if (param.getConvert2Tree() != null && param.getConvert2Tree()) {
 			categoryInfoList = convertLine2Tree(categoryInfoList, Constants.ZERO);
 		}
@@ -47,12 +52,16 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		return categoryInfoList;
 	}
 
-
 	//线性结构——>树形结构转换の辅助方法
 	private List<CategoryInfo> convertLine2Tree(List<CategoryInfo> dataList, Integer pid) {
 		List<CategoryInfo> children = new ArrayList<>();
+		// 先判空：避免dataList为NULL时遍历
+		if (dataList == null || dataList.isEmpty()) {
+			return children;
+		}
 		for (CategoryInfo m : dataList) {
-			if (m.getpCategoryId() != null && m.getpCategoryId().equals(pid)) {
+			// 增加判空：避免m.getpCategoryId()为NULL
+			if (m != null && pid != null && pid.equals(m.getpCategoryId())) {
 				m.setChildren(convertLine2Tree(dataList, m.getCategoryId()));
 				children.add(m);
 			}
@@ -60,7 +69,6 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		System.out.println("Children for pid " + pid + ": " + children);
 		return children;
 	}
-
 
 	/**
 	 * 根据条件查询列表
@@ -184,33 +192,22 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 	@Override
 	public void saveCategory(CategoryInfo bean) {
 		CategoryInfo dbBean = this.categoryInfoMapper.selectByCategoryCode(bean.getCategoryCode());
-/*		新建分类时（bean.getCategoryId() == null）
-		如果 dbBean != null，说明分类编号已存在，直接抛出异常：
-		编辑分类时（bean.getCategoryId() != null）
-		首先检查 dbBean != null，说明数据库中已存在相同分类编号的记录。
-		接着比较 bean.getCategoryId()（当前分类 ID）和 dbBean.getCategoryId()：
-		如果两者不相等，说明当前分类的分类 ID 与数据库中记录的分类 ID 不一致，抛出异常。*/
 		if(bean.getCategoryId()==null && dbBean!=null ||
-		    bean.getCategoryId()!=null && dbBean!=null && !bean.getCategoryId().equals(dbBean.getCategoryId())){
+				bean.getCategoryId()!=null && dbBean!=null && !bean.getCategoryId().equals(dbBean.getCategoryId())){
 			throw new BusinessException("分类编号已经存在或分类编号冲突");
 		}
-		//没有异常则正常插入新分类或修改旧分类
 		if(bean.getCategoryId()==null){
-			//如果是新分类，前端未传入sort参数，需要从数据库手动取
 			Integer maxSort = this.categoryInfoMapper.selectMaxSort(bean.getpCategoryId());
-			//新插入的分类设为该层级分类的最大排序+1
 			bean.setSort(maxSort + 1);
 			this.categoryInfoMapper.insert(bean);
 		}else{
 			this.categoryInfoMapper.updateByCategoryId(bean,bean.getCategoryId());
 		}
-		//刷新缓存中的内容
 		save2Redis();
 	}
 
 	@Override
 	public void delCategory(Integer categoryId) {
-		//  查询分类项是否有视频，有视频的话不能删除
 		VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
 		videoInfoQuery.setCategoryIdOrPCategoryId(categoryId);
 		Integer count = videoInfoService.findCountByParam(videoInfoQuery);
@@ -220,18 +217,12 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 		CategoryInfoQuery categoryInfoQuery = new CategoryInfoQuery();
 		categoryInfoQuery.setCategoryIdOrPCategoryId(categoryId);
 		categoryInfoMapper.deleteByParam(categoryInfoQuery);
-		//刷新缓存中的内容
 		save2Redis();
 	}
 
-	//  主要任务：
-	//	重新设置指定父分类（pCategoryId）下分类的排序顺序。
-	//	对传入的分类 ID 列表按照顺序进行排序更新。
 	@Override
 	public void changeSort(Integer pCategoryId, String categoryIds) {
-		//将逗号分隔的分类 ID 字符串（如 "1,2,3"）分割成数组。
 		String[] categoryIdArray = categoryIds.split(",");
-		//用于存储所有需要更新排序的分类对象
 		List<CategoryInfo> categoryInfoList = new ArrayList<>();
 
 		Integer sort = 0;
@@ -239,14 +230,10 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 			CategoryInfo categoryInfo = new CategoryInfo();
 			categoryInfo.setCategoryId(Integer.parseInt(categoryId));
 			categoryInfo.setpCategoryId(pCategoryId);
-			//设置排序号，递增
 			categoryInfo.setSort(++sort);
 			categoryInfoList.add(categoryInfo);
 		}
-		//我们选择使用mybatis的mapper一次性做完对数据库的操作，避免了java的for循环中每次循环都建立一次数据库连接的性能浪费
 		categoryInfoMapper.updateSortBatch(categoryInfoList);
-
-		//刷新缓存中的内容
 		save2Redis();
 	}
 
@@ -262,11 +249,20 @@ public class CategoryInfoServiceImpl implements CategoryInfoService {
 
 	@Override
 	public List<CategoryInfo> getAllCategoryList() {
+		// 1. 从Redis获取分类列表
 		List<CategoryInfo> categoryInfoList = redisComponent.getCategoryList();
-		//若未取到目录列表则刷新一次缓存中的内容
-		if(categoryInfoList.isEmpty()){
+
+		// 2. 正确的判空逻辑：先判断NULL，再判断空列表
+		if (categoryInfoList == null || categoryInfoList.isEmpty()) {
+			// 缓存为空/NULL，重建缓存
 			save2Redis();
+			// 重新从Redis获取
+			categoryInfoList = redisComponent.getCategoryList();
+			// 兜底：避免Redis返回NULL
+			if (categoryInfoList == null) {
+				categoryInfoList = new ArrayList<>();
+			}
 		}
-		return redisComponent.getCategoryList();
+		return categoryInfoList;
 	}
 }

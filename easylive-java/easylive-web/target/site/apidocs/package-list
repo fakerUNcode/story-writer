@@ -1,0 +1,6 @@
+com.easylive.web
+com.easylive.web.annotation
+com.easylive.web.aspect
+com.easylive.web.component
+com.easylive.web.controller
+com.easylive.web.task

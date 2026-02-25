@@ -1,0 +1,17 @@
+com.easylive.annotation
+com.easylive.aspect
+com.easylive.component
+com.easylive.controller
+com.easylive.entity.config
+com.easylive.entity.constants
+com.easylive.entity.dto
+com.easylive.entity.enums
+com.easylive.entity.po
+com.easylive.entity.query
+com.easylive.entity.vo
+com.easylive.exception
+com.easylive.mappers
+com.easylive.redis
+com.easylive.service
+com.easylive.service.impl
+com.easylive.utils
