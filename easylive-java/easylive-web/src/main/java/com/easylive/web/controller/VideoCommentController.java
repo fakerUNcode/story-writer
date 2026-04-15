@@ -91,15 +91,22 @@ public class VideoCommentController extends ABaseController{
         commentQuery.setOrderBy(orderBy);
         PaginationResultVO<VideoComment> commentData = videoCommentService.findListByPage(commentQuery);
 
-        //如果是第一页，并且该视频有置顶评论，将置顶评论添加到评论列表的最前面。
-        if(pageNo==null){
+        // 【修复新增】：兼容前端 pageNo 传 null、传 0 或传 1 的情况
+        if(pageNo == null || pageNo <= 1){
             List<VideoComment> topCommentList = topComment(videoId);
             if(!topCommentList.isEmpty()){
-                //过滤掉置顶评论，以免重复显示：
-                List<VideoComment> commentList =
-                        commentData.getList().stream().filter(item->!item.getCommentId().equals(topCommentList.get(0).getCommentId())).collect(Collectors.toList());
-                //将置顶评论插入到评论列表的最前面
-                commentList.addAll(0,topCommentList);
+                // 提取所有置顶评论的 ID
+                java.util.Set<Integer> topCommentIds = topCommentList.stream()
+                        .map(VideoComment::getCommentId)
+                        .collect(java.util.stream.Collectors.toSet());
+
+                // 过滤掉置顶评论，以免在普通列表中重复显示
+                List<VideoComment> commentList = commentData.getList().stream()
+                        .filter(item -> !topCommentIds.contains(item.getCommentId()))
+                        .collect(Collectors.toList());
+
+                // 将置顶评论插入到评论列表的最前面
+                commentList.addAll(0, topCommentList);
                 commentData.setList(commentList);
             }
         }
@@ -121,11 +128,14 @@ public class VideoCommentController extends ABaseController{
     }
 
     //置顶评论列表获取方法
+    // 置顶评论列表获取方法
     private List<VideoComment> topComment(String videoId) {
         VideoCommentQuery commentQuery = new VideoCommentQuery();
         commentQuery.setVideoId(videoId);
         commentQuery.setTopType(CommentTopTypeEnum.TOP.getType());
         commentQuery.setLoadChildren(true);
+        // 【修复新增】：必须指定查询顶级评论，否则关联查询大概率返回空
+        commentQuery.setpCommentId(0);
         List<VideoComment> videoCommentList = videoCommentService.findListByParam(commentQuery);
         return videoCommentList;
     }
