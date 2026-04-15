@@ -1,2 +1,13 @@
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/interceptor/AppInterceptor.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/IndexController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/FileController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/CategoryController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/ABaseController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/VideoController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/InteractController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/AccountController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/UserController.java
 /Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/EasyliveAdminRunApplication.java
-/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/TestController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/VideoInfoController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/controller/SettingController.java
+/Users/apple/Desktop/git/workspace-storywriter/easylive-java/easylive-admin/src/main/java/com/easylive/admin/interceptor/WebAppConfigurer.java
