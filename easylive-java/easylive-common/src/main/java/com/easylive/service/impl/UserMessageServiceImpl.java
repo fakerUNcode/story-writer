@@ -148,19 +148,29 @@ public class UserMessageServiceImpl implements UserMessageService {
 
 	//保存用户消息方法
 	/*使用@Async注解,让消息保存操作在独立线程中执行,这样就不会阻塞主程序流程,提高了系统的响应性能。*/
+	//保存用户消息方法
+	/*使用@Async注解,让消息保存操作在独立线程中执行,提高系统响应性能。*/
 	@Override
 	@Async
 	public void saveUserMessage(String videoId, String sendUserId, MessageTypeEnum messageTypeEnum, String content, Integer replyCommentId) {
+		// 1. 获取视频信息
 		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(videoId);
-		if(videoInfo==null){
+		if (videoInfo == null) {
 			return;
 		}
+
+		// 2. 初始接收者定为视频发布者
+		String userId = videoInfo.getUserId();
+
+		// 3. 自我操作拦截：如果是自己点赞/收藏/评论自己的视频，且不是系统通知，则直接返回
+		if (userId.equals(sendUserId) && MessageTypeEnum.SYS != messageTypeEnum && replyCommentId == null) {
+			return;
+		}
+
 		UserMessageExtendDto extendDto = new UserMessageExtendDto();
 		extendDto.setMessageContent(content);
 
-		String userId = videoInfo.getUserId();
-
-		//专门处理点赞和收藏这类可以"切换"的操作，如果用户反复点赞取消点赞,我们不希望接收者收到无穷无尽的通知,这会造成很糟糕的用户体验
+		// 4. 点赞和收藏的去重处理（避免反复点赞产生多条消息）
 		if (ArrayUtils.contains(
 				new Integer[]{
 						MessageTypeEnum.LIKE.getType(),
@@ -168,42 +178,48 @@ public class UserMessageServiceImpl implements UserMessageService {
 				},
 				messageTypeEnum.getType()
 		)) {
-			// 如果消息类型是点赞或收藏，执行相应操作
 			UserMessageQuery userMessageQuery = new UserMessageQuery();
 			userMessageQuery.setUserId(userId);
 			userMessageQuery.setVideoId(videoId);
+			userMessageQuery.setSendUserId(sendUserId);
 			userMessageQuery.setMessageType(messageTypeEnum.getType());
 			Integer count = userMessageMapper.selectCount(userMessageQuery);
-			//已经发送过的消息不再发送
-			if(count>0){
+			if (count > 0) {
 				return;
 			}
 		}
-		UserMessage userMessage = new UserMessage();
-		userMessage.setUserId(userId);                                     // 设置用户ID
-		userMessage.setVideoId(videoId);                                   // 设置视频ID
-		userMessage.setReadType(MessageReadTypeEnum.NO_READ.getType());    // 设置消息阅读状态为未读
-		userMessage.setCreateTime(new Date());                             // 设置消息创建时间为当前时间
-		userMessage.setMessageType(messageTypeEnum.getType());             // 设置消息类型
-		userMessage.setSendUserId(sendUserId);                             // 设置发送者用户ID
-		//评论回复的特殊处理，确保消息送达正确的接收者(原评论者)
-		if(replyCommentId!=null){
+
+		// 5. 评论回复的特殊处理：确保消息送达“被回复的人”，并再次检查是否回复自己
+		if (replyCommentId != null) {
 			VideoComment replyComment = videoCommentMapper.selectByCommentId(replyCommentId);
-			if(replyComment!=null){
-				userId = replyComment.getUserId();
+			if (replyComment != null) {
+				userId = replyComment.getUserId(); // 消息接收者改为原评论者
 				extendDto.setMessageContentReply(replyComment.getContent());
 			}
-			if(userId.equals(sendUserId)){
+			// 如果回复的是自己的评论，不发送消息
+			if (userId.equals(sendUserId)) {
 				return;
 			}
 		}
-		//系统消息特殊处理
-		if(MessageTypeEnum.SYS==messageTypeEnum){
+
+		// 6. 系统消息特殊处理（获取审核状态等）
+		if (MessageTypeEnum.SYS == messageTypeEnum) {
 			VideoInfoPost videoInfoPost = videoInfoPostMapper.selectByVideoId(videoId);
-			extendDto.setAuditStatus(videoInfoPost.getStatus());
+			if (videoInfoPost != null) {
+				extendDto.setAuditStatus(videoInfoPost.getStatus());
+			}
 		}
+
+		// 7. 组装并插入消息
+		UserMessage userMessage = new UserMessage();
 		userMessage.setUserId(userId);
+		userMessage.setVideoId(videoId);
+		userMessage.setReadType(MessageReadTypeEnum.NO_READ.getType());
+		userMessage.setCreateTime(new Date());
+		userMessage.setMessageType(messageTypeEnum.getType());
+		userMessage.setSendUserId(sendUserId);
 		userMessage.setExtendJson(JsonUtils.convertObj2Json(extendDto));
+
 		this.userMessageMapper.insert(userMessage);
 	}
 

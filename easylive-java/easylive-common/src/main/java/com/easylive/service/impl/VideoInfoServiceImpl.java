@@ -11,7 +11,7 @@ import com.easylive.entity.enums.UserActionTypeEnum;
 import com.easylive.entity.enums.VideoRecommendTypeEnum;
 import com.easylive.entity.po.UserInfo;
 import com.easylive.entity.po.VideoInfo;
-import com.easylive.entity.po.VideoInfoFile;
+import com.easylive.entity.po.VideoInfoFilePost;
 import com.easylive.entity.po.VideoInfoPost;
 import com.easylive.entity.query.*;
 import com.easylive.entity.vo.PaginationResultVO;
@@ -29,7 +29,6 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 /**
  * 视频信息 业务接口实现
@@ -58,7 +57,8 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 	@Resource
 	private UserInfoMapper<UserInfo,UserInfoQuery> userInfoMapper;
 
-	private  static ExecutorService executorService = Executors.newFixedThreadPool(10);
+	private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+
 	/**
 	 * 根据条件查询列表
 	 */
@@ -186,58 +186,78 @@ public class VideoInfoServiceImpl implements VideoInfoService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteVideo(String videoId, String userId) {
-		//只能删除自己的视频稿件 管理员删除不需要传入userId
-		VideoInfo videoInfo = this.videoInfoMapper.selectByVideoId(videoId);
-		if(videoInfo==null || userId!=null && !userId.equals(videoInfo.getUserId())){
+		// 1. 基准查询：统一从源头稿件表 (video_info_post) 查询视频记录，确保各种状态的视频都能查到
+		// 【修复点】：增加 (VideoInfoPost) 强制类型转换解决 Object 报错
+		VideoInfoPost videoInfoPost = (VideoInfoPost) this.videoInfoPostMapper.selectByVideoId(videoId);
+
+		// 判断权限：如果是用户端调用（userId不为空），必须保证是本人；如果是管理端调用（userId为空），则直接放行
+		if (videoInfoPost == null || (userId != null && !userId.equals(videoInfoPost.getUserId()))) {
 			throw new BusinessException(ResponseCodeEnum.CODE_404);
 		}
 
-		SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
+		// 2. 查询正式表，判断该视频是否曾经正式发布过（审核通过进入主表）
+		VideoInfo videoInfo = this.videoInfoMapper.selectByVideoId(videoId);
 
-		//减少用户因视频获得的奖励硬币
-		userInfoMapper.updateCoinCountInfo(videoInfo.getUserId(),-sysSettingDto.getPostVideoCoinCount());
+		// 3. 只有当视频存在于正式主表时，才进行扣除硬币和清理 ES 索引的操作
+		if (videoInfo != null) {
+			SysSettingDto sysSettingDto = redisComponent.getSysSettingDto();
+			// 减少用户因视频获得的奖励硬币 (防止转码失败的视频扣除用户原始硬币)
+			userInfoMapper.updateCoinCountInfo(videoInfoPost.getUserId(), -sysSettingDto.getPostVideoCoinCount());
+			// 从es中删去视频信息
+			esSearchComponent.delDoc(videoId);
+		}
 
-		//从es中删去视频信息
-		esSearchComponent.delDoc(videoId);
+		// 4. 异步清理底层文件与所有相关的数据库记录
+		executorService.execute(() -> {
+			try {
+				// 【修复点】：文件清理必须基于 post 稿件表查询，因为未过审/转码失败的视频，在正式文件表中没有记录
+				VideoInfoFilePostQuery filePostQuery = new VideoInfoFilePostQuery();
+				filePostQuery.setVideoId(videoId);
+				// 【修复点】：增加 (List<VideoInfoFilePost>) 强制类型转换
+				@SuppressWarnings("unchecked")
+				List<VideoInfoFilePost> videoInfoFilePostList = (List<VideoInfoFilePost>) this.videoInfoFilePostMapper.selectList(filePostQuery);
 
-		executorService.execute(()->{
-			/*删除服务器内文件*/
-			VideoInfoFileQuery videoInfoFileQuery = new VideoInfoFileQuery();
-			videoInfoFileQuery.setVideoId(videoId);
-			List<VideoInfoFile> videoInfoFileList = this.videoInfoFileMapper.selectList(videoInfoFileQuery);
-			for (VideoInfoFile item : videoInfoFileList) {
-				try {
-					FileUtils.deleteDirectory(new File(appConfig.getProjectFolder() + Constants.FILE_FOLDER + item.getFilePath()));
-				} catch (Exception e) {
-					log.error("删除文件失败，文件路径：{}", item.getFilePath());
+				for (VideoInfoFilePost item : videoInfoFilePostList) {
+					try {
+						// 【修复点】：使用原生 Java 判空替换 StringTools.isNotEmpty
+						if (item.getFilePath() != null && !item.getFilePath().trim().isEmpty()) {
+							FileUtils.deleteDirectory(new File(appConfig.getProjectFolder() + Constants.FILE_FOLDER + item.getFilePath()));
+						}
+					} catch (Exception e) {
+						log.error("删除本地物理文件失败，文件路径：{}", item.getFilePath());
+					}
 				}
+
+				/* 删除数据库信息：无论正式表里有没有，执行 delete 操作都是安全的（没数据只会返回影响行数0） */
+				// 删除稿件表（源头表）
+				VideoInfoPostQuery postQuery = new VideoInfoPostQuery();
+				postQuery.setVideoId(videoId);
+				videoInfoPostMapper.deleteByParam(postQuery);
+
+				videoInfoFilePostMapper.deleteByParam(filePostQuery);
+
+				// 删除主业务表
+				VideoInfoQuery infoQuery = new VideoInfoQuery();
+				infoQuery.setVideoId(videoId);
+				videoInfoMapper.deleteByParam(infoQuery);
+
+				VideoInfoFileQuery fileQuery = new VideoInfoFileQuery();
+				fileQuery.setVideoId(videoId);
+				videoInfoFileMapper.deleteByParam(fileQuery);
+
+				// 删除互动信息（弹幕、评论）
+				VideoDanmuQuery videoDanmuQuery = new VideoDanmuQuery();
+				videoDanmuQuery.setVideoId(videoId);
+				videoDanmuMapper.deleteByParam(videoDanmuQuery);
+
+				VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
+				videoCommentQuery.setVideoId(videoId);
+				videoCommentMapper.deleteByParam(videoCommentQuery);
+
+			} catch (Exception e) {
+				log.error("异步彻底删除视频关联数据异常，videoId: {}", videoId, e);
 			}
-
-			/*删除数据库信息*/
-			//删除视频信息
-			VideoInfoQuery videoInfoQuery = new VideoInfoQuery();
-			videoInfoQuery.setVideoId(videoId);
-			videoInfoMapper.deleteByParam(videoInfoQuery);
-			VideoInfoPostQuery videoInfoPostQuery = new VideoInfoPostQuery();
-			videoInfoPostQuery.setVideoId(videoId);
-			videoInfoPostMapper.deleteByParam(videoInfoPostQuery);
-			//删除分p信息
-			videoInfoFileMapper.deleteByParam(videoInfoFileQuery);
-			VideoInfoFilePostQuery videoInfoFilePost = new VideoInfoFilePostQuery();
-			videoInfoFilePost.setVideoId(videoId);
-			videoInfoFilePostMapper.deleteByParam(videoInfoFilePost);
-			//删除弹幕信息
-			VideoDanmuQuery videoDanmuQuery = new VideoDanmuQuery();
-			videoDanmuQuery.setVideoId(videoId);
-			videoDanmuMapper.deleteByParam(videoDanmuQuery);
-			//删除评论信息
-			VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
-			videoCommentQuery.setVideoId(videoId);
-			videoCommentMapper.deleteByParam(videoCommentQuery);
-
 		});
-
-
 	}
 
 	//增加视频播放量
