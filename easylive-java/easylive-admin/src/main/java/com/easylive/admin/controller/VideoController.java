@@ -25,7 +25,7 @@ import java.io.OutputStream;
 @RequestMapping("/file")
 @Validated
 @Slf4j
-public class VideoController extends ABaseController{
+public class VideoController extends ABaseController {
     @Resource
     private AppConfig appConfig;
     @Resource
@@ -62,11 +62,16 @@ public class VideoController extends ABaseController{
     // 查询视频资源（已审核或未审核）
     @RequestMapping("/videoResource/{fileId}")
     public void videoResource(HttpServletResponse response, @PathVariable @NotEmpty String fileId) {
-        // 优先从正式表查询
+        boolean isAuditPreview = false;
+
+        // 1. 优先从正式表查询
         VideoInfoFile videoInfoFile = videoInfoFileService.getVideoInfoFileByFileId(fileId);
+
+        // 2. 正式表中未找到，再从审核表查询
         if (videoInfoFile == null) {
-            // 正式表中未找到，再从审核表查询
+            // 【妥协修复】：因为底层的 PostService 错误地返回了 VideoInfoFile，所以这里直接用 VideoInfoFile 接
             videoInfoFile = videoInfoFilePostService.getVideoInfoFileByFileId(fileId);
+            isAuditPreview = true; // 标记为正在审核的稿件
         }
 
         if (videoInfoFile == null || videoInfoFile.getFilePath() == null) {
@@ -75,14 +80,23 @@ public class VideoController extends ABaseController{
             return;
         }
 
-        String filePath = videoInfoFile.getFilePath();
-        readFile(response, filePath + "/" + Constants.M3U8_NAME);
+        // 【核心修复 1】：强制设置 HLS M3U8 的 Content-Type 和防缓存头（解决预览时好时坏）
+        response.setContentType("application/x-mpegURL");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 
-        // 更新视频的播放信息
-        VideoPlayInfoDto videoPlayInfoDto = new VideoPlayInfoDto();
-        videoPlayInfoDto.setVideoId(videoInfoFile.getVideoId());
-        videoPlayInfoDto.setFileIndex(videoInfoFile.getFileIndex());
-        redisComponent.addVideoPlay(videoPlayInfoDto);
+        readFile(response, videoInfoFile.getFilePath() + "/" + Constants.M3U8_NAME);
+
+        // 【核心修复 2】：只有正式发布的视频才记录播放量，防止审核时刷数据或报错
+        if (!isAuditPreview) {
+            try {
+                VideoPlayInfoDto videoPlayInfoDto = new VideoPlayInfoDto();
+                videoPlayInfoDto.setVideoId(videoInfoFile.getVideoId());
+                videoPlayInfoDto.setFileIndex(videoInfoFile.getFileIndex());
+                redisComponent.addVideoPlay(videoPlayInfoDto);
+            } catch (Exception e) {
+                log.error("记录视频播放量异常, videoId: {}", videoInfoFile.getVideoId(), e);
+            }
+        }
     }
 
     // 查询视频资源片段（已审核或未审核）
@@ -90,19 +104,20 @@ public class VideoController extends ABaseController{
     public void videoResourceTs(HttpServletResponse response, @PathVariable @NotEmpty String fileId, @PathVariable @NotEmpty String ts) {
         // 优先从正式表查询
         VideoInfoFile videoInfoFile = videoInfoFileService.getVideoInfoFileByFileId(fileId);
+
+        // 正式表中未找到，再从审核表查询
         if (videoInfoFile == null) {
-            // 正式表中未找到，再从审核表查询
             videoInfoFile = videoInfoFilePostService.getVideoInfoFileByFileId(fileId);
         }
 
         if (videoInfoFile == null || videoInfoFile.getFilePath() == null) {
-            log.error("未找到视频文件信息，fileId: {}", fileId);
+            log.error("未找到视频片段信息，fileId: {}", fileId);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        String filePath = videoInfoFile.getFilePath();
-        readFile(response, filePath + "/" + ts);
+        // 【核心修复 3】：强制设置 TS 切片专用的 Content-Type
+        response.setContentType("video/MP2T");
+        readFile(response, videoInfoFile.getFilePath() + "/" + ts);
     }
-
 }

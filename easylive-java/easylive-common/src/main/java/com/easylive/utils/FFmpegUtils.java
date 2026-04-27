@@ -68,17 +68,17 @@ public class FFmpegUtils {
         // 判空防雷：如果执行结果完全为空（例如纯音频文件或文件损坏）
         if (result == null || result.trim().isEmpty()) {
             log.warn("无法获取视频编码格式，可能无视频流或文件损坏，路径: {}", videoFilePath);
-            return null; // 返回 null 交给外层业务逻辑去判断（如标记转码失败）
+            return null; // 返回 null 交给外层业务逻辑去判断
         }
 
-        // 清除多余的换行符和空格后直接返回，告别脆弱的 substring
+        // 清除多余的换行符和空格后直接返回
         return result.replace("\n", "").replace("\r", "").trim();
     }
 
-    // HEVC(H.265) 转 H.264 操作
+    // HEVC(H.265) 转 H.264 操作 (若有用到)
     public void convertHevc2Mp4(String tempFileName, String videoFilePath){
         try {
-            String CMD_HEVC_264 = "ffmpeg -i \"%s\" -c:v libx264 -crf 20 \"%s\" -y";
+            String CMD_HEVC_264 = "ffmpeg -i \"%s\" -c:v h264_videotoolbox -b:v 2000k \"%s\" -y";
             String cmd = String.format(CMD_HEVC_264, tempFileName, videoFilePath);
             ProcessUtils.executeCommand(cmd, appConfig.getShowFFmpegLog());
         } catch (Exception e) {
@@ -87,15 +87,30 @@ public class FFmpegUtils {
         }
     }
 
-    // 视频切片生成 TS 和 M3U8 索引
+    // 视频切片生成 TS 和 M3U8 索引 (Mac 加速版)
     public void convertVideo2Ts(File tsFolder, String videoFilePath){
-        final String CMD_TRANSFER_2TS = "ffmpeg -y -i \"%s\" -vcodec copy -acodec copy -bsf:v h264_mp4toannexb \"%s\"";
+        // 先探测视频真实的编码格式
+        String codec = getVideoCodec(videoFilePath);
+        String cmdTransfer2Ts;
+
+        // 判断是否为标准 h264
+        if ("h264".equalsIgnoreCase(codec)) {
+            // 原生 h264，直接 copy 流，极速切片
+            cmdTransfer2Ts = "ffmpeg -y -i \"%s\" -vcodec copy -acodec copy -bsf:v h264_mp4toannexb \"%s\"";
+            log.info("视频编码为 H.264，采用极速 Copy 模式生成 TS，文件: {}", videoFilePath);
+        } else {
+            // 非 h264 (如 hevc, vp9) 或者探测失败，强制重编码
+            // 【提速秘籍】：采用 Mac 硬件加速 (h264_videotoolbox) 代替 libx264
+            cmdTransfer2Ts = "ffmpeg -y -i \"%s\" -c:v h264_videotoolbox -b:v 2000k -c:a aac -bsf:v h264_mp4toannexb \"%s\"";
+            log.info("视频编码为 {}，采用 Mac 硬件加速(VideoToolbox)模式生成 TS，文件: {}", codec, videoFilePath);
+        }
+
         final String CMD_CUT_TS = "ffmpeg -i \"%s\" -c copy -map 0 -f segment -segment_list \"%s\" -segment_time 10 %s/%%4d.ts";
         String tsPath = tsFolder.getPath() + "/" + Constants.TS_NAME;
 
         try {
             // 1. 生成 .ts 巨型临时文件
-            String cmd = String.format(CMD_TRANSFER_2TS, videoFilePath, tsPath);
+            String cmd = String.format(cmdTransfer2Ts, videoFilePath, tsPath);
             ProcessUtils.executeCommand(cmd, appConfig.getShowFFmpegLog());
 
             // 2. 生成索引文件 .m3u8 和切片 .ts
@@ -104,11 +119,9 @@ public class FFmpegUtils {
 
         } catch (Exception e) {
             log.error("视频切片转码失败，原文件: {}", videoFilePath, e);
-            // 这里继续抛出异常，让外层的 transferVideoFile 能捕获到，从而将数据库视频状态改为转码失败
             throw new RuntimeException("生成TS切片失败", e);
         } finally {
-            // 【核心优化】：将删除 index.ts 放入 finally 块中
-            // 无论上面转码成功还是抛出异常崩溃，这里的代码都会执行，防止大文件残留在服务器硬盘中
+            // 确保巨大的 index.ts 临时文件被删除，防止撑爆磁盘
             File indexTs = new File(tsPath);
             if (indexTs.exists()) {
                 indexTs.delete();
