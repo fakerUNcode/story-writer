@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/index")
 @Validated
 @Slf4j
-public class IndexController extends ABaseController{
+public class IndexController extends ABaseController {
 
     @Resource
     private StatisticsInfoService statisticsInfoService;
@@ -45,20 +45,20 @@ public class IndexController extends ABaseController{
         List<StatisticsInfo> preDayData = statisticsInfoService.findListTotalInfoByParam(param);
 
         Integer userCount = userInfoService.findCountByParam(new UserInfoQuery());
-        preDayData.forEach(item->{
-            if(StatisticsTypeEnum.FANS.getType().equals(item.getDataType())){
+        preDayData.forEach(item -> {
+            if (StatisticsTypeEnum.FANS.getType().equals(item.getDataType())) {
                 item.setStatisticsCount(userCount);
             }
         });
 
-        Map<Integer,Integer> preDayDataMap = preDayData.stream().collect(Collectors.toMap(StatisticsInfo::getDataType,StatisticsInfo::getStatisticsCount,(item1,item2)->item2));
+        Map<Integer, Integer> preDayDataMap = preDayData.stream().collect(Collectors.toMap(StatisticsInfo::getDataType, StatisticsInfo::getStatisticsCount, (item1, item2) -> item2));
 
         /*实时数据*/
-        Map<String,Integer> totalCountInfo = statisticsInfoService.getStatisticsInfoActualTime(null);
+        Map<String, Integer> totalCountInfo = statisticsInfoService.getStatisticsInfoActualTime(null);
 
-        Map<String,Object> result = new HashMap<>();
-        result.put("preDayData",preDayDataMap);
-        result.put("totalCountInfo",totalCountInfo);
+        Map<String, Object> result = new HashMap<>();
+        result.put("preDayData", preDayDataMap);
+        result.put("totalCountInfo", totalCountInfo);
 
         return getSuccessResponseVO(result);
     }
@@ -66,27 +66,43 @@ public class IndexController extends ABaseController{
     @RequestMapping("/getWeekStatisticsInfo")
     public ResponseVO getWeekStatisticsInfo(Integer dataType) {
 
-
         List<String> dateList = DateUtil.getBeforeDaysDate(7);
 
         StatisticsInfoQuery param = new StatisticsInfoQuery();
         param.setDataType(dataType);
         param.setStatisticsDateStart(dateList.get(0));
-        param.setStatisticsDateEnd(dateList.get(dateList.size()-1));
+        param.setStatisticsDateEnd(dateList.get(dateList.size() - 1));
         param.setOrderBy("statistics_date asc");
 
         List<StatisticsInfo> statisticsInfoList = null;
-        if(!StatisticsTypeEnum.FANS.getType().equals(dataType)){
+        if (!StatisticsTypeEnum.FANS.getType().equals(dataType)) {
             statisticsInfoList = statisticsInfoService.findListTotalInfoByParam(param);
-        }else {
+        } else {
             statisticsInfoList = statisticsInfoService.findUserCountTotalInfoByParam(param);
         }
-        Map<String,StatisticsInfo> dataMap = statisticsInfoList.stream().collect(Collectors.toMap(item->item.getStatisticsDate(), Function.identity(),(date1,date2)->date2));
+
+        // ================== 【核心修复逻辑】 ==================
+        // 强行截取数据库返回的日期前 10 位 (yyyy-MM-dd)，抹除后面的时分秒
+        Map<String, StatisticsInfo> dataMap = statisticsInfoList.stream().collect(
+                Collectors.toMap(
+                        item -> {
+                            String date = item.getStatisticsDate();
+                            if (date != null && date.length() >= 10) {
+                                return date.substring(0, 10);
+                            }
+                            return date;
+                        },
+                        Function.identity(),
+                        (date1, date2) -> date2
+                )
+        );
+        // =========================================================
+
         List<StatisticsInfo> resultDataList = new ArrayList<>();
 
-        for (String date:dateList){
+        for (String date : dateList) {
             StatisticsInfo dataItem = dataMap.get(date);
-            if(dataItem==null){
+            if (dataItem == null) {
                 dataItem = new StatisticsInfo();
                 dataItem.setStatisticsCount(0);
                 dataItem.setStatisticsDate(date);
