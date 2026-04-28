@@ -178,56 +178,72 @@ public class UserActionServiceImpl implements UserActionService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void saveAction(UserAction bean) {
-		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(bean.getVideoId());
-		if(videoInfo==null){
-			throw new BusinessException(ResponseCodeEnum.CODE_600);
-		}
-		bean.setVideoUserId(videoInfo.getUserId());
-
 		UserActionTypeEnum actionTypeEnum = UserActionTypeEnum.getByType(bean.getActionType());
-		if(actionTypeEnum==null){
+		if (actionTypeEnum == null) {
 			throw new BusinessException(ResponseCodeEnum.CODE_600);
 		}
-		UserAction dbAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(bean.getVideoId(),bean.getCommentId(),bean.getActionType(), bean.getUserId());
+
+		// 1. 【修复核心一】：将查询用户历史动作的代码提前
+		UserAction dbAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(bean.getVideoId(), bean.getCommentId(), bean.getActionType(), bean.getUserId());
+
+		// 2. 查询视频信息
+		VideoInfo videoInfo = videoInfoMapper.selectByVideoId(bean.getVideoId());
+
+		// 3. 【修复核心二】：智能拦截与放行（解决无法取消已失效视频的问题）
+		if (videoInfo == null) {
+			// 如果视频已经失效，且用户存在历史记录（说明当前操作是“取消点赞/取消收藏”）
+			if (dbAction != null && (actionTypeEnum == UserActionTypeEnum.VIDEO_LIKE || actionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT)) {
+				// 直接清理用户的个人关系记录
+				userActionMapper.deleteByActionId(dbAction.getActionId());
+				// 视频主体已经不存在，不需要再去更新视频表的统计数和ES了，直接结束方法即可
+				return;
+			}
+			// 如果没有历史记录（当前操作是想给失效视频强行点赞、投币、收藏），坚决拦截
+			throw new BusinessException(ResponseCodeEnum.CODE_600);
+		}
+
+		// 正常流程
+		bean.setVideoUserId(videoInfo.getUserId());
 		bean.setActionTime(new Date());
-		switch (actionTypeEnum){
+
+		switch (actionTypeEnum) {
 			/*点赞和收藏操作*/
 			case VIDEO_LIKE:
 			case VIDEO_COLLECT:
 				//取消操作则删除该action
-				if(dbAction!=null){
+				if (dbAction != null) {
 					userActionMapper.deleteByActionId(dbAction.getActionId());
-				}else {
+				} else {
 					userActionMapper.insert(bean);
 				}
 				//取消操作则从数据库中的操作数减去1，比如取消点赞则点赞数减1
 				Integer changeCount = dbAction == null ? Constants.ONE : -Constants.ONE;
 				videoInfoMapper.updateCountInfo(bean.getVideoId(), actionTypeEnum.getField(), changeCount);
 
-				if(actionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT){
+				if (actionTypeEnum == UserActionTypeEnum.VIDEO_COLLECT) {
 					// 更新es收藏数量
-					esSearchComponent.updateDocCount(videoInfo.getVideoId(), SearchOrderTypeEnum.VIDEO_COLLECT.getField(),changeCount);
+					esSearchComponent.updateDocCount(videoInfo.getVideoId(), SearchOrderTypeEnum.VIDEO_COLLECT.getField(), changeCount);
 				}
 				break;
 			/*投币操作*/
 			case VIDEO_COIN:
 				//每个用户都不可以给自己投币
-				if(videoInfo.getUserId().equals(bean.getUserId())){
+				if (videoInfo.getUserId().equals(bean.getUserId())) {
 					throw new BusinessException("自己不能给自己投币哦！");
 				}
 				//一个用户给一个视频仅可投币一次
-				if(dbAction!=null){
+				if (dbAction != null) {
 					throw new BusinessException("对本稿件的投币次数已用完！");
 				}
 				//减少自己的硬币（使用SQL锁保证并发下硬币数不会出现错误）
 				Integer updateCount = userInfoMapper.updateCoinCountInfo(bean.getUserId(), -bean.getActionCount());
 				//更新行数返回为0说明更新操作失败
-				if(updateCount==0){
+				if (updateCount == 0) {
 					throw new BusinessException("硬币不足！");
 				}
 				//给up主增加硬币
 				updateCount = userInfoMapper.updateCoinCountInfo(videoInfo.getUserId(), bean.getActionCount());
-				if(updateCount==0){
+				if (updateCount == 0) {
 					throw new BusinessException("投币失败！");
 				}
 				userActionMapper.insert(bean);
@@ -237,24 +253,9 @@ public class UserActionServiceImpl implements UserActionService {
 			//评论区的点赞和讨厌
 			case COMMENT_LIKE:
 			case COMMENT_HATE:
-				UserActionTypeEnum opposeTypeEnum = UserActionTypeEnum.COMMENT_LIKE == actionTypeEnum?UserActionTypeEnum.COMMENT_HATE:UserActionTypeEnum.COMMENT_LIKE;
+				UserActionTypeEnum opposeTypeEnum = UserActionTypeEnum.COMMENT_LIKE == actionTypeEnum ? UserActionTypeEnum.COMMENT_HATE : UserActionTypeEnum.COMMENT_LIKE;
 				UserAction opposeAction = userActionMapper.selectByVideoIdAndCommentIdAndActionTypeAndUserId(bean.getVideoId(), bean.getCommentId(), opposeTypeEnum.getType(), bean.getUserId());
-				//如果用户当前动作存在存在原有对立动作则直接删除原有的对立动作即可：如果原本点赞了，此时点击讨厌，则删除原有的点赞即可
-				if(opposeAction!=null){
-					userActionMapper.deleteByActionId(opposeAction.getActionId());
-				}
-				//如果用户当前动作和原有的动作相同 删除原有动作：如果原本点赞了，此时再次点击点赞，则取消点赞
-				if(dbAction!=null){
-					userActionMapper.deleteByActionId(dbAction.getActionId());
-				}else {
-					userActionMapper.insert(bean);
-				}
-				changeCount = dbAction == null ? Constants.ONE : -Constants.ONE;
-				Integer opposeChangeCount = -changeCount;
-
-				videoCommentMapper.updateCountInfo(bean.getCommentId(), actionTypeEnum.getField(), changeCount,
-						opposeAction==null?null: opposeTypeEnum.getField(),opposeChangeCount);
-				break;
+				//如果用户当前动作存在存在原有对立动作则直接删除原有的对立动作即可：如果原本点赞了
 		}
 	}
 }

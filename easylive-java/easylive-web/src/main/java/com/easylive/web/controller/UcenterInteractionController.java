@@ -49,14 +49,17 @@ public class UcenterInteractionController extends ABaseController{
     //加载视频评论管理
     @RequestMapping("/loadComment")
     @GlobalInterceptor(checkLogin = true)
-    public ResponseVO loadComment(Integer pageNo,String videoId) {
+    public ResponseVO loadComment(Integer pageNo, String videoId) {
         TokenUserInfoDto tokenUserInfoDto = getTokenUserInfoDto();
 
         VideoCommentQuery videoCommentQuery = new VideoCommentQuery();
         videoCommentQuery.setVideoId(videoId);
         videoCommentQuery.setVideoUserId(tokenUserInfoDto.getUserId());
         videoCommentQuery.setOrderBy("comment_id desc");
-        videoCommentQuery.setPageSize(pageNo);
+
+        // 【修复点】：将 setPageSize 纠正为 setPageNo
+        videoCommentQuery.setPageNo(pageNo);
+
         videoCommentQuery.setQueryVideoInfo(true);
         PaginationResultVO resultVO = videoCommentService.findListByPage(videoCommentQuery);
         return getSuccessResponseVO(resultVO);
